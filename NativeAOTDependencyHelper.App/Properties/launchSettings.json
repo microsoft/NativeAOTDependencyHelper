@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "NativeAOTDependencyHelper.App (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "NativeAOTDependencyHelper.App (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
