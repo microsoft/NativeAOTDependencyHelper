@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:NativeAOTDependencyHelper.App"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:NativeAOTDependencyHelper.Core.ViewModels"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
@@ -32,7 +33,28 @@
             HorizontalAlignment="Right"
             Text="{x:Bind DotnetVersionCommand.ExecutionTask, Converter={StaticResource TaskResultConverter}, Mode=OneWay}" />
         <!--  List of dependencies grouped by project owner?  -->
-        <ListView x:Name="DependencyView" Grid.Row="1" />
+        <ListView x:Name="DependencyView" Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:NuGetPackageViewModel">
+                    <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto">
+                        <TextBlock
+                            Grid.ColumnSpan="2"
+                            Style="{ThemeResource TitleTextBlockStyle}"
+                            Text="{x:Bind Name}" />
+                        <TextBlock Grid.Row="1">
+                            <Run Text="{x:Bind ParentProjectPath}" />
+                            <Run FontSize="10" Text="(" />
+                            <Run FontSize="10" Text="{x:Bind Framework}" />
+                            <Run FontSize="10" Text=")" />
+                        </TextBlock>
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Text="{x:Bind ResolvedVersion}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
         <!--  Details Page  -->
     </Grid>
 </Page>
