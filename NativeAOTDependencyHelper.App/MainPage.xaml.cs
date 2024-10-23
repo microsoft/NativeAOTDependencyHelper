@@ -38,8 +38,7 @@ public sealed partial class MainPage : Page
         var file = await openPicker.PickSingleFileAsync();
 
         // https://learn.microsoft.com/dotnet/core/tools/dotnet-list-package
-        // TODO: Pass to dotnet list <slnfilepath> package --include-transitive --format json
-        // Pass into System.Text.Json...
+        var dotnetPackageList = await DotnetToolingInterop.GetTransitiveDependencyListAsync(file.Path);
     }
 
     private static bool IsTaskSuccessful(TaskStatus status) => status == TaskStatus.RanToCompletion;
