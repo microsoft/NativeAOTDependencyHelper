@@ -60,7 +60,7 @@ public partial class NuGetPackageViewModel(string parentProjectPath,
     private string? _lastCommitDate;
 
     /// <summary>
-    /// Gets or sets whether we found the <code><IsAotComaptible>true</IsAotComaptible></code> flag within the source code (props or csprojs), null if we're searching or can't determine.
+    /// Gets or sets whether we found the <code><IsAotCompatible>true</IsAotCompatible></code> flag within the source code (props or csprojs), null if we're searching or can't determine.
     /// TODO: We may want some better management of the state of this search, etc... here? As well as the search results, i.e. link to where the code was found.
     /// </summary>
     [ObservableProperty]
@@ -76,6 +76,8 @@ public partial class NuGetPackageViewModel(string parentProjectPath,
     // TODO: Would be nice if we can stream the Json deserialization and then process things by package one-by-one here too?
     public static IEnumerable<NuGetPackageViewModel> FromJsonModels(DotnetPackageList packageList)
     {
+        int commonPathIndex = GetFirstDifferentCharacter(packageList.Projects.Select(p => p.Path));
+
         foreach (var project in packageList.Projects)
         {
             foreach (var framework in project.Frameworks)
@@ -83,7 +85,7 @@ public partial class NuGetPackageViewModel(string parentProjectPath,
                 foreach (var package in framework.TopLevelPackages)
                 {
                     yield return new NuGetPackageViewModel(
-                        parentProjectPath: project.Path,
+                        parentProjectPath: project.Path.Substring(commonPathIndex),
                         name: package.Id,
                         framework: framework.Framework,
                         requestedVersion: package.RequestedVersion,
@@ -93,7 +95,7 @@ public partial class NuGetPackageViewModel(string parentProjectPath,
                 foreach (var package in framework.TransitivePackages)
                 {
                     yield return new NuGetPackageViewModel(
-                        parentProjectPath: project.Path,
+                        parentProjectPath: project.Path.Substring(commonPathIndex),
                         name: package.Id,
                         framework: framework.Framework,
                         requestedVersion: package.RequestedVersion,
@@ -104,5 +106,33 @@ public partial class NuGetPackageViewModel(string parentProjectPath,
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Given a list of strings, finds the first index where there's not the same character at that index.
+    /// </summary>
+    /// <param name="enumerable">List of strings</param>
+    /// <returns>index of first difference, -1 if null or only single string</returns>
+    private static int GetFirstDifferentCharacter(IEnumerable<string> strings)
+    {
+        if (strings == null || strings.Count() == 1) return -1;
+
+        int i = 0;
+        string firstString = strings.First();
+
+        while (firstString.Length > i) 
+        { 
+            foreach (var str in strings.Skip(1))
+            {
+                // If any of the other strings characters don't match our firststring character, that's it
+                if (str.Length == i || firstString[i] != str[i])
+                {
+                    return i;
+                }
+            }
+            i++;
+        }
+
+        return i;
     }
 }

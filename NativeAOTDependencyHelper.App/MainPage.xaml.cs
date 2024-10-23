@@ -2,7 +2,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using NativeAOTDependencyHelper.Core;
-using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.ViewModels;
 using System;
 using System.Threading.Tasks;

@@ -18,7 +18,7 @@
     <Grid Margin="8" ColumnSpacing="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -48,7 +48,7 @@
                             <Run FontSize="10" Text=")" />
                         </TextBlock>
                         <TextBlock
-                            Grid.Row="1"
+                            Grid.Row="0"
                             Grid.Column="1"
                             Text="{x:Bind ResolvedVersion}" />
                     </Grid>
