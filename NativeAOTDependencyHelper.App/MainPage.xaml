@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="NativeAOTDependencyHelper.App.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:NativeAOTDependencyHelper.App"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+
+    <Grid Margin="8" ColumnSpacing="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Button Click="OpenSolution_Click" Content="Open Sln..." />
+        <TextBlock
+            x:Name="DotNetVersion"
+            Grid.Column="1"
+            HorizontalAlignment="Right" />
+        <!--  List of dependencies grouped by project owner?  -->
+        <ListView x:Name="DependencyView" Grid.Row="1" />
+        <!--  Details Page  -->
+    </Grid>
+</Page>

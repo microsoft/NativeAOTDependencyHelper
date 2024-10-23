@@ -14,9 +14,4 @@ public sealed partial class MainWindow : Window
     {
         this.InitializeComponent();
     }
-
-    private void myButton_Click(object sender, RoutedEventArgs e)
-    {
-        myButton.Content = "Clicked";
-    }
 }
