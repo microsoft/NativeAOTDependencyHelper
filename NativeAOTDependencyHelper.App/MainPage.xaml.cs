@@ -1,7 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using NativeAOTDependencyHelper.Core;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 
@@ -12,37 +13,13 @@ namespace NativeAOTDependencyHelper.App;
 /// </summary>
 public sealed partial class MainPage : Page
 {
+    public IAsyncRelayCommand DotnetVersionCommand { get; } = new AsyncRelayCommand(DotnetToolingInterop.CheckDotnetVersion);
+
     public MainPage()
     {
         this.InitializeComponent();
 
-        _ = InitializeDotnet();
-    }
-
-    // TODO: Put in the other project with the STJ parser
-    private async Task InitializeDotnet()
-    {
-        try
-        {
-            Process process = new();
-            process.StartInfo.FileName = "dotnet.exe";
-            process.StartInfo.Arguments = "--version";
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-
-            process.Start();
-
-            var version = await process.StandardOutput.ReadToEndAsync();
-
-            await process.WaitForExitAsync();
-
-            DotNetVersion.Text = $"Using .NET {version}";
-        }
-        catch (Exception ex)
-        {
-            DotNetVersion.Text = $"Couldn't find .NET in path: {ex.Message}";
-        }
+        DotnetVersionCommand.Execute(this);
     }
 
     private async void OpenSolution_Click(object sender, RoutedEventArgs e)
@@ -64,4 +41,6 @@ public sealed partial class MainPage : Page
         // TODO: Pass to dotnet list <slnfilepath> package --include-transitive --format json
         // Pass into System.Text.Json...
     }
+
+    private static bool IsTaskSuccessful(TaskStatus status) => status == TaskStatus.RanToCompletion;
 }
