@@ -77,7 +77,7 @@ public partial class NuGetPackageViewModel(string parentProjectPath,
     public static IEnumerable<NuGetPackageViewModel> FromJsonModels(DotnetPackageList packageList)
     {
         int commonPathIndex = GetFirstDifferentCharacter(packageList.Projects.Select(p => p.Path));
-
+        if (commonPathIndex > 0) throw new IOException("Invalid project path. Please upload a valid .sln file");
         foreach (var project in packageList.Projects)
         {
             foreach (var framework in project.Frameworks)
@@ -115,7 +115,8 @@ public partial class NuGetPackageViewModel(string parentProjectPath,
     /// <returns>index of first difference, -1 if null or only single string</returns>
     private static int GetFirstDifferentCharacter(IEnumerable<string> strings)
     {
-        if (strings == null || strings.Count() == 1) return -1;
+        if (strings == null) return -1;
+        if (strings.Count() == 1) return 0;
 
         int i = 0;
         string firstString = strings.First();
