@@ -48,6 +48,9 @@ public partial class NuGetPackageViewModel(string parentProjectPath,
     [ObservableProperty]
     private string? _sourceRepositoryUrl;
 
+    [ObservableProperty]
+    private string? _registrationUrl;
+
     //// --- From GitHub.com ---
 
     /// <summary>

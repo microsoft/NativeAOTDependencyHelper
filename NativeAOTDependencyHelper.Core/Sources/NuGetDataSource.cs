@@ -14,6 +14,8 @@ public class NuGetDataSource : IDataSource
 
     public static Guid[] DependentDataSourceIds => [SolutionPackageIndexDataSource.Id];
 
+    private static string _registrationFileExt = "/index.json";
+
     // We're sharing this for all main calls within our source.
     // HttpClient lifecycle management best practices:
     // https://learn.microsoft.com/dotnet/fundamentals/networking/http/httpclient-guidelines#recommended-use
@@ -24,21 +26,30 @@ public class NuGetDataSource : IDataSource
     /// </summary>
     public async Task<bool> InitializeAsync()
     {
-        // Get the list of all books
-        var index = await _sharedHttpClient.GetFromJsonAsync<NuGetServiceIndex>("https://api.nuget.org/v3/index.json");
-
-        if (index == null) return false;
-
-        foreach (var service in index.Resources)
+        using (var httpClient = new HttpClient())
         {
-            // Need to find the base Url for the Registration service for our subsequent package calls
-            if (service.Type == "RegistrationsBaseUrl")
-            {
-                _sharedHttpClient.BaseAddress = new Uri(service.Id);
-                return true;
-            }
-        }
+            // Get the list of all books
+            var index = await _sharedHttpClient.GetFromJsonAsync<NuGetServiceIndex>("https://api.nuget.org/v3/index.json");
 
-        return false;
+            if (index == null) return false;
+
+            foreach (var service in index.Resources)
+            {
+                // Need to find the base Url for the Registration service for our subsequent package calls
+                if (service.Type == "RegistrationsBaseUrl")
+                {
+                    httpClient.BaseAddress = new Uri(service.Id);
+                    _sharedHttpClient = new HttpClient { BaseAddress = new Uri(service.Id) }; // Create a new HttpClient with the BaseAddress set
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    public async Task<NuGetPackageRegistration?> GetPackageRegistration(string packageId)
+    {
+        return await _sharedHttpClient.GetFromJsonAsync<NuGetPackageRegistration>(packageId.ToLower() + _registrationFileExt);
     }
 }

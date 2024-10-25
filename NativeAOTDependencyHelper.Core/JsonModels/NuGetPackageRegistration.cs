@@ -1,9 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class NuGetPackageRegistration
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
+
+    [JsonPropertyName("@type")]
     public string[] Type { get; set; } = Array.Empty<string>();
     public string CommitId { get; set; } = string.Empty;
     public DateTime CommitTimeStamp { get; set; } = DateTime.MinValue;
@@ -36,92 +40,119 @@ public class Context
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class Items
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
+
+    [JsonPropertyName("@container")]
     public string Container { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class CommitTimeStamp
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
+
+    [JsonPropertyName("@type")]
     public string Type { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class CommitId
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class Count
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class Parent
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
+
+    [JsonPropertyName("@type")]
     public string Type { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class Tags
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
+
+    [JsonPropertyName("@container")]
     public string Container { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class Reasons
 {
+    [JsonPropertyName("@container")]
     public string Container { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class PackageTargetFrameworks
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
+    [JsonPropertyName("@container")]
     public string Container { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class DependencyGroups
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
+
+    [JsonPropertyName("@container")]
     public string Container { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class Dependencies
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
+    [JsonPropertyName("@container")]
     public string Container { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class PackageContent
 {
+    [JsonPropertyName("@type")]
     public string Type { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class Published
 {
+    [JsonPropertyName("@type")]
     public string Type { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class Registration
 {
+    [JsonPropertyName("@type")]
     public string Type { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class RegistrationItem
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
+    [JsonPropertyName("@type")]
     public string Type { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;
     public DateTime CommitTimeStamp { get; set; } = DateTime.MinValue;
@@ -135,7 +166,9 @@ public class RegistrationItem
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class Item
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
+    [JsonPropertyName("@type")]
     public string Type { get; set; } = string.Empty;
     public string CommitId { get; set; } = string.Empty;
     public DateTime CommitTimeStamp { get; set; } = DateTime.MinValue;
@@ -147,13 +180,16 @@ public class Item
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class CatalogEntry
 {
+    [JsonPropertyName("@id")]
     public string IdUrl { get; set; } = string.Empty;
+    [JsonPropertyName("@type")]
     public string Type { get; set; } = string.Empty;
     public string Authors { get; set; } = string.Empty;
     public DependencyGroup[] DependencyGroups { get; set; } = Array.Empty<DependencyGroup>();
     public string Description { get; set; } = string.Empty;
     public string IconUrl { get; set; } = string.Empty;
-    public string Id { get; set; } = string.Empty;
+    [JsonPropertyName("id")]
+    public string IdName { get; set; } = string.Empty;
     public string Language { get; set; } = string.Empty;
     public string LicenseExpression { get; set; } = string.Empty;
     public string LicenseUrl { get; set; } = string.Empty;
@@ -172,7 +208,9 @@ public class CatalogEntry
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class DependencyGroup
 {
+    [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
+    [JsonPropertyName("@type")]
     public string Type { get; set; } = string.Empty;
     public string TargetFramework { get; set; } = string.Empty;
     public Dependency[] Dependencies { get; set; } = Array.Empty<Dependency>();
@@ -181,8 +219,10 @@ public class DependencyGroup
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class Dependency
 {
+    [JsonPropertyName("@id")]
     public string IdUrl { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
     public string Range { get; set; } = string.Empty;
+    public string IdName { get; set; } = string.Empty;
     public string Registration { get; set; } = string.Empty;
 }
