@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NativeAOTDependencyHelper.Core.JsonModels;
 
-namespace NativeAOTDependencyHelper.Core.ViewModels;
+namespace NativeAOTDependencyHelper.ViewModels;
 
 /// <summary>
 /// Wrapper of all NuGetPackage data we need to display in UI.
