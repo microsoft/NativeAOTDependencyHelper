@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NativeAOTDependencyHelper.Core;
+using NativeAOTDependencyHelper.Core.Models;
 using System.Collections.ObjectModel;
 
 namespace NativeAOTDependencyHelper.ViewModels;
@@ -22,7 +23,7 @@ public partial class MainViewModel : ObservableObject
 
         if (dotnetPackageList != null)
         {
-            Packages = new(NuGetPackageViewModel.FromJsonModels(dotnetPackageList));
+            Packages = new(NuGetPackageInfo.FromJsonModels(dotnetPackageList).Select(p => new NuGetPackageViewModel(p)));
         }
     }
 }

@@ -4,15 +4,11 @@ using System.Net.Http.Json;
 
 namespace NativeAOTDependencyHelper.Core.Sources;
 
-public class NuGetDataSource : IDataSource
+public class NuGetDataSource(SolutionPackageIndex _packageIndex) : IDataSource
 {
-    public static Guid Id => Guid.Parse("CAB01840-5C08-40F6-9190-46DDAEFB1E1A");
+    public string Name => "NuGet.org Package Information";
 
-    public static string Name => "NuGet.org Package Information";
-
-    public static string Description => "Retrieves information about package metadata from NuGet.org";
-
-    public static Guid[] DependentDataSourceIds => [SolutionPackageIndexDataSource.Id];
+    public string Description => "Retrieves information about package metadata from NuGet.org";
 
     // We're sharing this for all main calls within our source.
     // HttpClient lifecycle management best practices:

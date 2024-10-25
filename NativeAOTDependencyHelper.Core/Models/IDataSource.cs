@@ -1,15 +1,13 @@
 ﻿namespace NativeAOTDependencyHelper.Core.Models;
 
 /// <summary>
-/// Defines a source of data which will be needed for various <see cref="IAOTCheckItem"/>
+/// Defines a source of data which will be needed for various <see cref="AOTCheckItem"/>
 /// </summary>
-public interface IDataSource : IDependsOnDataSource
+public interface IDataSource
 {
-    public static abstract Guid Id { get; }
+    public string Name { get; }
 
-    public static abstract string Name { get; }
-
-    public static abstract string Description { get; }
+    public string Description { get; }
 
     /// <summary>
     /// Called before the data source is used in case anything needs to be setup ahead of time.

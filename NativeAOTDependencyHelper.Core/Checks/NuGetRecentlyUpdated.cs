@@ -3,28 +3,22 @@ using NativeAOTDependencyHelper.Core.Sources;
 
 namespace NativeAOTDependencyHelper.Core.Checks;
 
-public class NuGetRecentlyUpdated : IAOTCheckItem
+public class NuGetRecentlyUpdated(NuGetDataSource _nugetSource) : IReportItemProvider
 {
-    public static string Name => "Nuget Package Up-to-date";
+    public string Name => "Nuget Package Up-to-date";
 
-    public static int SortOrder => 5;
+    public int SortOrder => 5;
 
-    public static Guid[] DependentDataSourceIds => [NuGetDataSource.Id];
-
-    public string ReportDetails { get; } = string.Empty;
-
-    public Uri? ResultDetailLink { get; }
-
-    public bool HasPassed { get; }
-
-    public static IReportItem Process(IDataSource[] sources)
+    public Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
     {
-        if (sources != null
-            && sources.Length > 0
-            && sources[0] is NuGetDataSource nuget)
-        {
-        }
+        // TODO: Thinking that since we'll be having multiple checks calling for the package info
+        //       We should have the base orchestrator that does scheduling be an intermediary
+        //       It can get the specific data source info and cache it so each source doesn't need to worry about it?
+        // await _orchestrator.GetDataSourceInfo<NuGetPackageMetadata>(package, _nugetSource)
+        // And then the data source has a GetInfoForPackageAsync<T> in the interface called by the orchestrator, and it'll cache that result, so the above call will either make the request to the data source
+        // or it'll just returned the cached result for the existing package.
 
+        // await _nugetSource.GetNuGetInfoAsync(package);
         throw new NotImplementedException();
     }
 }

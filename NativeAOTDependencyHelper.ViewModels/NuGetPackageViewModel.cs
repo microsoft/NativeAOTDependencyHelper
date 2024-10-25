@@ -1,29 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using NativeAOTDependencyHelper.Core.JsonModels;
+using NativeAOTDependencyHelper.Core.Models;
+using System.Collections.ObjectModel;
 
 namespace NativeAOTDependencyHelper.ViewModels;
 
 /// <summary>
-/// Wrapper of all NuGetPackage data we need to display in UI.
-/// TODO: We should figure out if we want more separation here in our projects later between the core data gathering and what we need more specifically for the ViewModel layer...
+/// Wrapper of all <see cref="NuGetPackageInfo"/> data we need to display in UI.
 /// </summary>
-public partial class NuGetPackageViewModel(string parentProjectPath,
-                                           string name,
-                                           string framework,
-                                           string requestedVersion,
-                                           string resolvedVersion) : ObservableObject
+public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo) : ObservableObject
 {
-    public string ParentProjectPath { get; } = parentProjectPath;
+    public NuGetPackageInfo Info { get; } = _packageInfo;
 
-    public string Name { get; } = name;
+    public ObservableCollection<ReportItem> ReportItems { get; } = new();
 
-    public string Framework { get; } = framework;
-
-    public string RequestedVersion { get; } = requestedVersion;
-
-    public string ResolvedVersion { get; } = resolvedVersion;
-
-    public bool IsTransitive { get; set; }
+    public ObservableCollection<AOTCheckItem> CheckItems { get; } = new();
 
     //// --- From NuGet.org ---
 
@@ -73,66 +63,5 @@ public partial class NuGetPackageViewModel(string parentProjectPath,
     [ObservableProperty]
     private int? _numberOfAOTIssues;
 
-    // TODO: Would be nice if we can stream the Json deserialization and then process things by package one-by-one here too?
-    public static IEnumerable<NuGetPackageViewModel> FromJsonModels(DotnetPackageList packageList)
-    {
-        int commonPathIndex = GetFirstDifferentCharacter(packageList.Projects.Select(p => p.Path));
 
-        foreach (var project in packageList.Projects)
-        {
-            foreach (var framework in project.Frameworks)
-            {
-                foreach (var package in framework.TopLevelPackages)
-                {
-                    yield return new NuGetPackageViewModel(
-                        parentProjectPath: project.Path.Substring(commonPathIndex),
-                        name: package.Id,
-                        framework: framework.Framework,
-                        requestedVersion: package.RequestedVersion,
-                        resolvedVersion: package.ResolvedVersion);
-                }
-
-                foreach (var package in framework.TransitivePackages)
-                {
-                    yield return new NuGetPackageViewModel(
-                        parentProjectPath: project.Path.Substring(commonPathIndex),
-                        name: package.Id,
-                        framework: framework.Framework,
-                        requestedVersion: package.RequestedVersion,
-                        resolvedVersion: package.ResolvedVersion)
-                    {
-                        IsTransitive = true
-                    };
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Given a list of strings, finds the first index where there's not the same character at that index.
-    /// </summary>
-    /// <param name="enumerable">List of strings</param>
-    /// <returns>index of first difference, -1 if null or only single string</returns>
-    private static int GetFirstDifferentCharacter(IEnumerable<string> strings)
-    {
-        if (strings == null || strings.Count() == 1) return -1;
-
-        int i = 0;
-        string firstString = strings.First();
-
-        while (firstString.Length > i) 
-        { 
-            foreach (var str in strings.Skip(1))
-            {
-                // If any of the other strings characters don't match our firststring character, that's it
-                if (str.Length == i || firstString[i] != str[i])
-                {
-                    return i;
-                }
-            }
-            i++;
-        }
-
-        return i;
-    }
 }
