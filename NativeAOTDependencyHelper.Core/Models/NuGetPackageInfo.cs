@@ -6,17 +6,20 @@ namespace NativeAOTDependencyHelper.Core.Models;
 /// Core base class representing base-level nuget package info from solution file.
 /// Remapped from the Json data provided by <see cref="DotnetPackageList"/>.
 /// </summary>
-/// <param name="_parentProjectPath"></param>
-/// <param name="_name"></param>
-/// <param name="_framework"></param>
-/// <param name="_requestedVersion"></param>
-/// <param name="_resolvedVersion"></param>
+/// <param name="ParentProjectPath">The filepath to the project that uses this package.</param>
+/// <param name="Name">The <see cref="NuGetPackage.Id"/> of this package.</param>
+/// <param name="Framework">The target framework this package is evaluating for.</param>
+/// <param name="RequestedVersion">The version which the project requested for this package.</param>
+/// <param name="ResolvedVersion">The version NuGet decided to use for this package.</param>
 public record NuGetPackageInfo(string ParentProjectPath,
                                string Name,
                                string Framework,
                                string RequestedVersion,
                                string ResolvedVersion)
 {
+    /// <summary>
+    /// Gets if this package is a transitive reference and required for a referenced package. If <c>false</c>, then the package explicitly requested to use this package.
+    /// </summary>
     public bool IsTransitive { get; init; }
 
     /// <summary>

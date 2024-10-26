@@ -12,12 +12,12 @@ public class NuGetPackageRegistration
     public string CommitId { get; set; } = string.Empty;
     public DateTime CommitTimeStamp { get; set; } = DateTime.MinValue;
     public int Count { get; set; } = 0;
-    public RegistrationItem[] Items { get; set; } = Array.Empty<RegistrationItem>();
-    public Context Context { get; set; } = new Context();
+    public RegistrationListings[] Items { get; set; } = Array.Empty<RegistrationListings>();
+    public NuGetRegistrationContext? Context { get; set; }
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
-public class Context
+public class NuGetRegistrationContext
 {
     public string Vocab { get; set; } = string.Empty;
     public string Catalog { get; set; } = string.Empty;
@@ -148,7 +148,7 @@ public class Registration
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
-public class RegistrationItem
+public class RegistrationListings
 {
     [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
@@ -157,14 +157,14 @@ public class RegistrationItem
     public string CommitId { get; set; } = string.Empty;
     public DateTime CommitTimeStamp { get; set; } = DateTime.MinValue;
     public int Count { get; set; } = 0;
-    public Item[] Items { get; set; } = Array.Empty<Item>();
+    public CatalogEntryMetadata[] Items { get; set; } = Array.Empty<CatalogEntryMetadata>();
     public string Parent { get; set; } = string.Empty;
     public string Lower { get; set; } = string.Empty;
     public string Upper { get; set; } = string.Empty;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
-public class Item
+public class CatalogEntryMetadata
 {
     [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
@@ -185,7 +185,7 @@ public class CatalogEntry
     [JsonPropertyName("@type")]
     public string Type { get; set; } = string.Empty;
     public string Authors { get; set; } = string.Empty;
-    public DependencyGroup[] DependencyGroups { get; set; } = Array.Empty<DependencyGroup>();
+    public PackageDependencyGroup[] DependencyGroups { get; set; } = Array.Empty<PackageDependencyGroup>();
     public string Description { get; set; } = string.Empty;
     public string IconUrl { get; set; } = string.Empty;
     [JsonPropertyName("id")]
@@ -206,18 +206,18 @@ public class CatalogEntry
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
-public class DependencyGroup
+public class PackageDependencyGroup
 {
     [JsonPropertyName("@id")]
     public string Id { get; set; } = string.Empty;
     [JsonPropertyName("@type")]
     public string Type { get; set; } = string.Empty;
     public string TargetFramework { get; set; } = string.Empty;
-    public Dependency[] Dependencies { get; set; } = Array.Empty<Dependency>();
+    public PackageDependency[] Dependencies { get; set; } = Array.Empty<PackageDependency>();
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
-public class Dependency
+public class PackageDependency
 {
     [JsonPropertyName("@id")]
     public string IdUrl { get; set; } = string.Empty;

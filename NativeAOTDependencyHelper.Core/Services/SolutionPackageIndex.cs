@@ -1,6 +1,6 @@
 ﻿using NativeAOTDependencyHelper.Core.Models;
 
-namespace NativeAOTDependencyHelper.Core.Sources;
+namespace NativeAOTDependencyHelper.Core.Services;
 
 /// <summary>
 /// This is a special root data source which is expected to be used by all other data sources.

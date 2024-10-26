@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:NativeAOTDependencyHelper.App"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:NativeAOTDependencyHelper.Core.Models"
     xmlns:viewModels="using:NativeAOTDependencyHelper.ViewModels"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
@@ -39,7 +40,7 @@
             ItemsSource="{x:Bind ViewModel.Packages, Mode=OneWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:NuGetPackageViewModel">
-                    <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto">
+                    <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto">
                         <TextBlock
                             Grid.ColumnSpan="2"
                             Style="{ThemeResource TitleTextBlockStyle}"
@@ -54,10 +55,32 @@
                             Grid.Row="0"
                             Grid.Column="1"
                             Text="{x:Bind Info.ResolvedVersion}" />
+                        <!--  TODO: These are the details...  -->
+                        <ItemsControl
+                            Grid.Row="2"
+                            Grid.ColumnSpan="2"
+                            ItemsSource="{x:Bind CheckItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:AOTCheckItem">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind Provider.Name}" />
+                                        <TextBlock Grid.Column="1" Text="{x:Bind ReportDetails}" />
+                                        <!--  TODO: Have status/icons here... (queued, in progress, fail, pass)  -->
+                                        <!--  TODO: Do we want more than bool for checks? Success, Warning, Failure?  -->
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            FontWeight="Bold"
+                                            Text="{x:Bind HasPassed}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
         <!--  Details Page  -->
     </Grid>
+    <!--  TODO: We should have a status with a progress bar and the count of reports done vs. total, etc...  -->
+    <!--  TODO: Can we cancel all this? (i.e. add cancel button?)  -->
 </Page>
