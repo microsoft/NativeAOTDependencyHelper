@@ -38,6 +38,9 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo) : Obse
     [ObservableProperty]
     private string? _sourceRepositoryUrl;
 
+    [ObservableProperty]
+    private string? _registrationUrl;
+
     //// --- From GitHub.com ---
 
     /// <summary>

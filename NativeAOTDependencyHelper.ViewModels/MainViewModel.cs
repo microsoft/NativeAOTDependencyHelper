@@ -2,7 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using NativeAOTDependencyHelper.Core;
 using NativeAOTDependencyHelper.Core.Models;
+using NativeAOTDependencyHelper.Core.Sources;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace NativeAOTDependencyHelper.ViewModels;
 
@@ -20,10 +22,21 @@ public partial class MainViewModel : ObservableObject
     {
         // https://learn.microsoft.com/dotnet/core/tools/dotnet-list-package
         var dotnetPackageList = await DotnetToolingInterop.GetTransitiveDependencyListAsync(filepath);
+        var nugetDataSource = new NuGetDataSource();
+        await nugetDataSource.InitializeAsync();
 
         if (dotnetPackageList != null)
         {
             Packages = new(NuGetPackageInfo.FromJsonModels(dotnetPackageList).Select(p => new NuGetPackageViewModel(p)));
+
+            foreach (var item in Packages)
+            {
+                NuGetPackageRegistration? registration = await nugetDataSource.GetPackageRegistration(item.Name);
+                if (registration != null)
+                {
+                    Debug.WriteLine("@id: " + registration.Id);                
+                }
+            }
         }
     }
 }
