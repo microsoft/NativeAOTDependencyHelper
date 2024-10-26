@@ -22,7 +22,7 @@ public partial class MainViewModel : ObservableObject
     {
         // https://learn.microsoft.com/dotnet/core/tools/dotnet-list-package
         var dotnetPackageList = await DotnetToolingInterop.GetTransitiveDependencyListAsync(filepath);
-        var nugetDataSource = new NuGetDataSource();
+        var nugetDataSource = new NuGetDataSource(new()); // TODO: Just temp
         await nugetDataSource.InitializeAsync();
 
         if (dotnetPackageList != null)
@@ -31,7 +31,7 @@ public partial class MainViewModel : ObservableObject
 
             foreach (var item in Packages)
             {
-                NuGetPackageRegistration? registration = await nugetDataSource.GetPackageRegistration(item.Name);
+                NuGetPackageRegistration? registration = await nugetDataSource.GetPackageRegistration(item.Info.Name);
                 if (registration != null)
                 {
                     Debug.WriteLine("@id: " + registration.Id);                
