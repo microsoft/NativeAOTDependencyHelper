@@ -11,11 +11,11 @@ public sealed partial class DetailsControl : UserControl
         this.InitializeComponent();
     }
 
-    public static readonly DependencyProperty SelectedPackageProperty = DependencyProperty.Register(nameof(SelectedPackage), typeof(NuGetPackageViewModel), typeof(DetailsControl), new PropertyMetadata(defaultValue: null));
+    public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(nameof(ViewModel), typeof(NuGetPackageViewModel), typeof(DetailsControl), new PropertyMetadata(defaultValue: null));
 
-    public NuGetPackageViewModel SelectedPackage
+    public NuGetPackageViewModel ViewModel
     {
-        get => (NuGetPackageViewModel)GetValue(SelectedPackageProperty);
-        set => SetValue(SelectedPackageProperty, value);
+        get => (NuGetPackageViewModel)GetValue(ViewModelProperty);
+        set => SetValue(ViewModelProperty, value);
     }
 }

@@ -96,7 +96,6 @@
                 x:Name="DependencyView"
                 Grid.Row="1"
                 ItemsSource="{x:Bind ViewModel.Packages, Mode=OneWay}"
-                SelectionChanged="DependencyView_SelectionChanged"
                 SelectionMode="Single">
                 <ItemsView.Layout>
                     <StackLayout Spacing="4" />
@@ -137,7 +136,10 @@
                 BorderThickness="1"
                 CornerRadius="{StaticResource OverlayCornerRadius}">
                 <ScrollViewer>
-                    <controls:DetailsControl x:Name="DetailsController" Margin="12" />
+                    <controls:DetailsControl
+                        x:Name="DetailsController"
+                        Margin="12"
+                        ViewModel="{x:Bind (viewModels:NuGetPackageViewModel)DependencyView.SelectedItem, Mode=OneWay}" />
                 </ScrollViewer>
             </Grid>
         </Grid>
