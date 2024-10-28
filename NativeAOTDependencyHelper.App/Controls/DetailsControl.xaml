@@ -41,7 +41,7 @@
                         <toolkit:HeaderedContentControl Header="Provider">
                             <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind Provider.Name, Mode=OneWay}" />
                         </toolkit:HeaderedContentControl>
-                        <toolkit:HeaderedContentControl Header="Provider">
+                        <toolkit:HeaderedContentControl Header="Details">
                             <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ReportDetails, Mode=OneWay}" />
                         </toolkit:HeaderedContentControl>
                         <toolkit:HeaderedContentControl Header="Passed">
