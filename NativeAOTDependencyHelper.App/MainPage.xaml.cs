@@ -42,4 +42,9 @@ public sealed partial class MainPage : Page
     }
 
     private static bool IsTaskSuccessful(TaskStatus status) => status == TaskStatus.RanToCompletion;
+
+    private void DependencyView_SelectionChanged(ItemsView sender, ItemsViewSelectionChangedEventArgs args)
+    {
+        DetailsController.SelectedPackage = (NuGetPackageViewModel)((sender as ItemsView).SelectedItem);
+    }
 }

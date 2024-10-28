@@ -1,3 +1,4 @@
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -13,5 +14,8 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         this.InitializeComponent();
+        this.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+        this.AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+        this.AppWindow.TitleBar.PreferredHeightOption = Microsoft.UI.Windowing.TitleBarHeightOption.Tall;
     }
 }
