@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using NativeAOTDependencyHelper.Core;
-using NativeAOTDependencyHelper.Core.ViewModels;
+using NativeAOTDependencyHelper.ViewModels;
 using System;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
@@ -14,13 +14,13 @@ namespace NativeAOTDependencyHelper.App;
 /// </summary>
 public sealed partial class MainPage : Page
 {
-    public IAsyncRelayCommand DotnetVersionCommand { get; } = new AsyncRelayCommand(DotnetToolingInterop.CheckDotnetVersion);
+    public MainViewModel ViewModel { get; } = new(((App)App.Current).Services);
 
     public MainPage()
     {
-        this.InitializeComponent();
+        InitializeComponent();
 
-        DotnetVersionCommand.Execute(this);
+        ViewModel.DotnetVersionCommand.Execute(this);
     }
 
     private async void OpenSolution_Click(object sender, RoutedEventArgs e)
@@ -38,11 +38,7 @@ public sealed partial class MainPage : Page
         // Open the picker for the user to pick a file
         var file = await openPicker.PickSingleFileAsync();
 
-        // https://learn.microsoft.com/dotnet/core/tools/dotnet-list-package
-        var dotnetPackageList = await DotnetToolingInterop.GetTransitiveDependencyListAsync(file.Path);
-
-        // TODO: x:Bind/Setup MainViewModel?
-        DependencyView.ItemsSource = NuGetPackageViewModel.FromJsonModels(dotnetPackageList);
+        await ViewModel.ProcessSolutionFileCommand.ExecuteAsync(file.Path);
     }
 
     private static bool IsTaskSuccessful(TaskStatus status) => status == TaskStatus.RanToCompletion;

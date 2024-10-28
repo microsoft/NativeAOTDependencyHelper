@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeAOTDependencyHelper.App", "NativeAOTDependencyHelper.App\NativeAOTDependencyHelper.App.csproj", "{40B3011B-6D58-45BD-98E6-870EB1C75BB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeAOTDependencyHelper.App", "NativeAOTDependencyHelper.App\NativeAOTDependencyHelper.App.csproj", "{40B3011B-6D58-45BD-98E6-870EB1C75BB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeAOTDependencyHelper.Core", "NativeAOTDependencyHelper.Core\NativeAOTDependencyHelper.Core.csproj", "{170D2190-BC14-4B42-9D4D-4D7DA36680D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeAOTDependencyHelper.Core", "NativeAOTDependencyHelper.Core\NativeAOTDependencyHelper.Core.csproj", "{170D2190-BC14-4B42-9D4D-4D7DA36680D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeAOTDependencyHelper.ViewModels", "NativeAOTDependencyHelper.ViewModels\NativeAOTDependencyHelper.ViewModels.csproj", "{E20FA404-676D-4A64-951C-68E3E49A0F84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,22 @@ Global
 		{170D2190-BC14-4B42-9D4D-4D7DA36680D5}.Release|x64.Build.0 = Release|Any CPU
 		{170D2190-BC14-4B42-9D4D-4D7DA36680D5}.Release|x86.ActiveCfg = Release|Any CPU
 		{170D2190-BC14-4B42-9D4D-4D7DA36680D5}.Release|x86.Build.0 = Release|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Debug|x64.Build.0 = Debug|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Debug|x86.Build.0 = Debug|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Release|ARM64.Build.0 = Release|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Release|x64.ActiveCfg = Release|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Release|x64.Build.0 = Release|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Release|x86.ActiveCfg = Release|Any CPU
+		{E20FA404-676D-4A64-951C-68E3E49A0F84}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

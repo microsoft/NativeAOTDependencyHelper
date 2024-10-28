@@ -1,4 +1,10 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
+using NativeAOTDependencyHelper.Core.Checks;
+using NativeAOTDependencyHelper.Core.Models;
+using NativeAOTDependencyHelper.Core.Services;
+using NativeAOTDependencyHelper.Core.Sources;
+using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -14,12 +20,16 @@ public partial class App : Application
 
     public nint MainWindowHwnd => WinRT.Interop.WindowNative.GetWindowHandle(_window);
 
+    public IServiceProvider Services { get; }
+
     /// <summary>
     /// Initializes the singleton application object.  This is the first line of authored code
     /// executed, and as such is the logical equivalent of main() or WinMain().
     /// </summary>
     public App()
     {
+        Services = ConfigureServices();
+
         InitializeComponent();
     }
 
@@ -31,5 +41,22 @@ public partial class App : Application
     {
         _window = new MainWindow();
         _window.Activate();
+    }
+
+    private static IServiceProvider ConfigureServices()
+    {
+        ServiceCollection services = new();
+
+        // Root service
+        services.AddSingleton<SolutionPackageIndex>();
+        services.AddSingleton<TaskOrchestrator>();
+        
+        // Data Sources
+        services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
+
+        // Reports/Checks
+        services.AddSingleton<IReportItemProvider, NuGetRecentlyUpdated>();
+
+        return services.BuildServiceProvider();
     }
 }

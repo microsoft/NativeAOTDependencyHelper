@@ -29,6 +29,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.0.240109" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
     <Manifest Include="$(ApplicationManifest)" />
@@ -43,7 +44,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NativeAOTDependencyHelper.Core\NativeAOTDependencyHelper.Core.csproj" />
+    <ProjectReference Include="..\NativeAOTDependencyHelper.ViewModels\NativeAOTDependencyHelper.ViewModels.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="MainPage.xaml">
