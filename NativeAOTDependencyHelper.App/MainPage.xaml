@@ -11,6 +11,7 @@
     xmlns:models="using:NativeAOTDependencyHelper.Core.Models"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
     xmlns:viewModels="using:NativeAOTDependencyHelper.ViewModels"
+    x:DefaultBindMode="OneWay"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -44,12 +45,12 @@
                 <Button
                     Click="OpenSolution_Click"
                     Content="Open .sln.."
-                    IsEnabled="{x:Bind local:MainPage.IsTaskSuccessful(ViewModel.DotnetVersionCommand.ExecutionTask.Status), Mode=OneWay}"
+                    IsEnabled="{x:Bind local:MainPage.IsTaskSuccessful(ViewModel.DotnetVersionCommand.ExecutionTask.Status)}"
                     Style="{StaticResource AccentButtonStyle}" />
                 <ProgressRing
                     Width="24"
                     Height="24"
-                    IsActive="{x:Bind ViewModel.IsWorking, Mode=OneWay}" />
+                    IsActive="{x:Bind ViewModel.IsWorking}" />
             </StackPanel>
             <StackPanel
                 Grid.Column="1"
@@ -62,7 +63,7 @@
                     VerticalAlignment="Center"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Style="{StaticResource CaptionTextBlockStyle}"
-                    Text="{x:Bind ViewModel.DotnetVersionCommand.ExecutionTask, Converter={StaticResource TaskResultConverter}, Mode=OneWay}" />
+                    Text="{x:Bind ViewModel.DotnetVersionCommand.ExecutionTask, Converter={StaticResource TaskResultConverter}}" />
                 <CommandBar
                     VerticalAlignment="Center"
                     Background="Transparent"
@@ -79,7 +80,7 @@
             Grid.Row="1"
             ColumnSpacing="16"
             RowSpacing="8"
-            Visibility="{x:Bind ViewModel.Packages.Count, Converter={StaticResource DoubleToVisibilityConverter}, Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.Packages.Count, Converter={StaticResource DoubleToVisibilityConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -90,19 +91,19 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Margin="1,16,0,4" Style="{StaticResource BodyStrongTextBlockStyle}">
-                <Run Text="Packages (" /><Run Text="{x:Bind ViewModel.Packages.Count, Mode=OneWay}" /><Run Text=")" />
+                <Run Text="Packages (" /><Run Text="{x:Bind ViewModel.Packages.Count}" /><Run Text=")" />
             </TextBlock>
 
             <ItemsView
                 x:Name="DependencyView"
                 Grid.Row="1"
-                ItemsSource="{x:Bind ViewModel.Packages, Mode=OneWay}"
+                ItemsSource="{x:Bind ViewModel.Packages}"
                 SelectionMode="Single">
                 <ItemsView.Layout>
                     <StackLayout Spacing="4" />
                 </ItemsView.Layout>
                 <ItemsView.ItemTemplate>
-                    <DataTemplate x:DataType="viewModels:NuGetPackageViewModel">
+                    <DataTemplate x:DataType="viewModels:NuGetPackageViewModel" x:DefaultBindMode="OneTime">
                         <ItemContainer>
                             <toolkit:SettingsCard Header="{x:Bind Info.Name}">
                                 <toolkit:SettingsCard.HeaderIcon>
@@ -140,7 +141,7 @@
                     <controls:DetailsControl
                         x:Name="DetailsController"
                         Margin="12"
-                        ViewModel="{x:Bind (viewModels:NuGetPackageViewModel)DependencyView.SelectedItem, Mode=OneWay}" />
+                        ViewModel="{x:Bind (viewModels:NuGetPackageViewModel)DependencyView.SelectedItem}" />
                 </ScrollViewer>
             </Grid>
         </Grid>

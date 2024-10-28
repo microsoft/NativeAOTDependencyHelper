@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:NativeAOTDependencyHelper.Core.Models"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+    x:DefaultBindMode="OneWay"
     mc:Ignorable="d">
     <UserControl.Resources>
         <converters:BoolToObjectConverter
@@ -17,38 +18,38 @@
             TrueValue="{ThemeResource SystemFillColorSuccessBrush}" />
     </UserControl.Resources>
     <StackPanel Orientation="Vertical" Spacing="12">
-        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{x:Bind ViewModel.Info.Name, Mode=OneWay}" />
+        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{x:Bind ViewModel.Info.Name}" />
         <toolkit:HeaderedContentControl Header="Name">
-            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.Name, Mode=OneWay}" />
+            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.Name}" />
         </toolkit:HeaderedContentControl>
         <toolkit:HeaderedContentControl Header="Is transitive">
-            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.IsTransitive, Mode=OneWay}" />
+            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.IsTransitive}" />
         </toolkit:HeaderedContentControl>
         <toolkit:HeaderedContentControl Header="Parent project path">
-            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.ParentProjectPath, Mode=OneWay}" />
+            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.ParentProjectPath}" />
         </toolkit:HeaderedContentControl>
         <toolkit:HeaderedContentControl Header="Requested version">
-            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.RequestedVersion, Mode=OneWay}" />
+            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.RequestedVersion}" />
         </toolkit:HeaderedContentControl>
         <toolkit:HeaderedContentControl Header="Resolved version">
-            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.ResolvedVersion, Mode=OneWay}" />
+            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.ResolvedVersion}" />
         </toolkit:HeaderedContentControl>
 
-        <ItemsRepeater ItemsSource="{x:Bind ViewModel.CheckItems, Mode=OneWay}">
+        <ItemsRepeater ItemsSource="{x:Bind ViewModel.CheckItems}">
             <ItemsRepeater.ItemTemplate>
                 <DataTemplate x:DataType="models:AOTCheckItem">
                     <StackPanel Orientation="Vertical" Spacing="12">
                         <toolkit:HeaderedContentControl Header="Provider">
-                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind Provider.Name, Mode=OneWay}" />
+                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind Provider.Name}" />
                         </toolkit:HeaderedContentControl>
                         <toolkit:HeaderedContentControl Header="Details">
-                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ReportDetails, Mode=OneWay}" />
+                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ReportDetails}" />
                         </toolkit:HeaderedContentControl>
                         <toolkit:HeaderedContentControl Header="Passed">
                             <TextBlock
                                 FontWeight="SemiBold"
-                                Foreground="{x:Bind HasPassed, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
-                                Text="{x:Bind HasPassed, Mode=OneWay}" />
+                                Foreground="{x:Bind HasPassed, Converter={StaticResource BoolToObjectConverter}}"
+                                Text="{x:Bind HasPassed}" />
                         </toolkit:HeaderedContentControl>
                     </StackPanel>
                 </DataTemplate>
