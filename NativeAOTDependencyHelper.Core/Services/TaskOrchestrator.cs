@@ -1,5 +1,8 @@
 ﻿using NativeAOTDependencyHelper.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Nito.AsyncEx;
+using System.Collections;
+using System.Collections.Concurrent;
 
 namespace NativeAOTDependencyHelper.Core.Services;
 
@@ -15,6 +18,10 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
     public event EventHandler<ReportPackageProgressEventArgs>? ReportPackageProgress;
 
     public int NumberOfProviders { get; private set; }
+
+    private ConcurrentDictionary<Type, AsyncLock> _dataSourceInitializeLocks = new();
+
+    private ConcurrentDictionary<(Type, NuGetPackageInfo), object?> _resultCache = new();
 
     public async Task<bool> ProcessSolutionAsync(string solutionFilePath)
     {
@@ -61,15 +68,33 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
 
     public async Task<T?> GetDataFromSourceForPackageAsync<T>(IDataSource<T> dataSource, NuGetPackageInfo package)
     {
-        // TODO: We should lock on datasource here, as we only need to initialize once.
-        // TODO: We may want to investigate if we can grab all the generic reporter interfaces from the services collection and intialize them before we start processing instead...
-        if (!dataSource.IsInitialized)
+        // Create a lock if we don't have one
+        if (!_dataSourceInitializeLocks.ContainsKey(typeof(T)))
         {
-            await dataSource.InitializeAsync();
+            _dataSourceInitializeLocks[typeof(T)] = new();
         }
 
-        // TODO: We should cache based on the package and only call this once per package...
-        return await dataSource.GetInfoForPackageAsync<T>(package);
+        // TODO: We may want to investigate if we can grab all the generic reporter interfaces from the services collection and intialize them before we start processing instead...
+        using (await _dataSourceInitializeLocks[typeof(T)].LockAsync())
+        {
+            if (!dataSource.IsInitialized)
+            {
+                await dataSource.InitializeAsync();
+            }
+
+            // TODO: We don't need to lock the whole datasource for this... but then it seems excessive to lock on every pairing here... (even though that's what we need). Think about the approach here more.
+            // Note: We CANNOT use GetOrAdd on our ConcurrentDictionary here as that doesn't guarentee that the factory method will only be called once.
+            if (_resultCache.TryGetValue((dataSource.GetType(), package), out var result))
+            {
+                return (T?)result;
+            }
+            else
+            {
+                var resultNew = await dataSource.GetInfoForPackageAsync<T>(package);
+                _resultCache[(dataSource.GetType(), package)] = resultNew;
+                return resultNew;
+            }
+        }
     }
 }
 
