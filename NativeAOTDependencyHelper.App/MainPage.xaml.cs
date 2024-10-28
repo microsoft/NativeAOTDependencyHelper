@@ -14,7 +14,7 @@ namespace NativeAOTDependencyHelper.App;
 /// </summary>
 public sealed partial class MainPage : Page
 {
-    public MainViewModel ViewModel { get; } = new(((App)App.Current).Services);
+    public MainViewModel ViewModel { get; } = new(((App)App.Current).Services, TaskScheduler.FromCurrentSynchronizationContext());
 
     public MainPage()
     {

@@ -1,4 +1,5 @@
-﻿using NativeAOTDependencyHelper.Core.Models;
+﻿using NativeAOTDependencyHelper.Core.JsonModels;
+using NativeAOTDependencyHelper.Core.Models;
 
 namespace NativeAOTDependencyHelper.Core.Services;
 
@@ -11,8 +12,24 @@ public class SolutionPackageIndex
 
     public string Description => "Package information contained within a Solution file retrieves with the dotnet cmdline tool. This is the root source of information for other data sources.";
 
-    public Task<bool> InitializeAsync()
+    public DotnetPackageList? RawPackageList { get; private set; }
+
+    public IEnumerable<NuGetPackageInfo>? Packages { get; private set; }
+
+    public bool HasLoaded { get; private set; }
+
+    public async Task<bool> InitializeAsync(string solutionFilePath)
     {
-        return Task.FromResult(true);
+        // https://learn.microsoft.com/dotnet/core/tools/dotnet-list-package
+        RawPackageList = await DotnetToolingInterop.GetTransitiveDependencyListAsync(solutionFilePath);
+
+        if (RawPackageList != null)
+        {
+            Packages = NuGetPackageInfo.FromJsonModels(RawPackageList);
+
+            HasLoaded = true;
+        }
+
+        return HasLoaded;
     }
 }

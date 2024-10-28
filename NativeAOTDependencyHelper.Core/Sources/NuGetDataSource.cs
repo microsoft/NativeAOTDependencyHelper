@@ -11,6 +11,8 @@ public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
 
     public string Description => "Retrieves information about package metadata from NuGet.org";
 
+    public bool IsInitialized { get; private set; }
+
     private static string _registrationFileExt = "/index.json";
 
     // We're sharing this for all main calls within our source.
@@ -37,6 +39,8 @@ public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
                 {
                     httpClient.BaseAddress = new Uri(service.Id);
                     _sharedHttpClient = new HttpClient { BaseAddress = new Uri(service.Id) }; // Create a new HttpClient with the BaseAddress set
+
+                    IsInitialized = true;
                     return true;
                 }
             }

@@ -7,7 +7,14 @@ public interface IDataSource<T> // TODO: Needed to make this generic for how we 
 {
     public string Name { get; }
 
-    public string Description { get; }    
+    public string Description { get; }
+
+    /// <summary>
+    /// Gets whether or not this data source has been initialized and is ready for requests via <see cref="GetInfoForPackageAsync{T}(NuGetPackageInfo)"/>. If this is false, the <see cref="NativeAOTDependencyHelper.Core.Services.TaskOrchestrator"/> will call <see cref="InitializeAsync"/>. Be sure to set this to <c>true</c> once your <see cref="InitializeAsync"/> has been called.
+    /// </summary>
+    public bool IsInitialized { get; }
+
+    // TODO: Probably need a flag for if we're in an error state and can't continue?
 
     /// <summary>
     /// Called before the data source is used in case anything needs to be setup ahead of time.

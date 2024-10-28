@@ -15,6 +15,9 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo) : Obse
 
     public ObservableCollection<AOTCheckItem> CheckItems { get; } = new();
 
+    [ObservableProperty]
+    private int _reportsCompleted;
+
     //// --- From NuGet.org ---
 
     /// <summary>
