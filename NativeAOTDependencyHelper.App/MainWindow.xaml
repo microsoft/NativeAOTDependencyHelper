@@ -7,6 +7,25 @@
     xmlns:local="using:NativeAOTDependencyHelper.App"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
-    <local:MainPage />
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Image
+                Width="16"
+                Margin="16,0,8,0"
+                VerticalAlignment="Center"
+                Source="ms-appx:///Assets/StoreLogo.png" />
+            <TextBlock
+                VerticalAlignment="Center"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Text="Native AOT DependencyHelper" />
+        </StackPanel>
+        <local:MainPage Grid.Row="1" />
+    </Grid>
 </Window>
