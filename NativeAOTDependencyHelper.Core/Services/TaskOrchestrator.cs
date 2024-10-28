@@ -44,6 +44,7 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
                         ReportPackageProgress?.Invoke(this, new(package, report));
                     }
 
+                    // TODO: If we do background the reporters, then we'll want to wait for them all to be done before reporting the package is finished...
                     FinishedProcessingPackage?.Invoke(this, new(package));
                 }));
             }

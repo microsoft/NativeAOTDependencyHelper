@@ -40,6 +40,7 @@
                 Padding="8,0,0,0"
                 Orientation="Horizontal"
                 Spacing="12">
+                <!--  TODO: We should also disable this button when our ProcessSolutionFileCommand is working...  -->
                 <Button
                     Click="OpenSolution_Click"
                     Content="Open .sln.."
@@ -48,7 +49,7 @@
                 <ProgressRing
                     Width="24"
                     Height="24"
-                    IsActive="True" />
+                    IsActive="{x:Bind ViewModel.IsWorking, Mode=OneWay}" />
             </StackPanel>
             <StackPanel
                 Grid.Column="1"

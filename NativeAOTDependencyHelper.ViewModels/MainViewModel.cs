@@ -32,6 +32,9 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
 
     public int TotalChecks => TotalPackages * ChecksPerPackage;
 
+    [ObservableProperty]
+    private bool _isWorking;
+
     // TODO: Have error string to report back issues initializing?
 
     [RelayCommand]
@@ -45,6 +48,8 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
             _taskOrchestrator.StartedProcessingPackage += _taskOrchestrator_StartedProcessingPackage;
             _taskOrchestrator.ReportPackageProgress += _taskOrchestrator_ReportPackageProgress;
             _taskOrchestrator.FinishedProcessingPackage += _taskOrchestrator_FinishedProcessingPackage;
+
+            IsWorking = true;
 
             await _taskOrchestrator.ProcessSolutionAsync(filepath);
 
@@ -101,6 +106,10 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
         {
             // Keep track of how many packages we've processed
             PackagesProcessed++;
+            if (PackagesProcessed == TotalPackages)
+            {
+               IsWorking = false;
+            }
         }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler).Wait();
     }    
 }
