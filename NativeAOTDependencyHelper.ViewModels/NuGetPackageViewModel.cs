@@ -11,13 +11,15 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo) : Obse
 {
     public NuGetPackageInfo Info { get; } = _packageInfo;
 
+    // TODO: Summarize the number of checks/total and stuff here from MainViewModel
     public ObservableCollection<ReportItem> ReportItems { get; } = new();
 
     public ObservableCollection<AOTCheckItem> CheckItems { get; } = new();
 
     [ObservableProperty]
     private int _reportsCompleted;
-
+    
+    // TODO: Move the below to individual reports... ( as needed )
     //// --- From NuGet.org ---
 
     /// <summary>
@@ -34,9 +36,6 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo) : Obse
 
     [ObservableProperty]
     private string? _projectWebsite;
-
-    [ObservableProperty]
-    private string? _license;
 
     [ObservableProperty]
     private string? _sourceRepositoryUrl;

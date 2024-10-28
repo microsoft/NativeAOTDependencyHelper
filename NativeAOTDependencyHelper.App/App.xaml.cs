@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using NativeAOTDependencyHelper.Core.Checks;
 using NativeAOTDependencyHelper.Core.Models;
+using NativeAOTDependencyHelper.Core.Reports;
 using NativeAOTDependencyHelper.Core.Services;
 using NativeAOTDependencyHelper.Core.Sources;
 using System;
@@ -54,8 +55,11 @@ public partial class App : Application
         // Data Sources
         services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
 
-        // Reports/Checks
+        // Checks
         services.AddSingleton<IReportItemProvider, NuGetRecentlyUpdated>();
+
+        // Reports
+        services.AddSingleton<IReportItemProvider, NuGetLicenseReport>();
 
         return services.BuildServiceProvider();
     }

@@ -55,5 +55,21 @@
                 </DataTemplate>
             </ItemsRepeater.ItemTemplate>
         </ItemsRepeater>
+
+        <ItemsRepeater ItemsSource="{x:Bind ViewModel.ReportItems}">
+            <ItemsRepeater.ItemTemplate>
+                <DataTemplate x:DataType="models:ReportItem">
+                    <StackPanel Orientation="Vertical" Spacing="12">
+                        <toolkit:HeaderedContentControl Header="{x:Bind Provider.Name}">
+                            <!--  TODO: We should swap this out for plain text if the link is null...  -->
+                            <HyperlinkButton
+                                Content="{x:Bind ReportDetails}"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                NavigateUri="{x:Bind ResultDetailLink}" />
+                        </toolkit:HeaderedContentControl>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>
     </StackPanel>
 </UserControl>
