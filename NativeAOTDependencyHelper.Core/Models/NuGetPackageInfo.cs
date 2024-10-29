@@ -8,7 +8,7 @@ namespace NativeAOTDependencyHelper.Core.Models;
 /// </summary>
 /// <param name="Name">The <see cref="NuGetPackage.Id"/> of this package.</param>
 /// <param name="ProjectReferences">List of projects which reference this package.</param> // TODO: This could be a problem being a record-type if we add additional references here by transitive dependencies...
-public record NuGetPackageInfo(string Name, NuGetPackageProjectReference[] ProjectReferences)
+public record NuGetPackageInfo(string Name, string Version, NuGetPackageProjectReference[] ProjectReferences)
 {
     /// <summary>
     /// Gets whether this NuGetPackage is ONLY included due to transitive references and has no direct references by projects.
@@ -32,6 +32,8 @@ public record NuGetPackageInfo(string Name, NuGetPackageProjectReference[] Proje
 
         Dictionary<string, List<NuGetPackageProjectReference>> _uniquePackageIndex = new();
 
+        var packageVersion = string.Empty;
+
         foreach (var project in packageList.Projects)
         {
             foreach (var framework in project.Frameworks)
@@ -48,6 +50,11 @@ public record NuGetPackageInfo(string Name, NuGetPackageProjectReference[] Proje
                         {
                             _uniquePackageIndex[package.Id] = new();
                         }
+                        
+                        if (package.ResolvedVersion.CompareTo(packageVersion) > 0)
+                        {
+                            packageVersion = package.ResolvedVersion;
+                        }
 
                         _uniquePackageIndex[package.Id].Add(new NuGetPackageProjectReference(
                             ParentProjectPath: project.Path.Substring(commonPathIndex),
@@ -63,7 +70,7 @@ public record NuGetPackageInfo(string Name, NuGetPackageProjectReference[] Proje
         // Construct final package info with references to all projects used
         foreach ((var packageId, var projects) in _uniquePackageIndex)
         {
-            yield return new NuGetPackageInfo(packageId, projects.ToArray());
+            yield return new NuGetPackageInfo(packageId, packageVersion, projects.ToArray());
         }
     }
 
