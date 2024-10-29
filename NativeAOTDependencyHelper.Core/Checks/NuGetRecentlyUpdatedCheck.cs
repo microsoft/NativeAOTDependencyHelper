@@ -5,6 +5,11 @@ using NativeAOTDependencyHelper.Core.Sources;
 
 namespace NativeAOTDependencyHelper.Core.Checks;
 
+/// <summary>
+/// Checks if the NuGet package has had an update recently. In the last <see cref="NumberOfMonthsToBeRecentlyUpdated"/>.
+/// </summary>
+/// <param name="_orchestrator"><see cref="TaskOrchestrator"/></param>
+/// <param name="_nugetSource"><see cref="NuGetDataSource"/></param>
 public class NuGetRecentlyUpdatedCheck(TaskOrchestrator _orchestrator, [FromKeyedServices(NuGetDataSource.ServiceId)] IDataSource _nugetSource) : IReportItemProvider
 {
     /// <summary>

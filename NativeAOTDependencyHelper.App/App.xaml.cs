@@ -56,6 +56,7 @@ public partial class App : Application
         services.AddKeyedSingleton<IDataSource, NuGetDataSource>(NuGetDataSource.ServiceId);
 
         // Checks
+        services.AddSingleton<IReportItemProvider, NuGetLatestVersionCheck>();
         services.AddSingleton<IReportItemProvider, NuGetRecentlyUpdatedCheck>();
 
         // Reports

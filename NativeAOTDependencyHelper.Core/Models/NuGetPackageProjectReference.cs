@@ -18,4 +18,6 @@ public record NuGetPackageProjectReference(string ParentProjectPath,
     /// Gets whether this is a transitive reference or not (dependency of another directly referenced package). <c>true</c> when <see cref="TransitiveLayer"/> is non-zero.
     /// </summary>
     public bool IsTransitive => TransitiveLayer > 0;
+
+    public string Name => Path.GetFileName(ParentProjectPath);
 }
