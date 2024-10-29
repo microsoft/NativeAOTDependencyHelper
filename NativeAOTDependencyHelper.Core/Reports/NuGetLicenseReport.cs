@@ -1,9 +1,11 @@
-﻿using NativeAOTDependencyHelper.Core.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
+using NativeAOTDependencyHelper.Core.Sources;
 
 namespace NativeAOTDependencyHelper.Core.Reports;
 
-public class NuGetLicenseReport(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource) : IReportItemProvider
+public class NuGetLicenseReport(TaskOrchestrator _orchestrator, [FromKeyedServices(NuGetDataSource.ServiceId)] IDataSource _nugetSource) : IReportItemProvider
 {
     public string Name => "Package Licence";
 

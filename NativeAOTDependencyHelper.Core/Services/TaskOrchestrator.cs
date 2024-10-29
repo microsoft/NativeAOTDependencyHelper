@@ -1,7 +1,6 @@
-﻿using NativeAOTDependencyHelper.Core.Models;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NativeAOTDependencyHelper.Core.Models;
 using Nito.AsyncEx;
-using System.Collections;
 using System.Collections.Concurrent;
 
 namespace NativeAOTDependencyHelper.Core.Services;
@@ -28,6 +27,14 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
         if (await _servicePackageIndex.InitializeAsync(solutionFilePath)
             && _servicePackageIndex.Packages != null)
         {
+            // Initialize all Data Sources
+            var datasources = _serviceProvider.GetKeyedServices<IDataSource>(KeyedService.AnyKey);
+            foreach (var datasource in datasources)
+            {
+                await datasource.InitializeAsync();
+            }
+
+            // Determine all Checks to run
             var providers = _serviceProvider.GetServices<IReportItemProvider>().ToArray();
 
             NumberOfProviders = providers.Length;
@@ -66,18 +73,12 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
         return false;
     }
 
-    public async Task<T?> GetDataFromSourceForPackageAsync<T>(IDataSource<T> dataSource, NuGetPackageInfo package)
+    public async Task<T?> GetDataFromSourceForPackageAsync<T>(IDataSource dataSource, NuGetPackageInfo package)
     {
-        // TODO: We may want to investigate if we can grab all the generic reporter interfaces from the services collection and intialize them before we start processing instead...
         using (await _dataSourceInitializeLocks.GetOrAdd(typeof(T), new AsyncLock()).LockAsync())
         {
-            if (!dataSource.IsInitialized)
-            {
-                await dataSource.InitializeAsync();
-            }
-
             // TODO: We don't need to lock the whole datasource for this... but then it seems excessive to lock on every pairing here... (even though that's what we need). Think about the approach here more.
-            // Note: We CANNOT use GetOrAdd on our ConcurrentDictionary here as that doesn't guarentee that the factory method will only be called once.
+            // Note: We CANNOT use GetOrAdd on our ConcurrentDictionary here as that doesn't guarantee that the factory method will only be called once.
             if (_resultCache.TryGetValue((dataSource.GetType(), package), out var result))
             {
                 return (T?)result;

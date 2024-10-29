@@ -5,8 +5,11 @@ using System.Net.Http.Json;
 
 namespace NativeAOTDependencyHelper.Core.Sources;
 
-public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
+public class NuGetDataSource : IDataSource
 {
+    // Note: We want this to be a static abstract on the IDataSource, but that doesn't work with services... so we'll just have this be our convention
+    public const string ServiceId = "NuGetRegistration";
+
     public string Name => "NuGet.org Package Information";
 
     public string Description => "Retrieves information about package metadata from NuGet.org";

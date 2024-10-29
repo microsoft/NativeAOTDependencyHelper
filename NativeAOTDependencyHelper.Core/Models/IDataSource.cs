@@ -1,9 +1,9 @@
 ﻿namespace NativeAOTDependencyHelper.Core.Models;
 
 /// <summary>
-/// Defines a source of data which will be needed for various <see cref="AOTCheckItem"/>
+/// Defines a source of data which will be needed for various <see cref="ReportItem"/> or <see cref="AOTCheckItem"/> (or even other <see cref="IDataSource"/>).
 /// </summary>
-public interface IDataSource<T> // TODO: Needed to make this generic for how we implement the InfoForPackage call, but then not sure how this will effect getting an aggregate list from the service provider... maybe that doesn't matter?
+public interface IDataSource
 {
     public string Name { get; }
 

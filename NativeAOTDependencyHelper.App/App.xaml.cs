@@ -51,9 +51,9 @@ public partial class App : Application
         // Root service
         services.AddSingleton<SolutionPackageIndex>();
         services.AddSingleton<TaskOrchestrator>();
-        
-        // Data Sources
-        services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
+
+        // Data Sources - see https://andrewlock.net/exploring-the-dotnet-8-preview-keyed-services-dependency-injection-support/
+        services.AddKeyedSingleton<IDataSource, NuGetDataSource>(NuGetDataSource.ServiceId);
 
         // Checks
         services.AddSingleton<IReportItemProvider, NuGetRecentlyUpdatedCheck>();

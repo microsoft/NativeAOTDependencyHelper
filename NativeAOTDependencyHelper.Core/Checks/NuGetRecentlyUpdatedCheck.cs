@@ -1,9 +1,11 @@
-﻿using NativeAOTDependencyHelper.Core.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
+using NativeAOTDependencyHelper.Core.Sources;
 
 namespace NativeAOTDependencyHelper.Core.Checks;
 
-public class NuGetRecentlyUpdatedCheck(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource) : IReportItemProvider
+public class NuGetRecentlyUpdatedCheck(TaskOrchestrator _orchestrator, [FromKeyedServices(NuGetDataSource.ServiceId)] IDataSource _nugetSource) : IReportItemProvider
 {
     /// <summary>
     /// Gets how many months old a package must be within to be considered recently updated.
