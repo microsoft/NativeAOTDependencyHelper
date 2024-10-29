@@ -66,7 +66,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
         Task.Factory.StartNew(() =>
         {
             // Add our package to our list now that it's started processing.
-            Packages.Add(new(e.Package));
+            Packages.Add(new(e.Package, ChecksPerPackage));
 
             // Keep track of how many packages we have.
             TotalPackages++;
@@ -92,6 +92,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
                 {
                     package.ReportItems.Add(item);
                 }
+                package.ReportsCompleted++;
             }
 
             ChecksProcessed++;

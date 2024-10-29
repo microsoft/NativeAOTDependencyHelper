@@ -7,7 +7,7 @@ namespace NativeAOTDependencyHelper.ViewModels;
 /// <summary>
 /// Wrapper of all <see cref="NuGetPackageInfo"/> data we need to display in UI.
 /// </summary>
-public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo) : ObservableObject
+public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _totalChecks) : ObservableObject
 {
     public NuGetPackageInfo Info { get; } = _packageInfo;
 
@@ -17,7 +17,12 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo) : Obse
     public ObservableCollection<AOTCheckItem> CheckItems { get; } = new();
 
     [ObservableProperty]
+    private int _totalReports = _totalChecks;
+
+    [ObservableProperty]
     private int _reportsCompleted;
+
+
     
     // TODO: Move the below to individual reports... ( as needed )
     //// --- From NuGet.org ---
@@ -30,9 +35,6 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo) : Obse
 
     [ObservableProperty]
     private string? _latestNuGetVersion;
-
-    [ObservableProperty]
-    private string? _lastUploadDate; // TODO: We should probably use better typing here
 
     [ObservableProperty]
     private string? _projectWebsite;
