@@ -16,10 +16,13 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
 
     public ObservableCollection<AOTCheckItem> CheckItems { get; } = new();
 
+    public bool HasAnyFailedChecks => CheckItems.Any(check => !check.HasPassed);
+
     [ObservableProperty]
     private int _totalReports = _totalChecks;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasAnyFailedChecks))]
     private int _reportsCompleted;
 
 
