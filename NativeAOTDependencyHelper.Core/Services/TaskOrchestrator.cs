@@ -68,14 +68,8 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
 
     public async Task<T?> GetDataFromSourceForPackageAsync<T>(IDataSource<T> dataSource, NuGetPackageInfo package)
     {
-        // Create a lock if we don't have one
-        if (!_dataSourceInitializeLocks.ContainsKey(typeof(T)))
-        {
-            _dataSourceInitializeLocks[typeof(T)] = new();
-        }
-
         // TODO: We may want to investigate if we can grab all the generic reporter interfaces from the services collection and intialize them before we start processing instead...
-        using (await _dataSourceInitializeLocks[typeof(T)].LockAsync())
+        using (await _dataSourceInitializeLocks.GetOrAdd(typeof(T), new AsyncLock()).LockAsync())
         {
             if (!dataSource.IsInitialized)
             {
