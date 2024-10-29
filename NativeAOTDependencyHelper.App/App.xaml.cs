@@ -57,6 +57,7 @@ public partial class App : Application
         services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
 
         // Checks
+        services.AddSingleton<IReportItemProvider, NuGetLatestVersionCheck>();
         services.AddSingleton<IReportItemProvider, NuGetRecentlyUpdatedCheck>();
 
         // Reports
