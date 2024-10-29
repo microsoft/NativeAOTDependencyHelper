@@ -35,12 +35,20 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
     [ObservableProperty]
     private bool _isWorking;
 
+    private TaskOrchestrator? _taskOrchestrator;
+
     // TODO: Have error string to report back issues initializing?
 
     [RelayCommand]
     public async Task<bool> ProcessSolutionFileAsync(string filepath)
     {
-        TaskOrchestrator? _taskOrchestrator = _serviceProvider?.GetService<TaskOrchestrator>();
+        // Ensure we start fresh each time!
+        Packages.Clear();
+        PackagesProcessed = 0;
+        TotalPackages = 0;
+        ChecksProcessed = 0;
+
+        _taskOrchestrator = _serviceProvider?.GetService<TaskOrchestrator>();
 
         if (_taskOrchestrator != null)
         {
@@ -109,7 +117,13 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
             PackagesProcessed++;
             if (PackagesProcessed == TotalPackages)
             {
-               IsWorking = false;
+                IsWorking = false;
+                if (_taskOrchestrator != null)
+                {
+                    _taskOrchestrator.StartedProcessingPackage -= _taskOrchestrator_StartedProcessingPackage;
+                    _taskOrchestrator.ReportPackageProgress -= _taskOrchestrator_ReportPackageProgress;
+                    _taskOrchestrator.FinishedProcessingPackage -= _taskOrchestrator_FinishedProcessingPackage;
+                }
             }
         }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler).Wait();
     }    
