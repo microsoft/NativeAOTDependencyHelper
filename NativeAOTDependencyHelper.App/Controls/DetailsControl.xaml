@@ -22,18 +22,25 @@
         <toolkit:HeaderedContentControl Header="Name">
             <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.Name}" />
         </toolkit:HeaderedContentControl>
-        <toolkit:HeaderedContentControl Header="Is transitive">
-            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.IsTransitive}" />
-        </toolkit:HeaderedContentControl>
-        <toolkit:HeaderedContentControl Header="Parent project path">
-            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.ParentProjectPath}" />
-        </toolkit:HeaderedContentControl>
-        <toolkit:HeaderedContentControl Header="Requested version">
-            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.RequestedVersion}" />
-        </toolkit:HeaderedContentControl>
-        <toolkit:HeaderedContentControl Header="Resolved version">
-            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.Info.ResolvedVersion}" />
-        </toolkit:HeaderedContentControl>
+        <ItemsControl ItemsSource="{x:Bind ViewModel.Info.ProjectReferences}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="models:NuGetPackageProjectReference" x:DefaultBindMode="OneTime">
+                    <toolkit:HeaderedContentControl Header="{x:Bind ParentProjectPath}">
+                        <StackPanel Margin="16,4,0,8">
+                            <toolkit:HeaderedContentControl Header="Is transitive">
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind IsTransitive}" />
+                            </toolkit:HeaderedContentControl>
+                            <toolkit:HeaderedContentControl Header="Requested version">
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind RequestedVersion}" />
+                            </toolkit:HeaderedContentControl>
+                            <toolkit:HeaderedContentControl Header="Resolved version">
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ResolvedVersion}" />
+                            </toolkit:HeaderedContentControl>
+                        </StackPanel>
+                    </toolkit:HeaderedContentControl>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
         <ItemsRepeater ItemsSource="{x:Bind ViewModel.CheckItems}">
             <ItemsRepeater.ItemTemplate>

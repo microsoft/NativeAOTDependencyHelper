@@ -111,11 +111,17 @@
                                     <FontIcon Glyph="&#xF158;" />
                                 </toolkit:SettingsCard.HeaderIcon>
                                 <toolkit:SettingsCard.Description>
-                                    <TextBlock>
-                                        <Run Text="{x:Bind Info.ParentProjectPath}" />
-                                        <Run Text=" • " />
-                                        <Run Text="{x:Bind Info.Framework}" />
-                                    </TextBlock>
+                                    <ItemsControl ItemsSource="{x:Bind Info.ProjectReferences}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="models:NuGetPackageProjectReference">
+                                                <TextBlock>
+                                                    <Run Text="{x:Bind ParentProjectPath}" />
+                                                    <Run Text=" • " />
+                                                    <Run Text="{x:Bind Framework}" />
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </toolkit:SettingsCard.Description>
                             </toolkit:SettingsCard>
                         </ItemContainer>
