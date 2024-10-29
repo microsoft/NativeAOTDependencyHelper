@@ -3,7 +3,7 @@ using NativeAOTDependencyHelper.Core.Services;
 
 namespace NativeAOTDependencyHelper.Core.Checks;
 
-public class NuGetRecentlyUpdated(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource) : IReportItemProvider
+public class NuGetRecentlyUpdatedCheck(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource) : IReportItemProvider
 {
     /// <summary>
     /// Gets how many months old a package must be within to be considered recently updated.
