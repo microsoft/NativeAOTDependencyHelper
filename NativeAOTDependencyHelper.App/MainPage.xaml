@@ -47,10 +47,20 @@
                     Content="Open .sln.."
                     IsEnabled="{x:Bind local:MainPage.IsTaskSuccessful(ViewModel.DotnetVersionCommand.ExecutionTask.Status)}"
                     Style="{StaticResource AccentButtonStyle}" />
-                <ProgressRing
-                    Width="24"
+                <ProgressBar
+                    Width="128"
                     Height="24"
-                    IsActive="{x:Bind ViewModel.IsWorking}" />
+                    Maximum="{x:Bind ViewModel.TotalChecks}"
+                    Visibility="{x:Bind ViewModel.IsWorking}"
+                    Value="{x:Bind ViewModel.ChecksProcessed}" />
+                <StackPanel Orientation="Horizontal" Visibility="{x:Bind ViewModel.IsWorking}">
+                    <TextBlock VerticalAlignment="Center">
+                        <Run Text="{x:Bind ViewModel.PackagesProcessed}" />
+                        <Run Text=" of " />
+                        <Run Text="{x:Bind ViewModel.TotalPackages}" />
+                        <Run Text=" packages processed" />
+                    </TextBlock>
+                </StackPanel>
             </StackPanel>
             <StackPanel
                 Grid.Column="1"
