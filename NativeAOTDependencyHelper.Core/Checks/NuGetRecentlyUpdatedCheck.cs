@@ -1,4 +1,5 @@
 ﻿using NativeAOTDependencyHelper.Core.Models;
+using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.Services;
 
 namespace NativeAOTDependencyHelper.Core.Checks;

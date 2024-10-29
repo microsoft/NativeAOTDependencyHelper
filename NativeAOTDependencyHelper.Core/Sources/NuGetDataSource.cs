@@ -1,6 +1,5 @@
 ﻿using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.Models;
-using NativeAOTDependencyHelper.Core.Services;
 using System.Net.Http.Json;
 
 namespace NativeAOTDependencyHelper.Core.Sources;
@@ -49,7 +48,7 @@ public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
         }
     }
 
-    public Task<NuGetPackageRegistration?> GetInfoForPackageAsync<NuGetPackageRegistration>(NuGetPackageInfo package)
+    public Task<NuGetPackageRegistration?> GetInfoForPackageAsync(NuGetPackageInfo package)
     {
         return _sharedHttpClient.GetFromJsonAsync<NuGetPackageRegistration>(package.Name.ToLower() + _registrationFileExt);
     }

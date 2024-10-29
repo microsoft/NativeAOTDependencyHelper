@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using NativeAOTDependencyHelper.Core.Checks;
+using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Reports;
 using NativeAOTDependencyHelper.Core.Services;

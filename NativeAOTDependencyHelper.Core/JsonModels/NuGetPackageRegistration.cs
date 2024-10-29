@@ -1,5 +1,6 @@
-﻿using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+
+namespace NativeAOTDependencyHelper.Core.JsonModels;
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
 public class NuGetPackageRegistration

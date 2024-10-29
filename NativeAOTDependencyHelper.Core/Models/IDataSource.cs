@@ -10,7 +10,7 @@ public interface IDataSource<T> // TODO: Needed to make this generic for how we 
     public string Description { get; }
 
     /// <summary>
-    /// Gets whether or not this data source has been initialized and is ready for requests via <see cref="GetInfoForPackageAsync{T}(NuGetPackageInfo)"/>. If this is false, the <see cref="NativeAOTDependencyHelper.Core.Services.TaskOrchestrator"/> will call <see cref="InitializeAsync"/>. Be sure to set this to <c>true</c> once your <see cref="InitializeAsync"/> has been called.
+    /// Gets whether or not this data source has been initialized and is ready for requests via <see cref="GetInfoForPackageAsync(NuGetPackageInfo)"/>. If this is false, the <see cref="NativeAOTDependencyHelper.Core.Services.TaskOrchestrator"/> will call <see cref="InitializeAsync"/>. Be sure to set this to <c>true</c> once your <see cref="InitializeAsync"/> has been called.
     /// </summary>
     public bool IsInitialized { get; }
 
@@ -28,7 +28,7 @@ public interface IDataSource<T> // TODO: Needed to make this generic for how we 
     /// <typeparam name="T">The metadata type this datasource returns.</typeparam>
     /// <param name="package">The <see cref="NuGetPackageInfo"/> for the package that data is being requested.</param>
     /// <returns>The requested information of the requested type parameter from the data source or null.</returns>
-    public Task<T?> GetInfoForPackageAsync<T>(NuGetPackageInfo package);
+    public Task<T?> GetInfoForPackageAsync(NuGetPackageInfo package);
 }
 
 /*

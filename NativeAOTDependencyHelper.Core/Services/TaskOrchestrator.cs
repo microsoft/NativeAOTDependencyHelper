@@ -84,7 +84,7 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
             }
             else
             {
-                var resultNew = await dataSource.GetInfoForPackageAsync<T>(package);
+                var resultNew = await dataSource.GetInfoForPackageAsync(package);
                 _resultCache[(dataSource.GetType(), package)] = resultNew;
                 return resultNew;
             }

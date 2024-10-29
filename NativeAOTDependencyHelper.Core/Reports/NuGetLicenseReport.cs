@@ -1,11 +1,12 @@
 ﻿using NativeAOTDependencyHelper.Core.Models;
+using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.Services;
 
 namespace NativeAOTDependencyHelper.Core.Reports;
 
 public class NuGetLicenseReport(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource) : IReportItemProvider
 {
-    public string Name => "Package Licence";
+    public string Name => "Package License";
 
     public int SortOrder => 10;
 
