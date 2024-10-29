@@ -47,7 +47,8 @@ public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
     {
         // Type = RegistrationsBaseUrl
         var registration = await GetRegistrationsForPackageAsync<NuGetPackageRegistration>(package);
-        return await GetMetadataFromNuspec(registration, package.Name, package.Version);
+        var version = registration?.Items?.FirstOrDefault()?.Upper;
+        return await GetMetadataFromNuspec(registration, package.Name, version);
     }
 
     public async Task<NuGetPackageRegistration?> GetRegistrationsForPackageAsync<NuGetPackageRegistration>(NuGetPackageInfo package)
