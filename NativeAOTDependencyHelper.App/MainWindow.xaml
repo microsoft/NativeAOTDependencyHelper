@@ -24,7 +24,7 @@
             <TextBlock
                 VerticalAlignment="Center"
                 Style="{StaticResource CaptionTextBlockStyle}"
-                Text="Native AOT DependencyHelper" />
+                Text="Native AOT Dependency Helper" />
         </StackPanel>
         <local:MainPage Grid.Row="1" />
     </Grid>
