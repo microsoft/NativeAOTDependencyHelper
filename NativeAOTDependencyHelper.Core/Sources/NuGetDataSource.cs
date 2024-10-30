@@ -8,9 +8,6 @@ namespace NativeAOTDependencyHelper.Core.Sources;
 
 public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
 {
-    // Note: We want this to be a static abstract on the IDataSource, but that doesn't work with services... so we'll just have this be our convention
-    public const string ServiceId = "NuGetRegistration";
-
     public string Name => "NuGet.org Package Information";
 
     public string Description => "Retrieves information about package metadata from NuGet.org";
@@ -46,34 +43,27 @@ public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
     public async Task<NuGetPackageRegistration?> GetInfoForPackageAsync(NuGetPackageInfo package)
     {
         // Type = RegistrationsBaseUrl
-        var registration = await GetRegistrationsForPackageAsync<NuGetPackageRegistration>(package);
+        var registration = await _sharedHttpClient.GetFromJsonAsync<NuGetPackageRegistration>(_serviceTypeToUri["RegistrationsBaseUrl"] + package.Name.ToLower() + "/index.json");
         var version = registration?.Items?.FirstOrDefault()?.Upper;
         return await GetMetadataFromNuspec(registration, package.Name, version);
     }
 
-    public async Task<NuGetPackageRegistration?> GetRegistrationsForPackageAsync<NuGetPackageRegistration>(NuGetPackageInfo package)
-    {
-        return await _sharedHttpClient.GetFromJsonAsync<NuGetPackageRegistration>(_serviceTypeToUri["RegistrationsBaseUrl"] + package.Name.ToLower() + "/index.json");
-    }
-
-    public async Task<NuGetPackageRegistration?> GetMetadataFromNuspec(NuGetPackageRegistration? registration, string packageId, string version)
+    private async Task<NuGetPackageRegistration?> GetMetadataFromNuspec(NuGetPackageRegistration? registration, string packageId, string version)
     {
         // Type = PackageBaseAddress/3.0.0
         var response = await _sharedHttpClient.GetAsync(_serviceTypeToUri["PackageBaseAddress/3.0.0"] + packageId.ToLower() + "/" + version + "/" + packageId.ToLower() + ".nuspec");
         response.EnsureSuccessStatusCode();
 
-        using (var nuspecStream = await response.Content.ReadAsStreamAsync())
-        {
-            XDocument doc = XDocument.Load(nuspecStream);
-            var repository = from element in doc.Descendants()
-                             where element.Name.LocalName == "repository"
-                             select element;
+        using var nuspecStream = await response.Content.ReadAsStreamAsync();
+        XDocument doc = XDocument.Load(nuspecStream);
+        var repository = from element in doc.Descendants()
+                         where element.Name.LocalName == "repository"
+                         select element;
 
-            if (registration != null && repository != null)
-            {
-                registration.RepositoryUrl = repository?.FirstOrDefault()?.Attribute("url")?.Value;
-            }
-            return registration;
+        if (registration != null && repository != null)
+        {
+            registration.RepositoryUrl = repository?.FirstOrDefault()?.Attribute("url")?.Value;
         }
+        return registration;
     }
 }
