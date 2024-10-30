@@ -83,6 +83,9 @@
                     <AppBarButton Icon="Refresh" Label="Reload" />
                     <AppBarButton Icon="Cancel" Label="Cancel" />
                 </CommandBar>
+                <Button
+                    Command="{x:Bind ViewModel.StartGitHubOAuthFlowCommand}"
+                    Content="Click to authenticate with Github"/>
             </StackPanel>
         </Grid>
 
