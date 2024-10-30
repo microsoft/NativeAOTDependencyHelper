@@ -19,14 +19,14 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
     public bool HasAnyFailedChecks => CheckItems.Any(check => !check.HasPassed);
 
     [ObservableProperty]
-    private int _totalReports = _totalChecks;
+    public partial int TotalReports { get; set; } = _totalChecks;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasAnyFailedChecks))]
-    private int _reportsCompleted;
+    public partial int ReportsCompleted { get; set; }
 
 
-    
+
     // TODO: Move the below to individual reports... ( as needed )
     //// --- From NuGet.org ---
 
@@ -37,16 +37,16 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
     private bool _isAvailableOnNuget;
 
     [ObservableProperty]
-    private string? _latestNuGetVersion;
+    public partial string? LatestNuGetVersion { get; set; }
 
     [ObservableProperty]
-    private string? _projectWebsite;
+    public partial string? ProjectWebsite { get; set; }
 
     [ObservableProperty]
-    private string? _sourceRepositoryUrl;
+    public partial string? SourceRepositoryUrl { get; set; }
 
     [ObservableProperty]
-    private string? _registrationUrl;
+    public partial string? RegistrationUrl { get; set; }
 
     //// --- From GitHub.com ---
 
@@ -54,24 +54,22 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
     /// Gets or sets if this package's code was found on GitHub.com
     /// </summary>
     [ObservableProperty]
-    private bool _isAvailableOnGitHub;
+    public partial bool IsAvailableOnGitHub { get; set; }
 
     [ObservableProperty]
-    private string? _lastCommitDate;
+    public partial string? LastCommitDate { get; set; }
 
     /// <summary>
     /// Gets or sets whether we found the <code><IsAotCompatible>true</IsAotCompatible></code> flag within the source code (props or csprojs), null if we're searching or can't determine.
     /// TODO: We may want some better management of the state of this search, etc... here? As well as the search results, i.e. link to where the code was found.
     /// </summary>
     [ObservableProperty]
-    private bool? _isAotCompatibleFlagFound;
+    public partial bool? IsAotCompatibleFlagFound { get; set; }
 
     /// <summary>
     /// Gets or sets the number of GitHub issues found with the text "AOT".
     /// TODO: We should have the status/links for those, expand once we hook into the data source there...
     /// </summary>
     [ObservableProperty]
-    private int? _numberOfAOTIssues;
-
-
+    public partial int? NumberOfAOTIssues { get; set; }
 }

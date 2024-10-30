@@ -14,26 +14,26 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
     public IAsyncRelayCommand DotnetVersionCommand { get; } = new AsyncRelayCommand(DotnetToolingInterop.CheckDotnetVersion);
 
     [ObservableProperty]
-    private ObservableCollection<NuGetPackageViewModel> _packages = new();
+    public partial ObservableCollection<NuGetPackageViewModel> Packages { get; set; } = new();
 
     [ObservableProperty]
-    private int _packagesProcessed;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(TotalChecks))]
-    private int _totalPackages;
+    public partial int PackagesProcessed { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotalChecks))]
-    private int _checksPerPackage;
+    public partial int TotalPackages { get; set; }
 
     [ObservableProperty]
-    private int _checksProcessed;
+    [NotifyPropertyChangedFor(nameof(TotalChecks))]
+    public partial int ChecksPerPackage { get; set; }
+
+    [ObservableProperty]
+    public partial int ChecksProcessed { get; set; }
 
     public int TotalChecks => TotalPackages * ChecksPerPackage;
 
     [ObservableProperty]
-    private bool _isWorking;
+    public partial bool IsWorking { get; set; }
 
     private TaskOrchestrator? _taskOrchestrator;
 
