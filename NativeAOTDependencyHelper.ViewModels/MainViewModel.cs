@@ -5,9 +5,7 @@ using NativeAOTDependencyHelper.Core;
 using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
 using NativeAOTDependencyHelper.Core.Services.GitHubOAuth;
-using Octokit;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace NativeAOTDependencyHelper.ViewModels;
 
@@ -72,28 +70,9 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
     }
 
     [RelayCommand]
-    public void StartGitHubOAuthFlow()
+    public async Task StartGitHubOAuthFlow()
     {
-        var authorizationUrl = _gitHubOAuthService.GetAuthorizationUrl();
-        Process.Start(new ProcessStartInfo(authorizationUrl) { UseShellExecute = true });
-    }
-
-    [RelayCommand]
-    public async Task<string> CompleteGitHubOAuthFlowAsync(string code)
-    {
-        try
-        {
-            var accessToken = await _gitHubOAuthService.GetAccessTokenAsync(code);
-            var client = _gitHubOAuthService.GetGitHubClient(accessToken);
-            var user = await client.User.Current();
-            Console.WriteLine($"Authenticated as {user.Login}");
-            return accessToken;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Authentication failed: {ex.Message}");
-            return string.Empty;
-        }
+        await _gitHubOAuthService.StartAuthRequest();
     }
 
     private void _taskOrchestrator_StartedProcessingPackage(object? sender, ProcessingPackageEventArgs e)
