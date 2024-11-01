@@ -9,10 +9,29 @@
 public record ReportItem(IReportItemProvider Provider, string ReportDetails, Uri? ResultDetailLink = null);
 
 /// <summary>
-/// Defines a special type of <see cref="ReportItem"/> that additional performs a validation check, <see cref="HasPassed"/>; that'll report status towards AOT compatibility reliant on an <see cref="IDataSource"/>.
+/// Defines a special type of <see cref="ReportItem"/> that additional performs a validation check, <see cref="Status"/>; that'll report status towards AOT compatibility reliant on an <see cref="IDataSource"/>.
 /// </summary>
-/// <param name="HasPassed">if the check was passed successfully or not</param>
+/// <param name="Status">the status/result of the check, <see cref="CheckStatus"/></param>
 /// <param name="Provider">reference to the provider of this data</param>
 /// <param name="ReportDetails">additional detail text about the state of the report</param>
 /// <param name="ResultDetailLink">(optionally) a link to direct to the result/source of the report information.</param>
-public record AOTCheckItem(IReportItemProvider Provider, bool HasPassed, string ReportDetails, Uri? ResultDetailLink = null) : ReportItem(Provider, ReportDetails, ResultDetailLink);
+public record AOTCheckItem(IReportItemProvider Provider, CheckStatus Status, string ReportDetails, Uri? ResultDetailLink = null) : ReportItem(Provider, ReportDetails, ResultDetailLink);
+
+/// <summary>
+/// The various possible outcomes of a check returnable in an <see cref="AOTCheckItem"/>.
+/// </summary>
+public enum CheckStatus
+{
+    /// <summary>
+    /// Returned if the check encountered an error while processing.
+    /// </summary>
+    Error,
+    /// <summary>
+    /// Returned when the check has been performed, but the result requires investigation/indicates a potential issue with AOT compatibility.
+    /// </summary>
+    Warning,
+    /// <summary>
+    /// Returned when the check has passed and does not indicate a potential issue with AOT compatibility; Note: this does not guarantee AOT compatibility.
+    /// </summary>
+    Passed,
+}
