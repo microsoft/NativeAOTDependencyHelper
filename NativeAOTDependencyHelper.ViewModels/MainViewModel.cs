@@ -5,11 +5,13 @@ using NativeAOTDependencyHelper.Core;
 using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
 using NativeAOTDependencyHelper.Core.Services.GitHubOAuth;
+using Octokit;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace NativeAOTDependencyHelper.ViewModels;
 
-public partial class MainViewModel(IServiceProvider _serviceProvider, TaskScheduler _uiScheduler, GitHubOAuthService _gitHubOAuthService) : ObservableObject
+public partial class MainViewModel(IServiceProvider _serviceProvider, TaskScheduler _uiScheduler) : ObservableObject
 {
     public IAsyncRelayCommand DotnetVersionCommand { get; } = new AsyncRelayCommand(DotnetToolingInterop.CheckDotnetVersion);
 
@@ -36,6 +38,8 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
     public partial bool IsWorking { get; set; }
 
     private TaskOrchestrator? _taskOrchestrator;
+
+    private GitHubOAuthService? _gitHubOAuthService;
 
     // TODO: Have error string to report back issues initializing?
 
@@ -70,9 +74,9 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
     }
 
     [RelayCommand]
-    public async Task StartGitHubOAuthFlow()
+    public void StartGitHubOAuthFlow()
     {
-        await _gitHubOAuthService.StartAuthRequest();
+        _gitHubOAuthService = _serviceProvider?.GetService<GitHubOAuthService>();
     }
 
     private void _taskOrchestrator_StartedProcessingPackage(object? sender, ProcessingPackageEventArgs e)
