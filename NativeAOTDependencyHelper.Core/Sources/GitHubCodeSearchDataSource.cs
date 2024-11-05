@@ -9,7 +9,7 @@ using System.Net.Http.Json;
 
 namespace NativeAOTDependencyHelper.Core.Sources
 {
-    public class GitHubDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService) : IDataSource<GitHubCodeSearchResult?>
+    public class GitHubCodeSearchDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService) : IDataSource<GitHubCodeSearchResult?>
     {
         public string Name => "GitHub Search Information";
 

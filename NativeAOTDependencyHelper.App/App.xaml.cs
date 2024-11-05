@@ -56,7 +56,7 @@ public partial class App : Application
         
         // Data Sources
         services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
-        services.AddSingleton<IDataSource<GitHubCodeSearchResult>, GitHubDataSource>();
+        services.AddSingleton<IDataSource<GitHubCodeSearchResult>, GitHubCodeSearchDataSource>();
 
         // Other services
         services.AddSingleton<GitHubOAuthService>();
