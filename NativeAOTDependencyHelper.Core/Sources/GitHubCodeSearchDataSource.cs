@@ -23,8 +23,6 @@ public class GitHubCodeSearchDataSource(TaskOrchestrator _orchestrator, IDataSou
 
     public async Task<bool> InitializeAsync()
     {
-        if (_githubClient != null) return true;
-
         _githubClient = await gitHubOAuthService?.StartAuthRequest();
         return _githubClient != null;
     }

@@ -11,6 +11,8 @@ public class GitHubOAuthService
     const string clientSecret = "clientSecret";
     const string redirectUri = "http://localhost:5000/callback/";
 
+    private GitHubClient? _gitHubClient;
+
     private string GetAuthorizationUrl()
     {
         return $"https://github.com/login/oauth/authorize?client_id={clientId}&redirect_uri={redirectUri}&scope=read:user";
@@ -18,6 +20,8 @@ public class GitHubOAuthService
 
     public async Task<GitHubClient?> StartAuthRequest()
     {
+        if (_gitHubClient != null) return _gitHubClient;
+
         var authorizationUrl = GetAuthorizationUrl();
         var listener = new HttpListener();
         listener.Prefixes.Add(redirectUri);
@@ -40,7 +44,7 @@ public class GitHubOAuthService
         output.Close();
 
         listener.Stop();
-
+        _gitHubClient = client;
         return client;
     }
 

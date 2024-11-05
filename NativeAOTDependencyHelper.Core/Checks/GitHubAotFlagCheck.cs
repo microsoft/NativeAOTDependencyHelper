@@ -4,7 +4,7 @@ using NativeAOTDependencyHelper.Core.Services;
 using System.Text;
 
 namespace NativeAOTDependencyHelper.Core.Checks;
-public class GitHubAotCheck(TaskOrchestrator _orchestrator, IDataSource<GitHubCodeSearchResult> _gitHubSource) : IReportItemProvider
+public class GitHubAotFlagCheck(TaskOrchestrator _orchestrator, IDataSource<GitHubCodeSearchResult> _gitHubSource) : IReportItemProvider
 {
     public string Name => "IsAotCompatible Flag";
 

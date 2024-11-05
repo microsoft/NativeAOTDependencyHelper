@@ -57,6 +57,7 @@ public partial class App : Application
         // Data Sources
         services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
         services.AddSingleton<IDataSource<GitHubCodeSearchResult>, GitHubCodeSearchDataSource>();
+        services.AddSingleton<IDataSource<GitHubIssueSearchResult>, GitHubIssueSearchDataSource>();
 
         // Other services
         services.AddSingleton<GitHubOAuthService>();
@@ -64,7 +65,8 @@ public partial class App : Application
         // Checks
         services.AddSingleton<IReportItemProvider, NuGetLatestVersionCheck>();
         services.AddSingleton<IReportItemProvider, NuGetRecentlyUpdatedCheck>();
-        services.AddSingleton<IReportItemProvider, GitHubAotCheck>();
+        services.AddSingleton<IReportItemProvider, GitHubAotFlagCheck>();
+        services.AddSingleton<IReportItemProvider, GitHubAotIssuesCheck>();
 
         // Reports
         services.AddSingleton<IReportItemProvider, NuGetLicenseReport>();
