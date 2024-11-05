@@ -9,7 +9,6 @@ public class GitHubOAuthService
     const string clientName = "NativeAOTDependencyHelper";
     const string clientId = "clientId";
     const string clientSecret = "clientSecret";
-    // TODO: Figure out how to redirect user back to app and return auth token
     const string redirectUri = "http://localhost:5000/callback/";
 
     private string GetAuthorizationUrl()

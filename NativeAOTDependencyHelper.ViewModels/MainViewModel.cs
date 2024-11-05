@@ -4,10 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NativeAOTDependencyHelper.Core;
 using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
-using NativeAOTDependencyHelper.Core.Services.GitHubOAuth;
-using Octokit;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace NativeAOTDependencyHelper.ViewModels;
 
@@ -39,8 +36,6 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
 
     private TaskOrchestrator? _taskOrchestrator;
 
-    private GitHubOAuthService? _gitHubOAuthService;
-
     // TODO: Have error string to report back issues initializing?
 
     [RelayCommand]
@@ -71,12 +66,6 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
         }
 
         return false;
-    }
-
-    [RelayCommand]
-    public void StartGitHubOAuthFlow()
-    {
-        _gitHubOAuthService = _serviceProvider?.GetService<GitHubOAuthService>();
     }
 
     private void _taskOrchestrator_StartedProcessingPackage(object? sender, ProcessingPackageEventArgs e)
