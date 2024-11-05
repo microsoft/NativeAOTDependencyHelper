@@ -4,15 +4,11 @@ using NativeAOTDependencyHelper.Core.Services.GitHubOAuth;
 using Octokit;
 using System.Diagnostics;
 using NativeAOTDependencyHelper.Core.Services;
-using System.Threading.Tasks;
-using System.Text.Json;
 using System.Xml.Linq;
 using System.Net.Http.Json;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace NativeAOTDependencyHelper.Core.Sources
 {
-    // Q: how to initialize this singleton with constructor parameters in App.xaml.cs?
     public class GitHubDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService) : IDataSource<GitHubCodeSearchResult?>
     {
         public string Name => "GitHub Search Information";
@@ -35,6 +31,7 @@ namespace NativeAOTDependencyHelper.Core.Sources
 
         public async Task<GitHubCodeSearchResult?> GetInfoForPackageAsync(NuGetPackageInfo package)
         {
+            // GitHub search code request to fetch source file url that contains <IsAotCompatible> tag
             var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);
             if (packageMetadata?.RepositoryUrl == null) return null;
             var repoPath = packageMetadata?.RepositoryUrl.Replace("https://github.com/", "");
@@ -48,12 +45,14 @@ namespace NativeAOTDependencyHelper.Core.Sources
             var result = await _githubClient?.Search.SearchCode(request);
             if (result == null || result.TotalCount == 0) return null;
 
+            // Fetching source file from url parsed in GitHub code search response
             var gitSource = result.Items[0].Url;
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "AOT Compatibility Tool");
 
             try
             {
+                // Parsing XML tags to find <IsAotCompatible> tag
                 var repoInfo = await _httpClient.GetFromJsonAsync<GitHubCodeSearchResult>(gitSource);
                 var sourceFile = await _httpClient.GetAsync(repoInfo.DownloadUrl);
                 var sourceXml = await sourceFile.Content.ReadAsStreamAsync();
@@ -61,6 +60,7 @@ namespace NativeAOTDependencyHelper.Core.Sources
                 var aotTag = doc.Descendants("PropertyGroup")
                     .Elements("IsAotCompatible")
                     .FirstOrDefault();
+
                 if (aotTag != null) repoInfo.IsAotCompatible = aotTag != null && aotTag.Value == "true";
                 return repoInfo; 
             }
