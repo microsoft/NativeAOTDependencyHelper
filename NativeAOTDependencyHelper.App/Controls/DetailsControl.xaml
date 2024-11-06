@@ -50,7 +50,10 @@
                             <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind Provider.Name}" />
                         </toolkit:HeaderedContentControl>
                         <toolkit:HeaderedContentControl Header="Details">
-                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ReportDetails}" />
+                            <HyperlinkButton
+                                Content="{x:Bind ReportDetails}"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                NavigateUri="{x:Bind ResultDetailLink}" />
                         </toolkit:HeaderedContentControl>
                         <toolkit:HeaderedContentControl Header="Passed">
                             <TextBlock

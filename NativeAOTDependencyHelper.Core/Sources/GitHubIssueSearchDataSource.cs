@@ -32,10 +32,16 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
             Repos = new RepositoryCollection { repoPath },
             Type = IssueTypeQualifier.Issue
         };
-
-        var result = await _gitHubClient?.Search.SearchIssues(request);
-        if (result == null || result.TotalCount == 0) return null;
-
-        return null;
+        try
+        {
+            var result = await _gitHubClient?.Search.SearchIssues(request);
+            if (result == null || result.TotalCount == 0) return null;
+            var queryUri = new Uri($"{packageMetadata?.RepositoryUrl}/issues?q=type%3Aissue%20aot");
+            return new GitHubIssueSearchResult(result.TotalCount, queryUri);
+        } catch
+        {
+            // TODO: Display error for search 
+            return null;
+        }
     }
 }

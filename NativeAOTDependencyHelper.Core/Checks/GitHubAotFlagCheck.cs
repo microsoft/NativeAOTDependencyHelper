@@ -13,7 +13,7 @@ public class GitHubAotFlagCheck(TaskOrchestrator _orchestrator, IDataSource<GitH
     public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
     {
         var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<GitHubCodeSearchResult>(_gitHubSource, package);
-        if (packageMetadata == null) return new AOTCheckItem(this, false, "Flag not found for package.");
-        return new AOTCheckItem(this, (packageMetadata.IsAotCompatible == true), $"Source code URL: {packageMetadata.DownloadUrl}");
+        if (packageMetadata == null || packageMetadata.DownloadUrl == null) return new AOTCheckItem(this, false, "Flag not found for package.");
+        return new AOTCheckItem(this, (packageMetadata.IsAotCompatible == true), "Click to navigate to source file", new Uri(packageMetadata.DownloadUrl));
     }
 }

@@ -17,6 +17,7 @@ public class GitHubAotIssuesCheck(TaskOrchestrator _orchestrator, IDataSource<Gi
     public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
     {
         var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<GitHubIssueSearchResult>(_gitHubSource, package);
-        return new ReportItem(this, "", null);
+        if (packageMetadata == null || packageMetadata.TotalItems == 0) return new ReportItem(this, "No AOT-related issues found", null);
+        return new ReportItem(this, $"{packageMetadata.TotalItems} issues found. Click to view list of issues", packageMetadata.IssuesQuery);
     }
 }
