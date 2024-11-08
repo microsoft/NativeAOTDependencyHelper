@@ -34,4 +34,8 @@ public enum CheckStatus
     /// Returned when the check has passed and does not indicate a potential issue with AOT compatibility; Note: this does not guarantee AOT compatibility.
     /// </summary>
     Passed,
+    /// <summary>
+    /// Returned when the source to perform the check is unavailable and the check cannot be verified
+    /// </summary>
+    Unavailable
 }

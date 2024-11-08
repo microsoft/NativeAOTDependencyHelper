@@ -19,6 +19,7 @@
             <localconverters:SwitchConverterCase Value="Error" Content="{ThemeResource SystemFillColorCriticalBrush}"/>
             <localconverters:SwitchConverterCase Value="Warning" Content="{ThemeResource SystemFillColorCautionBrush}"/>
             <localconverters:SwitchConverterCase Value="Passed" Content="{ThemeResource SystemFillColorSuccessBrush}"/>
+            <localconverters:SwitchConverterCase Value="Unavailable" Content="{ThemeResource SystemFillColorNeutralBrush}"/>
         </localconverters:SwitchConverter>
     </UserControl.Resources>
     <StackPanel Orientation="Vertical" Spacing="12">
@@ -54,7 +55,10 @@
                             <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind Provider.Name}" />
                         </toolkit:HeaderedContentControl>
                         <toolkit:HeaderedContentControl Header="Details">
-                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ReportDetails}" />
+                            <HyperlinkButton
+                                Content="{x:Bind ReportDetails}"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                NavigateUri="{x:Bind ResultDetailLink}" />
                         </toolkit:HeaderedContentControl>
                         <toolkit:HeaderedContentControl Header="Passed">
                             <TextBlock

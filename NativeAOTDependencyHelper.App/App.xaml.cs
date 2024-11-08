@@ -55,6 +55,7 @@ public partial class App : Application
         
         // Data Sources
         services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
+        services.AddSingleton<IDataSource<GitHubIssueSearchResult>, GitHubIssueSearchDataSource>();
         services.AddSingleton<IDataSource<GitHubCodeSearchResult>, GitHubAotCompatibleCodeSearchDataSource>();
 
         // Other services
@@ -63,7 +64,8 @@ public partial class App : Application
         // Checks
         services.AddSingleton<IReportItemProvider, NuGetLatestVersionCheck>();
         services.AddSingleton<IReportItemProvider, NuGetRecentlyUpdatedCheck>();
-        services.AddSingleton<IReportItemProvider, GitHubAotCheck>();
+        services.AddSingleton<IReportItemProvider, GitHubAotFlagCheck>();
+        services.AddSingleton<IReportItemProvider, GitHubAotIssuesCheck>();
 
         // Reports
         services.AddSingleton<IReportItemProvider, NuGetLicenseReport>();

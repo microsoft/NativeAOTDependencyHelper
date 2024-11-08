@@ -5,6 +5,7 @@ using System.Diagnostics;
 using NativeAOTDependencyHelper.Core.Services;
 using System.Xml.Linq;
 using System.Net.Http.Json;
+using CheckStatus = NativeAOTDependencyHelper.Core.Models.CheckStatus;
 
 namespace NativeAOTDependencyHelper.Core.Sources;
 
@@ -26,7 +27,7 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
     public async Task<bool> InitializeAsync()
     {
         _githubClient = await gitHubOAuthService?.StartAuthRequest();
-        IsInitialized = true;
+        IsInitialized = _githubClient != null;
         return _githubClient != null;
     }
 
@@ -62,7 +63,15 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
                 .Elements("IsAotCompatible")
                 .FirstOrDefault();
 
-            if (aotTag != null) repoInfo.IsAotCompatible = aotTag != null && aotTag.Value == "true";
+            if (aotTag != null)
+            {
+                repoInfo.IsAotCompatible = aotTag != null && aotTag.Value == "true";
+                repoInfo.CheckStatus = CheckStatus.Passed;
+            }
+            else
+            {
+                repoInfo.CheckStatus = CheckStatus.Warning;
+            }
             return repoInfo;
         }
         catch (HttpRequestException e)
