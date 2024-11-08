@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using NativeAOTDependencyHelper.Core.Models;
+using System.Text.Json.Serialization;
 
 namespace NativeAOTDependencyHelper.Core.JsonModels;
 
@@ -19,4 +20,6 @@ public class GitHubCodeSearchResult
     public string Encoding { get; set; } = string.Empty;
 
     public bool? IsAotCompatible { get; set; }
+
+    public CheckStatus CheckStatus { get; set; } = CheckStatus.Unavailable;
 }

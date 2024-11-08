@@ -19,6 +19,7 @@
             <localconverters:SwitchConverterCase Value="Error" Content="{ThemeResource SystemFillColorCriticalBrush}"/>
             <localconverters:SwitchConverterCase Value="Warning" Content="{ThemeResource SystemFillColorCautionBrush}"/>
             <localconverters:SwitchConverterCase Value="Passed" Content="{ThemeResource SystemFillColorSuccessBrush}"/>
+            <localconverters:SwitchConverterCase Value="Unavailable" Content="{ThemeResource SystemFillColorNeutralBrush}"/>
         </localconverters:SwitchConverter>
     </UserControl.Resources>
     <StackPanel Orientation="Vertical" Spacing="12">

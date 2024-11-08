@@ -15,28 +15,32 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
 
     private GitHubClient? _gitHubClient;
 
+    private const string gitHubUrl = "https://github.com/";
+
     public async Task<bool> InitializeAsync()
     {
         _gitHubClient = await gitHubOAuthService?.StartAuthRequest();
+        IsInitialized = _gitHubClient != null;
         return _gitHubClient != null;
     }
 
     public async Task<GitHubIssueSearchResult?> GetInfoForPackageAsync(NuGetPackageInfo package)
     {
         var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);
-        if (packageMetadata?.RepositoryUrl == null) return null;
-        var repoPath = packageMetadata?.RepositoryUrl.Replace("https://github.com/", "");
+        if (packageMetadata?.RepositoryUrl == null || !packageMetadata.RepositoryUrl.Contains(gitHubUrl)) return null;
+        var repoPath = packageMetadata?.RepositoryUrl.Replace(gitHubUrl, "");
 
         var request = new SearchIssuesRequest("aot")
         {
             Repos = new RepositoryCollection { repoPath },
-            Type = IssueTypeQualifier.Issue
+            Type = IssueTypeQualifier.Issue,
+            State = ItemState.Open
         };
         try
         {
             var result = await _gitHubClient?.Search.SearchIssues(request);
             if (result == null || result.TotalCount == 0) return null;
-            var queryUri = new Uri($"{packageMetadata?.RepositoryUrl}/issues?q=type%3Aissue%20aot");
+            var queryUri = new Uri($"{packageMetadata?.RepositoryUrl}/issues?q=type%3Aissue%20state%3Aopen%20aot");
             return new GitHubIssueSearchResult(result.TotalCount, queryUri);
         } catch
         {
