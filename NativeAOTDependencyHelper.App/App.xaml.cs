@@ -55,10 +55,15 @@ public partial class App : Application
         
         // Data Sources
         services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
+        services.AddSingleton<IDataSource<GitHubCodeSearchResult>, GitHubAotCompatibleCodeSearchDataSource>();
+
+        // Other services
+        services.AddSingleton<GitHubOAuthService>();
 
         // Checks
         services.AddSingleton<IReportItemProvider, NuGetLatestVersionCheck>();
         services.AddSingleton<IReportItemProvider, NuGetRecentlyUpdatedCheck>();
+        services.AddSingleton<IReportItemProvider, GitHubAotCheck>();
 
         // Reports
         services.AddSingleton<IReportItemProvider, NuGetLicenseReport>();

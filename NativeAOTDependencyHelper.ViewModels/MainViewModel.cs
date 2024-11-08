@@ -5,7 +5,6 @@ using NativeAOTDependencyHelper.Core;
 using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 
 namespace NativeAOTDependencyHelper.ViewModels;
 
