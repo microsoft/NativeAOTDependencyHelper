@@ -16,7 +16,7 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
 
     public ObservableCollection<AOTCheckItem> CheckItems { get; } = new();
 
-    public bool HasAnyFailedChecks => CheckItems.Any(check => !check.HasPassed);
+    public bool HasAnyFailedChecks => CheckItems.Any(check => check.Status != CheckStatus.Passed);
 
     [ObservableProperty]
     public partial int TotalReports { get; set; } = _totalChecks;

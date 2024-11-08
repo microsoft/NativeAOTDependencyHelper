@@ -12,10 +12,13 @@
     x:DefaultBindMode="OneWay"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <converters:BoolToObjectConverter
-            x:Key="BoolToObjectConverter"
-            FalseValue="{ThemeResource SystemFillColorCriticalBrush}"
-            TrueValue="{ThemeResource SystemFillColorSuccessBrush}" />
+        <converters:SwitchConverter x:Key="StatusToColorSwitchConverter"
+                                         TargetType="models:CheckStatus">
+            <toolkit:Case Value="Error" Content="{ThemeResource SystemFillColorCriticalBrush}"/>
+            <toolkit:Case Value="Warning" Content="{ThemeResource SystemFillColorCautionBrush}"/>
+            <toolkit:Case Value="Passed" Content="{ThemeResource SystemFillColorSuccessBrush}"/>
+            <toolkit:Case Value="Unavailable" Content="{ThemeResource SystemFillColorNeutralBrush}"/>
+        </converters:SwitchConverter>
     </UserControl.Resources>
     <StackPanel Orientation="Vertical" Spacing="12">
         <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{x:Bind ViewModel.Info.Name}" />
@@ -58,8 +61,8 @@
                         <toolkit:HeaderedContentControl Header="Passed">
                             <TextBlock
                                 FontWeight="SemiBold"
-                                Foreground="{x:Bind HasPassed, Converter={StaticResource BoolToObjectConverter}}"
-                                Text="{x:Bind HasPassed}" />
+                                Foreground="{x:Bind Status, Converter={StaticResource StatusToColorSwitchConverter}}"
+                                Text="{x:Bind Status}" />
                         </toolkit:HeaderedContentControl>
                     </StackPanel>
                 </DataTemplate>

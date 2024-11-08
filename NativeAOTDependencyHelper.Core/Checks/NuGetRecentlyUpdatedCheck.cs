@@ -11,7 +11,9 @@ public class NuGetRecentlyUpdatedCheck(TaskOrchestrator _orchestrator, IDataSour
     /// </summary>
     private const int NumberOfMonthsToBeRecentlyUpdated = 12;
 
-    public string Name => "Nuget Package Up-to-date";
+    public string Name => "NuGet Package Up-to-date";
+
+    public ReportCategory Category => ReportCategory.Health;
 
     public int SortOrder => 5;
 
@@ -41,9 +43,9 @@ public class NuGetRecentlyUpdatedCheck(TaskOrchestrator _orchestrator, IDataSour
 
         if (!found)
         {
-            return new AOTCheckItem(this, false, "Could not find latest package details");
+            return new AOTCheckItem(this, CheckStatus.Error, "Could not find latest package details");
         }
 
-        return new AOTCheckItem(this, isRecent, $"Package last updated: {publishedDate}");
+        return new AOTCheckItem(this, isRecent ? CheckStatus.Passed : CheckStatus.Warning, $"Package last updated: {publishedDate}");
     }
 }

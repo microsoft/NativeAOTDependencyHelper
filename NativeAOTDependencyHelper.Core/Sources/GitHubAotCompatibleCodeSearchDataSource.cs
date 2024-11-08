@@ -1,15 +1,18 @@
 ﻿using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.JsonModels;
-using NativeAOTDependencyHelper.Core.Services.GitHubOAuth;
 using Octokit;
 using System.Diagnostics;
 using NativeAOTDependencyHelper.Core.Services;
 using System.Xml.Linq;
 using System.Net.Http.Json;
+using CheckStatus = NativeAOTDependencyHelper.Core.Models.CheckStatus;
 
 namespace NativeAOTDependencyHelper.Core.Sources;
 
-public class GitHubCodeSearchDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService) : IDataSource<GitHubCodeSearchResult?>
+/**
+ * Performs a code search request to see if the project contains definitions for the <IsAotCompatible> flag
+ */
+public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService) : IDataSource<GitHubCodeSearchResult?>
 {
     public string Name => "GitHub Search Information";
 
@@ -24,6 +27,7 @@ public class GitHubCodeSearchDataSource(TaskOrchestrator _orchestrator, IDataSou
     public async Task<bool> InitializeAsync()
     {
         _githubClient = await gitHubOAuthService?.StartAuthRequest();
+        IsInitialized = _githubClient != null;
         return _githubClient != null;
     }
 
@@ -59,7 +63,15 @@ public class GitHubCodeSearchDataSource(TaskOrchestrator _orchestrator, IDataSou
                 .Elements("IsAotCompatible")
                 .FirstOrDefault();
 
-            if (aotTag != null) repoInfo.IsAotCompatible = aotTag != null && aotTag.Value == "true";
+            if (aotTag != null)
+            {
+                repoInfo.IsAotCompatible = aotTag != null && aotTag.Value == "true";
+                repoInfo.CheckStatus = CheckStatus.Passed;
+            }
+            else
+            {
+                repoInfo.CheckStatus = CheckStatus.Warning;
+            }
             return repoInfo;
         }
         catch (HttpRequestException e)

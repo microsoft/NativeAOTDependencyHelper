@@ -12,6 +12,11 @@ public interface IReportItemProvider
     public string Name { get; }
 
     /// <summary>
+    /// Gets the <see cref="ReportCategory"/> category of the information this provider provides.
+    /// </summary>
+    public ReportCategory Category { get; }
+
+    /// <summary>
     /// Gets the desired sort order for this item within the list of reports.
     /// </summary>
     public int SortOrder { get; }
@@ -22,4 +27,11 @@ public interface IReportItemProvider
     /// <param name="sources">Instances of the requested <see cref="IDataSource"/> in <see cref="IDependsOnDataSource.DependentDataSourceIds"/>, will be in the same order as requested or empty if none.</param>
     /// <returns>A new <see cref="ReportItem"/> (or <see cref="AOTCheckItem"/>) for the given <see cref="NuGetPackageInfo"/>.</returns>
     public Task<ReportItem> ProcessPackage(NuGetPackageInfo package);
+}
+
+public enum ReportCategory
+{
+    Informational,
+    Health,
+    AOTCompatibility
 }

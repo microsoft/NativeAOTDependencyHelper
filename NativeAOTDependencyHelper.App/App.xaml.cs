@@ -5,7 +5,6 @@ using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Reports;
 using NativeAOTDependencyHelper.Core.Services;
-using NativeAOTDependencyHelper.Core.Services.GitHubOAuth;
 using NativeAOTDependencyHelper.Core.Sources;
 using System;
 
@@ -56,8 +55,8 @@ public partial class App : Application
         
         // Data Sources
         services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
-        services.AddSingleton<IDataSource<GitHubCodeSearchResult>, GitHubCodeSearchDataSource>();
         services.AddSingleton<IDataSource<GitHubIssueSearchResult>, GitHubIssueSearchDataSource>();
+        services.AddSingleton<IDataSource<GitHubCodeSearchResult>, GitHubAotCompatibleCodeSearchDataSource>();
 
         // Other services
         services.AddSingleton<GitHubOAuthService>();
