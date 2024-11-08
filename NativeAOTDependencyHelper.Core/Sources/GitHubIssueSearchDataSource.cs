@@ -1,10 +1,10 @@
 ﻿using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
-using NativeAOTDependencyHelper.Core.Services.GitHubOAuth;
 using Octokit;
 
 namespace NativeAOTDependencyHelper.Core.Sources;
+
 public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService) : IDataSource<GitHubIssueSearchResult?>
 {
     public string Name => "GitHub AOT Issue Search";
