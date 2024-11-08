@@ -9,18 +9,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:NativeAOTDependencyHelper.Core.Models"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
-    xmlns:localconverters="using:NativeAOTDependencyHelper.App.Converters"
     x:DefaultBindMode="OneWay"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <localconverters:SwitchConverter x:Key="StatusToColorSwitchConverter"
+        <converters:SwitchConverter x:Key="StatusToColorSwitchConverter"
                                          TargetType="models:CheckStatus">
-            <!-- TODO: If we make the WCT Case accept DependencyObject we can directly use them here for this construct as well -->
-            <localconverters:SwitchConverterCase Value="Error" Content="{ThemeResource SystemFillColorCriticalBrush}"/>
-            <localconverters:SwitchConverterCase Value="Warning" Content="{ThemeResource SystemFillColorCautionBrush}"/>
-            <localconverters:SwitchConverterCase Value="Passed" Content="{ThemeResource SystemFillColorSuccessBrush}"/>
-            <localconverters:SwitchConverterCase Value="Unavailable" Content="{ThemeResource SystemFillColorNeutralBrush}"/>
-        </localconverters:SwitchConverter>
+            <toolkit:Case Value="Error" Content="{ThemeResource SystemFillColorCriticalBrush}"/>
+            <toolkit:Case Value="Warning" Content="{ThemeResource SystemFillColorCautionBrush}"/>
+            <toolkit:Case Value="Passed" Content="{ThemeResource SystemFillColorSuccessBrush}"/>
+            <toolkit:Case Value="Unavailable" Content="{ThemeResource SystemFillColorNeutralBrush}"/>
+        </converters:SwitchConverter>
     </UserControl.Resources>
     <StackPanel Orientation="Vertical" Spacing="12">
         <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{x:Bind ViewModel.Info.Name}" />

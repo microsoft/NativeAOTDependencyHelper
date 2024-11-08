@@ -30,6 +30,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0-preview1" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.HeaderedControls" Version="8.2.241108-build.1250" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.241108-build.1250" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.241108-build.1250" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.241108-build.1250" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
