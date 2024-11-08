@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Net;
 
-namespace NativeAOTDependencyHelper.Core.Services.GitHubOAuth;
+namespace NativeAOTDependencyHelper.Core.Services;
 
 public class GitHubOAuthService
 {

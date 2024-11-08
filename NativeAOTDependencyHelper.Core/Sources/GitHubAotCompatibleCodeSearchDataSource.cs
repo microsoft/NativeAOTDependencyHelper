@@ -1,6 +1,5 @@
 ﻿using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.JsonModels;
-using NativeAOTDependencyHelper.Core.Services.GitHubOAuth;
 using Octokit;
 using System.Diagnostics;
 using NativeAOTDependencyHelper.Core.Services;
@@ -9,7 +8,10 @@ using System.Net.Http.Json;
 
 namespace NativeAOTDependencyHelper.Core.Sources;
 
-public class GitHubCodeSearchDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService) : IDataSource<GitHubCodeSearchResult?>
+/**
+ * Performs a code search request to see if the project contains definitions for the <IsAotCompatible> flag
+ */
+public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService) : IDataSource<GitHubCodeSearchResult?>
 {
     public string Name => "GitHub Search Information";
 
@@ -23,9 +25,8 @@ public class GitHubCodeSearchDataSource(TaskOrchestrator _orchestrator, IDataSou
 
     public async Task<bool> InitializeAsync()
     {
-        if (_githubClient != null) return true;
-
         _githubClient = await gitHubOAuthService?.StartAuthRequest();
+        IsInitialized = true;
         return _githubClient != null;
     }
 
