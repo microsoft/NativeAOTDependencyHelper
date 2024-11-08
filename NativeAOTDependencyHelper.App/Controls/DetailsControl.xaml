@@ -9,13 +9,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:NativeAOTDependencyHelper.Core.Models"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+    xmlns:localconverters="using:NativeAOTDependencyHelper.App.Converters"
     x:DefaultBindMode="OneWay"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <converters:BoolToObjectConverter
-            x:Key="BoolToObjectConverter"
-            FalseValue="{ThemeResource SystemFillColorCriticalBrush}"
-            TrueValue="{ThemeResource SystemFillColorSuccessBrush}" />
+        <localconverters:SwitchConverter x:Key="StatusToColorSwitchConverter"
+                                         TargetType="models:CheckStatus">
+            <!-- TODO: If we make the WCT Case accept DependencyObject we can directly use them here for this construct as well -->
+            <localconverters:SwitchConverterCase Value="Error" Content="{ThemeResource SystemFillColorCriticalBrush}"/>
+            <localconverters:SwitchConverterCase Value="Warning" Content="{ThemeResource SystemFillColorCautionBrush}"/>
+            <localconverters:SwitchConverterCase Value="Passed" Content="{ThemeResource SystemFillColorSuccessBrush}"/>
+        </localconverters:SwitchConverter>
     </UserControl.Resources>
     <StackPanel Orientation="Vertical" Spacing="12">
         <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{x:Bind ViewModel.Info.Name}" />
@@ -58,8 +62,8 @@
                         <toolkit:HeaderedContentControl Header="Passed">
                             <TextBlock
                                 FontWeight="SemiBold"
-                                Foreground="{x:Bind HasPassed, Converter={StaticResource BoolToObjectConverter}}"
-                                Text="{x:Bind HasPassed}" />
+                                Foreground="{x:Bind Status, Converter={StaticResource StatusToColorSwitchConverter}}"
+                                Text="{x:Bind Status}" />
                         </toolkit:HeaderedContentControl>
                     </StackPanel>
                 </DataTemplate>

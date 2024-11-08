@@ -8,6 +8,8 @@ public class NuGetLicenseReport(TaskOrchestrator _orchestrator, IDataSource<NuGe
 {
     public string Name => "Package License";
 
+    public ReportCategory Category => ReportCategory.Informational;
+
     public int SortOrder => 10;
 
     public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
