@@ -25,6 +25,8 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
     [NotifyPropertyChangedFor(nameof(HasAnyFailedChecks))]
     public partial int ReportsCompleted { get; set; }
 
+    [ObservableProperty]
+    public partial bool IsWorking { get; set; }
 
 
     // TODO: Move the below to individual reports... ( as needed )

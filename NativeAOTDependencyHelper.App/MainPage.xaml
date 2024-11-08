@@ -113,7 +113,7 @@
                     <StackLayout Spacing="4" />
                 </ItemsView.Layout>
                 <ItemsView.ItemTemplate>
-                    <DataTemplate x:DataType="viewModels:NuGetPackageViewModel" x:DefaultBindMode="OneTime">
+                    <DataTemplate x:DataType="viewModels:NuGetPackageViewModel" x:DefaultBindMode="OneWay">
                         <ItemContainer>
                             <toolkit:SettingsCard Header="{x:Bind Info.Name}">
                                 <toolkit:SettingsCard.HeaderIcon>
@@ -124,15 +124,16 @@
                                     <ItemsControl ItemsSource="{x:Bind Info.ProjectReferences}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="models:NuGetPackageProjectReference">
-                                                <TextBlock>
-                                                    <Run Text="{x:Bind ParentProjectPath}" />
-                                                    <Run Text=" • " />
-                                                    <Run Text="{x:Bind Framework}" />
-                                                </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="{x:Bind ParentProjectPath}" />
+                                                        <Run Text=" • " />
+                                                        <Run Text="{x:Bind Framework}" />
+                                                    </TextBlock>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </toolkit:SettingsCard.Description>
+                                <ProgressRing IsActive="{x:Bind IsWorking}"/>
                             </toolkit:SettingsCard>
                         </ItemContainer>
                     </DataTemplate>
