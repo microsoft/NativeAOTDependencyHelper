@@ -48,15 +48,20 @@
         <ItemsRepeater ItemsSource="{x:Bind ViewModel.CheckItems}">
             <ItemsRepeater.ItemTemplate>
                 <DataTemplate x:DataType="models:AOTCheckItem">
-                    <StackPanel Orientation="Vertical" Spacing="12">
-                        <toolkit:HeaderedContentControl Header="Provider">
-                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind Provider.Name}" />
-                        </toolkit:HeaderedContentControl>
+                    <StackPanel Orientation="Vertical"  Margin="10">
+                        <TextBlock Style="{StaticResource FlyoutPickerTitleTextBlockStyle}" Text="{x:Bind Provider.Name}" />
                         <toolkit:HeaderedContentControl Header="Details">
-                            <HyperlinkButton
-                                Content="{x:Bind ReportDetails}"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                NavigateUri="{x:Bind ResultDetailLink}" />
+                            <toolkit:SwitchPresenter Value="{x:Bind ResultDetailLink}" >
+                                <toolkit:Case Value="{x:Null}">
+                                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ReportDetails}"/>
+                                </toolkit:Case>
+                                <toolkit:Case IsDefault="true">
+                                    <HyperlinkButton
+                                    Content="{x:Bind ReportDetails}"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    NavigateUri="{x:Bind ResultDetailLink}" />  
+                                </toolkit:Case>
+                            </toolkit:SwitchPresenter>
                         </toolkit:HeaderedContentControl>
                         <toolkit:HeaderedContentControl Header="Passed">
                             <TextBlock
@@ -72,14 +77,19 @@
         <ItemsRepeater ItemsSource="{x:Bind ViewModel.ReportItems}">
             <ItemsRepeater.ItemTemplate>
                 <DataTemplate x:DataType="models:ReportItem">
-                    <StackPanel Orientation="Vertical" Spacing="12">
-                        <toolkit:HeaderedContentControl Header="{x:Bind Provider.Name}">
-                            <!--  TODO: We should swap this out for plain text if the link is null...  -->
-                            <HyperlinkButton
-                                Content="{x:Bind ReportDetails}"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                NavigateUri="{x:Bind ResultDetailLink}" />
-                        </toolkit:HeaderedContentControl>
+                    <StackPanel Orientation="Vertical" Margin="10">
+                        <TextBlock Style="{StaticResource FlyoutPickerTitleTextBlockStyle}" Text="{x:Bind Provider.Name}" />
+                            <toolkit:SwitchPresenter Value="{x:Bind ResultDetailLink}" >
+                                <toolkit:Case Value="{x:Null}">
+                                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ReportDetails}" Padding="5" Style="{StaticResource BodyTextBlockStyle}"/>
+                                </toolkit:Case>
+                                <toolkit:Case IsDefault="true">
+                                    <HyperlinkButton
+                                        Content="{x:Bind ReportDetails}"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        NavigateUri="{x:Bind ResultDetailLink}" />
+                                </toolkit:Case>
+                            </toolkit:SwitchPresenter>
                     </StackPanel>
                 </DataTemplate>
             </ItemsRepeater.ItemTemplate>
