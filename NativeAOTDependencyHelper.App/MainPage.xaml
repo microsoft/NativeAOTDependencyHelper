@@ -133,7 +133,17 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </toolkit:SettingsCard.Description>
-                                <ProgressRing IsActive="{x:Bind IsWorking}"/>
+                                <toolkit:SwitchPresenter Value="{x:Bind LoadStatus}" TargetType="models:PackageLoadStatus">
+                                    <toolkit:Case Value="Success">
+                                        <TextBlock FontSize="20" Text="✔️"/>
+                                    </toolkit:Case>
+                                    <toolkit:Case Value="Error">
+                                        <TextBlock FontSize="20" Text="❗" />
+                                    </toolkit:Case>
+                                    <toolkit:Case IsDefault="True">
+                                        <ProgressRing IsActive="True"/>
+                                    </toolkit:Case>
+                                </toolkit:SwitchPresenter>
                             </toolkit:SettingsCard>
                         </ItemContainer>
                     </DataTemplate>

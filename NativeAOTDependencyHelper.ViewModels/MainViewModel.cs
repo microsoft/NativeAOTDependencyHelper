@@ -74,8 +74,6 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
         {
             // Add our package to our list now that it's started processing.
             Packages.Add(new(e.Package, ChecksPerPackage));
-            var package = Packages.FirstOrDefault(p => p.Info == e.Package);
-            if (package != null) package.IsWorking = true;
             // Keep track of how many packages we have.
             TotalPackages++;
         }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler).Wait();
@@ -117,7 +115,17 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
             // Keep track of how many packages we've processed
             PackagesProcessed++;
             var package = Packages.FirstOrDefault(p => p.Info == e.Package);
-            if (package != null) package.IsWorking = false;
+            if (package != null)
+            {
+                if (e.Errors != null && e.Errors.Length > 0)
+                {
+                    package.LoadStatus = PackageLoadStatus.Error;
+                }
+                else
+                {
+                    package.LoadStatus = PackageLoadStatus.Success;
+                }
+            }
 
             if (PackagesProcessed == TotalPackages)
             {

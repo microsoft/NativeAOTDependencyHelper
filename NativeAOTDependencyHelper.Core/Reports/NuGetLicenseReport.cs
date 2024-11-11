@@ -26,6 +26,12 @@ public class NuGetLicenseReport(TaskOrchestrator _orchestrator, IDataSource<NuGe
                     // TODO: Do we care if this fails?
                     Uri.TryCreate(registration.CatalogEntry.LicenseUrl, UriKind.Absolute, out var licenseUri);
 
+                    if (String.IsNullOrEmpty(registration.CatalogEntry.LicenseExpression))
+                    {
+                        if (licenseUri != null) return new ReportItem(this, "Click to view license details", licenseUri);
+                        else return new ReportItem(this, "License information not available", licenseUri);
+                    }
+
                     return new ReportItem(this, $"License: {registration.CatalogEntry.LicenseExpression}", licenseUri);
                 }
             }

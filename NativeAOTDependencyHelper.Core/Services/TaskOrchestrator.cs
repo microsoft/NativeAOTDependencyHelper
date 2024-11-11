@@ -92,9 +92,10 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
     }
 }
 
-public class ProcessingPackageEventArgs(NuGetPackageInfo _nugetPackage) : EventArgs
+public class ProcessingPackageEventArgs(NuGetPackageInfo _nugetPackage, string[]? _errors = null) : EventArgs
 {
     public NuGetPackageInfo Package => _nugetPackage;
+    public string[]? Errors => _errors; 
 }
 
 public class ReportPackageProgressEventArgs(NuGetPackageInfo _nugetPackage, ReportItem _reportItem) : EventArgs

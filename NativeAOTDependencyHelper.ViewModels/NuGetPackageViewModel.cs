@@ -26,8 +26,7 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
     public partial int ReportsCompleted { get; set; }
 
     [ObservableProperty]
-    public partial bool IsWorking { get; set; }
-
+    public partial PackageLoadStatus LoadStatus { get; set; } = PackageLoadStatus.Loading;
 
     // TODO: Move the below to individual reports... ( as needed )
     //// --- From NuGet.org ---
