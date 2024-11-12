@@ -43,7 +43,7 @@ public class NuGetRecentlyUpdatedCheck(TaskOrchestrator _orchestrator, IDataSour
 
         if (!found)
         {
-            return new AOTCheckItem(this, CheckStatus.Error, "Could not find latest package details");
+            return new AOTCheckItem(this, CheckStatus.Unavailable, "Could not find latest package details");
         }
 
         return new AOTCheckItem(this, isRecent ? CheckStatus.Passed : CheckStatus.Warning, $"Package last updated: {publishedDate}");

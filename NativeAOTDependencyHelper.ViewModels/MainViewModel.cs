@@ -93,10 +93,20 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
                 if (e.ReportItem is AOTCheckItem check)
                 {
                     package.CheckItems.Add(check);
+                    if (check.ProcessingError != null)
+                    {
+                        package.ProcessingErrors.Add(check.ProcessingError);
+                        package.LoadStatus = PackageLoadStatus.Error;
+                    }
                 }
                 else if (e.ReportItem is ReportItem item)
                 {
                     package.ReportItems.Add(item);
+                    if (item.ProcessingError != null)
+                    {
+                        package.ProcessingErrors.Add(item.ProcessingError);
+                        package.LoadStatus = PackageLoadStatus.Error;
+                    }
                 }
                 package.ReportsCompleted++;
             }
@@ -117,7 +127,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
             var package = Packages.FirstOrDefault(p => p.Info == e.Package);
             if (package != null)
             {
-                if (e.Errors != null && e.Errors.Length > 0)
+                if (package.ProcessingErrors.Count > 0)
                 {
                     package.LoadStatus = PackageLoadStatus.Error;
                 }

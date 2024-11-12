@@ -44,16 +44,16 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
             Repos = new RepositoryCollection { repoPath }
         };
 
-        var result = await _githubClient?.Search.SearchCode(request);
-        if (result == null || result.TotalCount == 0) return null;
-
-        // Fetching source file from url parsed in GitHub code search response
-        var gitSource = result.Items[0].Url;
-        _httpClient.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", "AOT Compatibility Tool");
-
         try
         {
+            var result = await _githubClient?.Search.SearchCode(request);
+            if (result == null || result.TotalCount == 0) return null;
+
+            // Fetching source file from url parsed in GitHub code search response
+            var gitSource = result.Items[0].Url;
+            _httpClient.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", "AOT Compatibility Tool");
+
             // Parsing XML tags to find <IsAotCompatible> tag
             var repoInfo = await _httpClient.GetFromJsonAsync<GitHubCodeSearchResult>(gitSource);
             var sourceFile = await _httpClient.GetAsync(repoInfo.DownloadUrl);

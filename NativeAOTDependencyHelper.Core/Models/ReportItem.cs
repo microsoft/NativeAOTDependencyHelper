@@ -6,7 +6,7 @@
 /// <param name="Provider">reference to the provider of this data</param>
 /// <param name="ReportDetails">additional detail text about the state of the report</param>
 /// <param name="ResultDetailLink">(optionally) a link to direct to the result/source of the report information.</param>
-public record ReportItem(IReportItemProvider Provider, string ReportDetails, Uri? ResultDetailLink = null);
+public record ReportItem(IReportItemProvider Provider, string ReportDetails, Uri? ResultDetailLink = null, string? ProcessingError = null);
 
 /// <summary>
 /// Defines a special type of <see cref="ReportItem"/> that additional performs a validation check, <see cref="Status"/>; that'll report status towards AOT compatibility reliant on an <see cref="IDataSource"/>.
@@ -15,7 +15,7 @@ public record ReportItem(IReportItemProvider Provider, string ReportDetails, Uri
 /// <param name="Provider">reference to the provider of this data</param>
 /// <param name="ReportDetails">additional detail text about the state of the report</param>
 /// <param name="ResultDetailLink">(optionally) a link to direct to the result/source of the report information.</param>
-public record AOTCheckItem(IReportItemProvider Provider, CheckStatus Status, string ReportDetails, Uri? ResultDetailLink = null) : ReportItem(Provider, ReportDetails, ResultDetailLink);
+public record AOTCheckItem(IReportItemProvider Provider, CheckStatus Status, string ReportDetails, Uri? ResultDetailLink = null, string? ProcessingError = null) : ReportItem(Provider, ReportDetails, ResultDetailLink, ProcessingError);
 
 /// <summary>
 /// The various possible outcomes of a check returnable in an <see cref="AOTCheckItem"/>.
