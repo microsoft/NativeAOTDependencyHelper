@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NativeAOTDependencyHelper.Core.Models;
+using System.Collections;
 using System.Collections.ObjectModel;
 
 namespace NativeAOTDependencyHelper.ViewModels;
@@ -18,54 +19,32 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
 
     public bool HasAnyFailedChecks => CheckItems.Any(check => check.Status != CheckStatus.Passed);
 
+    /// <summary>
+    /// Total reports + checks (as checks are reports)
+    /// </summary>
     [ObservableProperty]
     public partial int TotalReports { get; set; } = _totalChecks;
 
+    /// <summary>
+    /// Number of reports + checks currently completed
+    /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasAnyFailedChecks))]
+    [NotifyPropertyChangedFor(nameof(PassedChecks))]
+    [NotifyPropertyChangedFor(nameof(TotalChecks))]
     public partial int ReportsCompleted { get; set; }
+
+    /// <summary>
+    /// Number of passed checks.
+    /// </summary>
+    public int PassedChecks => CheckItems.Count(check => check.Status == CheckStatus.Passed);
+
+    public int TotalChecks => CheckItems.Count;
 
     [ObservableProperty]
     public partial PackageLoadStatus LoadStatus { get; set; } = PackageLoadStatus.Loading;
 
-    // TODO: Move the below to individual reports... ( as needed )
-    //// --- From NuGet.org ---
-
-    /// <summary>
-    /// Gets or sets if this package was found on NuGet.org.
-    /// </summary>
-    [ObservableProperty]
-    private bool _isAvailableOnNuget;
-
-    [ObservableProperty]
-    public partial string? LatestNuGetVersion { get; set; }
-
-    [ObservableProperty]
-    public partial string? ProjectWebsite { get; set; }
-
-    [ObservableProperty]
-    public partial string? SourceRepositoryUrl { get; set; }
-
-    [ObservableProperty]
-    public partial string? RegistrationUrl { get; set; }
-
-    //// --- From GitHub.com ---
-
-    /// <summary>
-    /// Gets or sets if this package's code was found on GitHub.com
-    /// </summary>
-    [ObservableProperty]
-    public partial bool IsAvailableOnGitHub { get; set; }
-
-    [ObservableProperty]
-    public partial string? LastCommitDate { get; set; }
-
-    /// <summary>
-    /// Gets or sets whether we found the <code><IsAotCompatible>true</IsAotCompatible></code> flag within the source code (props or csprojs), null if we're searching or can't determine.
-    /// TODO: We may want some better management of the state of this search, etc... here? As well as the search results, i.e. link to where the code was found.
-    /// </summary>
-    [ObservableProperty]
-    public partial bool? IsAotCompatibleFlagFound { get; set; }
+    public ArrayList ProcessingErrors { get; } = new ArrayList();
 
     /// <summary>
     /// Gets or sets the number of GitHub issues found with the text "AOT".
