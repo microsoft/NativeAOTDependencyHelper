@@ -6,7 +6,10 @@ using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Reports;
 using NativeAOTDependencyHelper.Core.Services;
 using NativeAOTDependencyHelper.Core.Sources;
+using NativeAOTDependencyHelper.ViewModels;
+using NativeAOTDependencyHelper.ViewModels.Services;
 using System;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -49,9 +52,13 @@ public partial class App : Application
     {
         ServiceCollection services = new();
 
+        // View Models
+        services.AddSingleton<MainViewModel>();
+
         // Root service
         services.AddSingleton<SolutionPackageIndex>();
         services.AddSingleton<TaskOrchestrator>();
+        services.AddSingleton(TaskScheduler.FromCurrentSynchronizationContext()); // Grab copy of UI thread
         
         // Data Sources
         services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
@@ -59,6 +66,7 @@ public partial class App : Application
         services.AddSingleton<IDataSource<GitHubCodeSearchResult>, GitHubAotCompatibleCodeSearchDataSource>();
 
         // Other services
+        services.AddSingleton<ILogger, BasicLogger>();
         services.AddSingleton<GitHubOAuthService>();
 
         // Checks

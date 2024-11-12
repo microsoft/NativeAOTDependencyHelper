@@ -9,7 +9,7 @@ namespace NativeAOTDependencyHelper.Core.Services;
 /// <summary>
 /// Helper class which orchestrates/reports on all tasks and caches results for reports/checks.
 /// </summary>
-public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServiceProvider _serviceProvider)
+public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServiceProvider _serviceProvider, ILogger _logger)
 {
     public event EventHandler<ProcessingPackageEventArgs>? StartedProcessingPackage;
 
@@ -25,6 +25,8 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
 
     public async Task<bool> ProcessSolutionAsync(string solutionFilePath)
     {
+        _logger.Information($"Initializing Solution: {solutionFilePath}");
+
         if (await _servicePackageIndex.InitializeAsync(solutionFilePath)
             && _servicePackageIndex.Packages != null)
         {
@@ -36,6 +38,7 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
 
             foreach (var package in _servicePackageIndex.Packages)
             {
+                _logger.Information($"Processing Package: {package.Name}");
                 StartedProcessingPackage?.Invoke(this, new(package));
 
                 // https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/task-based-asynchronous-programming
@@ -53,6 +56,7 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
 
                     // TODO: If we do background the reporters, then we'll want to wait for them all to be done before reporting the package is finished...
                     FinishedProcessingPackage?.Invoke(this, new(package));
+                    _logger.Information($"Finished Package: {package.Name}");
                 }));
             }
 
@@ -68,22 +72,25 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
 
     public async Task<T?> GetDataFromSourceForPackageAsync<T>(IDataSource<T> dataSource, NuGetPackageInfo package)
     {
-        // TODO: We may want to investigate if we can grab all the generic reporter interfaces from the services collection and intialize them before we start processing instead...
+        // TODO: We may want to investigate if we can grab all the generic reporter interfaces from the services collection and initialize them before we start processing instead...
         using (await _dataSourceInitializeLocks.GetOrAdd(typeof(T), new AsyncLock()).LockAsync())
         {
             if (!dataSource.IsInitialized)
             {
+                _logger.Information($"Initializing DataSource: {dataSource.Name}");
                 await dataSource.InitializeAsync();
             }
 
             // TODO: We don't need to lock the whole datasource for this... but then it seems excessive to lock on every pairing here... (even though that's what we need). Think about the approach here more.
-            // Note: We CANNOT use GetOrAdd on our ConcurrentDictionary here as that doesn't guarentee that the factory method will only be called once.
+            // Note: We CANNOT use GetOrAdd on our ConcurrentDictionary here as that doesn't guarantee that the factory method will only be called once.
             if (_resultCache.TryGetValue((dataSource.GetType(), package), out var result))
             {
+                _logger.Information($"Returning Cache: {dataSource.Name} - {package.Name}");
                 return (T?)result;
             }
             else
             {
+                _logger.Information($"Fetching Data: {dataSource.Name} - {package.Name}");
                 var resultNew = await dataSource.GetInfoForPackageAsync(package);
                 _resultCache[(dataSource.GetType(), package)] = resultNew;
                 return resultNew;

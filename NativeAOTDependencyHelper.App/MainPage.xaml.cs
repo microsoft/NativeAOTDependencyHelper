@@ -1,8 +1,11 @@
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using NativeAOTDependencyHelper.Core;
+using NativeAOTDependencyHelper.Core.Services;
 using NativeAOTDependencyHelper.ViewModels;
+using NativeAOTDependencyHelper.ViewModels.Services;
 using System;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
@@ -14,7 +17,9 @@ namespace NativeAOTDependencyHelper.App;
 /// </summary>
 public sealed partial class MainPage : Page
 {
-    public MainViewModel ViewModel { get; } = new(((App)App.Current).Services, TaskScheduler.FromCurrentSynchronizationContext());
+    public MainViewModel ViewModel { get; } = ((App)App.Current).Services.GetService<MainViewModel>();
+
+    public BasicLogger Logger { get; private set; } = ((App)App.Current).Services.GetService<ILogger>() as BasicLogger;
 
     public MainPage()
     {
@@ -25,6 +30,9 @@ public sealed partial class MainPage : Page
 
     private async void OpenSolution_Click(object sender, RoutedEventArgs e)
     {
+        // Clear log
+        Logger.Clear(); // TODO: Do we just make this part of the interface and handle in the MainViewModel?
+
         // Create a file picker
         FileOpenPicker openPicker = new();
 
