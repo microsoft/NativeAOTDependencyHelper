@@ -171,7 +171,8 @@
         </Grid>
 
         <Expander Header="Operation Log" Grid.Row="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <ScrollView Height="320">
+            <!-- Use VerticalAnchorRatio 1.0 to prefer to be on the bottom of the incoming items -->
+            <ScrollView Height="320" VerticalAnchorRatio="1.0">
                 <ItemsControl ItemsSource="{x:Bind Logger.LogItems}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="services:LogItemData">
