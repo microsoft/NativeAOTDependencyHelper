@@ -1,0 +1,84 @@
+
+# https://docs.github.com/actions/using-workflows/about-workflows
+# https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions
+
+name: CI
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the main or release branches
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  merge_group:
+
+env:
+  DOTNET_VERSION: ${{ '9.0.100' }}
+  MSBUILD_VERBOSITY: normal
+  IS_MAIN: ${{ github.ref == 'refs/heads/main' }}
+  IS_PR: ${{ startsWith(github.ref, 'refs/pull/') }}
+  IS_RELEASE: ${{ startsWith(github.ref, 'refs/heads/rel/') }}
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "Xaml-Style-Check"
+  Xaml-Style-Check:
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Install .NET SDK v${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # Restore Tools from Manifest list in the Repository
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+
+      - name: Check XAML Styling
+        run: powershell -version 5.1 -command "./ApplyXamlStyling.ps1 -Passive" -ErrorAction Stop
+
+  # Build WinUI App
+  build:
+    needs: [Xaml-Style-Check]
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Install .NET SDK v${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Restore Tools from Manifest list in the Repository
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: '[17.12,)'
+
+      # Build solution
+      - name: MSBuild
+        run: >
+          msbuild.exe /restore
+          /p:Configuration=Release
+          /m
+          /v:${{ env.MSBUILD_VERBOSITY }}
+          NativeAOTDependencyHelper.sln
