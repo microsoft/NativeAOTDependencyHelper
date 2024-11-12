@@ -7,6 +7,7 @@
     xmlns:converters="using:CommunityToolkit.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:NativeAOTDependencyHelper.App"
+    xmlns:services="using:NativeAOTDependencyHelper.ViewModels.Services"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:NativeAOTDependencyHelper.Core.Models"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
@@ -18,6 +19,12 @@
         <converters:TaskResultConverter x:Key="TaskResultConverter" />
         <converters:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" GreaterThan="0" />
 
+        <converters:SwitchConverter x:Key="LevelToColorSwitchConverter"
+                                 TargetType="services:LogItemLevel">
+            <toolkit:Case Value="Info" Content="{ThemeResource SystemFillColorNeutralBrush}"/>
+            <toolkit:Case Value="Warning" Content="{ThemeResource SystemFillColorCautionBrush}"/>
+            <toolkit:Case Value="Error" Content="{ThemeResource SystemFillColorCriticalBrush}"/>
+        </converters:SwitchConverter>
     </Page.Resources>
 
     <Grid Padding="16" RowSpacing="8">
@@ -25,6 +32,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid
@@ -177,6 +185,19 @@
                 </ScrollViewer>
             </Grid>
         </Grid>
+
+        <Expander Header="Operation Log" Grid.Row="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+            <!-- Use VerticalAnchorRatio 1.0 to prefer to be on the bottom of the incoming items -->
+            <ScrollView Height="320" VerticalAnchorRatio="1.0">
+                <ItemsControl ItemsSource="{x:Bind Logger.LogItems}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="services:LogItemData">
+                            <TextBlock Text="{x:Bind Message}" Foreground="{x:Bind Level, Converter={StaticResource LevelToColorSwitchConverter}}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollView>
+        </Expander>
     </Grid>
     <!--  TODO: We should have a status with a progress bar and the count of reports done vs. total, etc...  -->
     <!--  TODO: Can we cancel all this? (i.e. add cancel button?)  -->

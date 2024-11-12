@@ -1,10 +1,11 @@
-﻿using NativeAOTDependencyHelper.Core.Models;
-using NativeAOTDependencyHelper.Core.JsonModels;
+﻿using NativeAOTDependencyHelper.Core.JsonModels;
+using NativeAOTDependencyHelper.Core.Models;
+using NativeAOTDependencyHelper.Core.Services;
+using Nito.AsyncEx;
 using Octokit;
 using System.Diagnostics;
-using NativeAOTDependencyHelper.Core.Services;
-using System.Xml.Linq;
 using System.Net.Http.Json;
+using System.Xml.Linq;
 using CheckStatus = NativeAOTDependencyHelper.Core.Models.CheckStatus;
 
 namespace NativeAOTDependencyHelper.Core.Sources;
@@ -24,6 +25,8 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
 
     private static HttpClient _httpClient = new();
 
+    private readonly AsyncLock _mutex = new();
+
     public async Task<bool> InitializeAsync()
     {
         _githubClient = await gitHubOAuthService?.StartAuthRequest();
@@ -33,21 +36,29 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
 
     public async Task<GitHubCodeSearchResult?> GetInfoForPackageAsync(NuGetPackageInfo package)
     {
-        // GitHub search code request to fetch source file url that contains <IsAotCompatible> tag
-        var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);
-        if (packageMetadata?.RepositoryUrl == null) return null;
-        var repoPath = packageMetadata?.RepositoryUrl.Replace("https://github.com/", "");
-        var request = new SearchCodeRequest("<IsAotCompatible>")
-        {
-            In = new[] { CodeInQualifier.File, CodeInQualifier.Path },
-            Language = Language.Xml,
-            Repos = new RepositoryCollection { repoPath }
-        };
+        SearchCodeResult result;
+    
+        try {
+            using (await _mutex.LockAsync())
+            {
+                // We mutex the datasource and artificially delay here as Code Search API is rate limited 10/min - https://docs.github.com/rest/search/search
+                await Task.Delay(6250); // Technically, 6000, but adding a bit of buffer.
 
-        try
-        {
-            var result = await _githubClient?.Search.SearchCode(request);
-            if (result == null || result.TotalCount == 0) return null;
+                // GitHub search code request to fetch source file url that contains <IsAotCompatible> tag
+                var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);
+                if (packageMetadata?.RepositoryUrl == null) return null;
+                var repoPath = packageMetadata?.RepositoryUrl.Replace("https://github.com/", "");
+                var request = new SearchCodeRequest("<IsAotCompatible>")
+                {
+                    In = new[] { CodeInQualifier.File, CodeInQualifier.Path },
+                    Language = Language.Xml,
+                    Repos = new RepositoryCollection { repoPath }
+                };
+
+                result = await _githubClient?.Search.SearchCode(request);
+                if (result == null || result.TotalCount == 0) return null;
+
+            }
 
             // Fetching source file from url parsed in GitHub code search response
             var gitSource = result.Items[0].Url;
@@ -55,10 +66,11 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "AOT Compatibility Tool");
 
             // Parsing XML tags to find <IsAotCompatible> tag
-            var repoInfo = await _httpClient.GetFromJsonAsync<GitHubCodeSearchResult>(gitSource);
+            var repoInfo = await _httpClient.GetFromJsonAsync<GitHubCodeSearchResult>(gitSource); // TODO: Check if this will rate limit us too?
             var sourceFile = await _httpClient.GetAsync(repoInfo.DownloadUrl);
             var sourceXml = await sourceFile.Content.ReadAsStreamAsync();
             XDocument doc = XDocument.Load(sourceXml);
+
             var aotTag = doc.Descendants("PropertyGroup")
                 .Elements("IsAotCompatible")
                 .FirstOrDefault();
