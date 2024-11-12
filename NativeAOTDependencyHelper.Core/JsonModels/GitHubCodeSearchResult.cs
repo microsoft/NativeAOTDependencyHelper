@@ -22,4 +22,6 @@ public class GitHubCodeSearchResult
     public bool? IsAotCompatible { get; set; }
 
     public CheckStatus CheckStatus { get; set; } = CheckStatus.Unavailable;
+
+    public string? Error { get; set; }
 }

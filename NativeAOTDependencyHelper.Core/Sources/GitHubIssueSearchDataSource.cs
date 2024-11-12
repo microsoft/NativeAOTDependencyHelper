@@ -28,7 +28,10 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
     {
         var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);
         if (packageMetadata?.RepositoryUrl == null || !packageMetadata.RepositoryUrl.Contains(gitHubUrl)) return null;
+        // Parsing repo path
         var repoPath = packageMetadata?.RepositoryUrl.Replace(gitHubUrl, "");
+        // Remove .git url suffix since this doesn't work in search
+        if (repoPath?.EndsWith(".git") == true) repoPath = repoPath.Replace(".git", "");
 
         var request = new SearchIssuesRequest("aot")
         {
@@ -42,10 +45,9 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
             if (result == null || result.TotalCount == 0) return null;
             var queryUri = new Uri($"{packageMetadata?.RepositoryUrl}/issues?q=type%3Aissue%20state%3Aopen%20aot");
             return new GitHubIssueSearchResult(result.TotalCount, queryUri);
-        } catch
+        } catch (Exception e)
         {
-            // TODO: Display error for search 
-            return null;
+            return new GitHubIssueSearchResult(0, null, e.Message);
         }
     }
 }

@@ -16,7 +16,6 @@ public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
 
     public bool IsInitialized { get; private set; }
 
-
     // We're sharing this for all main calls within our source.
     // HttpClient lifecycle management best practices:
     // https://learn.microsoft.com/dotnet/fundamentals/networking/http/httpclient-guidelines#recommended-use
@@ -42,10 +41,21 @@ public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
 
     public async Task<NuGetPackageRegistration?> GetInfoForPackageAsync(NuGetPackageInfo package)
     {
-        // Type = RegistrationsBaseUrl
-        var registration = await _sharedHttpClient.GetFromJsonAsync<NuGetPackageRegistration>(_serviceTypeToUri["RegistrationsBaseUrl"] + package.Name.ToLower() + "/index.json");
-        var version = registration?.Items?.FirstOrDefault()?.Upper;
-        return await GetMetadataFromNuspec(registration, package.Name, version);
+        try
+        {
+            // Type = RegistrationsBaseUrl
+            var registration = await _sharedHttpClient.GetFromJsonAsync<NuGetPackageRegistration>(_serviceTypeToUri["RegistrationsBaseUrl"] + package.Name.ToLower() + "/index.json");
+            var version = registration?.Items?.FirstOrDefault()?.Upper;
+            return await GetMetadataFromNuspec(registration, package.Name, version);
+        }
+        catch (Exception e)
+        {
+            return new NuGetPackageRegistration
+            {
+                Id = package.Name,
+                Error = e.Message
+            };
+        }
     }
 
     private async Task<NuGetPackageRegistration?> GetMetadataFromNuspec(NuGetPackageRegistration? registration, string packageId, string version)

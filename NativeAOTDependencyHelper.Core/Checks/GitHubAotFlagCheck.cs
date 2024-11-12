@@ -16,6 +16,7 @@ public class GitHubAotFlagCheck(TaskOrchestrator _orchestrator, IDataSource<GitH
     {
         var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<GitHubCodeSearchResult>(_gitHubSource, package);
         if (packageMetadata == null) return new AOTCheckItem(this, CheckStatus.Unavailable, "Flag not found for package.");
+        if (packageMetadata.Error != null) return new AOTCheckItem(this, CheckStatus.Error, $"Error performing code search result: {packageMetadata.Error}");
         if (packageMetadata.DownloadUrl == null) return new AOTCheckItem(this, packageMetadata.CheckStatus, "Flag found, but source file could not be retrieved. Please check repository for more details.");
         return new AOTCheckItem(this, packageMetadata.CheckStatus, "Click to navigate to source file", new Uri(packageMetadata.DownloadUrl));
     }

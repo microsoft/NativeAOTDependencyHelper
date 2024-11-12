@@ -74,12 +74,14 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
             }
             return repoInfo;
         }
-        catch (HttpRequestException e)
+        catch (Exception e)
         {
-            Debug.WriteLine(e.StatusCode + ": " + e.Message);
+            return new GitHubCodeSearchResult
+            {
+                CheckStatus = CheckStatus.Error,
+                Error = e.Message
+            };
         }
-
-        return null;
     }
 
 }

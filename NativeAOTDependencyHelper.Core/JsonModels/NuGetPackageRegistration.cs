@@ -16,6 +16,8 @@ public class NuGetPackageRegistration
     public RegistrationListings[] Items { get; set; } = Array.Empty<RegistrationListings>();
     public NuGetRegistrationContext? Context { get; set; }
     public string? RepositoryUrl { get; set; }
+
+    public string? Error { get; set; }
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]

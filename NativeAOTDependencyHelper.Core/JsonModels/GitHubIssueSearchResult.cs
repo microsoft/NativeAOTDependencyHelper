@@ -8,9 +8,16 @@ public class GitHubIssueSearchResult
     public Uri? IssuesQuery { get; private set; }
     public CheckStatus checkStatus { get; set; } = CheckStatus.Unavailable;
 
-    public GitHubIssueSearchResult(int totalItems, Uri? issuesQuery)
+    public string? Error { get; set; }
+
+    public GitHubIssueSearchResult(int totalItems, Uri? issuesQuery, string? error = null)
     {
         TotalItems = totalItems;
         IssuesQuery = issuesQuery;
+        if (error != null)
+        {
+            Error = error;
+            checkStatus = CheckStatus.Error;
+        }
     }
 }
