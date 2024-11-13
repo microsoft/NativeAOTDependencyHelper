@@ -1,4 +1,5 @@
-﻿using Octokit;
+﻿using Nito.AsyncEx;
+using Octokit;
 using System.Diagnostics;
 using System.Net;
 
@@ -13,6 +14,8 @@ public class GitHubOAuthService
 
     private GitHubClient? _gitHubClient;
 
+    private readonly AsyncLock _mutex = new();
+
     private string GetAuthorizationUrl()
     {
         return $"https://github.com/login/oauth/authorize?client_id={clientId}&redirect_uri={redirectUri}&scope=read:user";
@@ -20,32 +23,36 @@ public class GitHubOAuthService
 
     public async Task<GitHubClient?> StartAuthRequest()
     {
-        if (_gitHubClient != null) return _gitHubClient;
+        // Ensure we only issue one start of our auth request
+        using (await _mutex.LockAsync())
+        {
+            if (_gitHubClient != null) return _gitHubClient;
 
-        var authorizationUrl = GetAuthorizationUrl();
-        var listener = new HttpListener();
-        listener.Prefixes.Add(redirectUri);
-        listener.Start();
+            var authorizationUrl = GetAuthorizationUrl();
+            var listener = new HttpListener();
+            listener.Prefixes.Add(redirectUri);
+            listener.Start();
 
-        Process.Start(new ProcessStartInfo(authorizationUrl) { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(authorizationUrl) { UseShellExecute = true });
 
-        var context = await listener.GetContextAsync();
-        var code = context.Request.QueryString["code"];
+            var context = await listener.GetContextAsync();
+            var code = context.Request.QueryString["code"];
 
-        var client = await CompleteGitHubOAuthFlowAsync(code);
+            var client = await CompleteGitHubOAuthFlowAsync(code);
 
-        // Respond to the browser
-        var response = context.Response;
-        string responseString = "<html><body>You can close this window now.</body></html>";
-        byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-        response.ContentLength64 = buffer.Length;
-        var output = response.OutputStream;
-        output.Write(buffer, 0, buffer.Length);
-        output.Close();
+            // Respond to the browser
+            var response = context.Response;
+            string responseString = "<html><body>You can close this window now.</body></html>";
+            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+            response.ContentLength64 = buffer.Length;
+            var output = response.OutputStream;
+            output.Write(buffer, 0, buffer.Length);
+            output.Close();
 
-        listener.Stop();
-        _gitHubClient = client;
-        return client;
+            listener.Stop();
+            _gitHubClient = client;
+            return client;
+        }
     }
 
     private async Task<GitHubClient?> CompleteGitHubOAuthFlowAsync(string code)
