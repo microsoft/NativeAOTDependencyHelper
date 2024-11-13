@@ -144,9 +144,9 @@
                                 <toolkit:SwitchPresenter Value="{x:Bind LoadStatus}" TargetType="models:PackageLoadStatus">
                                     <toolkit:Case Value="Success">
                                         <TextBlock VerticalAlignment="Center">
-                                            <Run Text="{x:Bind PassedChecks, Mode=OneWay}" />
+                                            <Run Text="{x:Bind PassedChecks}" />
                                             <Run Text=" / " />
-                                            <Run Text="{x:Bind TotalChecks, Mode=OneWay}" />
+                                            <Run Text="{x:Bind TotalChecks}" />
                                             <Run Text=" checks passed" />
                                         </TextBlock>
                                     </toolkit:Case>
@@ -154,7 +154,7 @@
                                         <TextBlock FontSize="20" Text="❗" />
                                     </toolkit:Case>
                                     <toolkit:Case IsDefault="True">
-                                        <ProgressRing Maximum="{x:Bind TotalReports, Mode=OneWay}" Value="{x:Bind ReportsCompleted, Mode=OneWay}" IsIndeterminate="False" Width="30" Height="30" Background="DarkGray"/>
+                                        <ProgressRing IsActive="True" Maximum="{x:Bind TotalReports}" Value="{x:Bind ReportsCompleted}" IsIndeterminate="False" Width="24" Height="24" Background="DarkGray"/>
                                     </toolkit:Case>
                                 </toolkit:SwitchPresenter>
                             </toolkit:SettingsCard>

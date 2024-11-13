@@ -44,7 +44,7 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
     [ObservableProperty]
     public partial PackageLoadStatus LoadStatus { get; set; } = PackageLoadStatus.Loading;
 
-    public ArrayList ProcessingErrors { get; } = new ArrayList();
+    public List<string> ProcessingErrors { get; } = new();
 
     /// <summary>
     /// Gets or sets the number of GitHub issues found with the text "AOT".

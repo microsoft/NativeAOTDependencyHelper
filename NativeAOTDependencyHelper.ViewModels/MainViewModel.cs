@@ -22,9 +22,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
     [NotifyPropertyChangedFor(nameof(TotalChecks))]
     public partial int TotalPackages { get; set; }
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(TotalChecks))]
-    public partial int ChecksPerPackage { get; set; }
+    public int ChecksPerPackage => _taskOrchestrator?.NumberOfProviders ?? 0;
 
     [ObservableProperty]
     public partial int ChecksProcessed { get; set; }
@@ -41,17 +39,17 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
     [RelayCommand]
     public async Task<bool> ProcessSolutionFileAsync(string filepath)
     {
+        _taskOrchestrator = _serviceProvider?.GetService<TaskOrchestrator>();
+
         // Ensure we start fresh each time!
         Packages.Clear();
         PackagesProcessed = 0;
         TotalPackages = 0;
-        ChecksProcessed = 0;
-
-        _taskOrchestrator = _serviceProvider?.GetService<TaskOrchestrator>();
+        ChecksProcessed = 0;        
 
         if (_taskOrchestrator != null)
         {
-            // TODO: Need to know when all the packages are finished and remove these...
+            // Keep track of what's happening, progress, and completion
             _taskOrchestrator.StartedProcessingPackage += _taskOrchestrator_StartedProcessingPackage;
             _taskOrchestrator.ReportPackageProgress += _taskOrchestrator_ReportPackageProgress;
             _taskOrchestrator.FinishedProcessingPackage += _taskOrchestrator_FinishedProcessingPackage;
@@ -59,8 +57,6 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
             IsWorking = true;
 
             await _taskOrchestrator.ProcessSolutionAsync(filepath);
-
-            ChecksPerPackage = _taskOrchestrator.NumberOfProviders;
 
             return true;
         }
@@ -93,20 +89,16 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
                 if (e.ReportItem is AOTCheckItem check)
                 {
                     package.CheckItems.Add(check);
-                    if (check.ProcessingError != null)
-                    {
-                        package.ProcessingErrors.Add(check.ProcessingError);
-                        package.LoadStatus = PackageLoadStatus.Error;
-                    }
                 }
                 else if (e.ReportItem is ReportItem item)
                 {
                     package.ReportItems.Add(item);
-                    if (item.ProcessingError != null)
-                    {
-                        package.ProcessingErrors.Add(item.ProcessingError);
-                        package.LoadStatus = PackageLoadStatus.Error;
-                    }
+                }
+
+                if (e.ReportItem.ProcessingError != null)
+                {
+                    package.ProcessingErrors.Add(e.ReportItem.ProcessingError);
+                    package.LoadStatus = PackageLoadStatus.Error;
                 }
                 package.ReportsCompleted++;
             }
@@ -137,6 +129,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
                 }
             }
 
+            // All of our processing is done!
             if (PackagesProcessed == TotalPackages)
             {
                 IsWorking = false;
