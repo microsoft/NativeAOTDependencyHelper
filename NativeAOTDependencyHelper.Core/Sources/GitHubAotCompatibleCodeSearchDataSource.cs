@@ -13,11 +13,11 @@ namespace NativeAOTDependencyHelper.Core.Sources;
 /**
  * Performs a code search request to see if the project contains definitions for the <IsAotCompatible> flag
  */
-public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService) : IDataSource<GitHubCodeSearchResult?>
+public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService, ILogger _logger) : IDataSource<GitHubCodeSearchResult?>
 {
-    public string Name => "GitHub Search Information";
+    public string Name => "GitHub IsAotCompatible Code Search";
 
-    public string Description => "Retrieves information about the package from its GitHub repository";
+    public string Description => "Retrieves information about the package source from its GitHub repository, if available. Looks for the IsAotCompatible flag.";
 
     public bool IsInitialized { get; private set; }
 
@@ -31,6 +31,14 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
     {
         _githubClient = await gitHubOAuthService?.StartAuthRequest();
         IsInitialized = _githubClient != null;
+        if (!IsInitialized)
+        {
+            _logger.Warning("GitHub Code Source hasn't authenticated to GitHub");
+        }
+        else
+        {
+            _logger.Information("GitHub Code Source Authorized for GitHub");
+        }
         return _githubClient != null;
     }
 
@@ -45,7 +53,7 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
                 await Task.Delay(6250); // Technically, 6000, but adding a bit of buffer.
 
                 // GitHub search code request to fetch source file url that contains <IsAotCompatible> tag
-                var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);
+                NuGetPackageRegistration? packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_nugetSource, package);
                 if (packageMetadata?.RepositoryUrl == null) return null;
                 var repoPath = packageMetadata?.RepositoryUrl.Replace("https://github.com/", "");
                 var request = new SearchCodeRequest("<IsAotCompatible>")
@@ -88,6 +96,7 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
         }
         catch (Exception e)
         {
+            _logger.Error(e, $"Error searching GitHub Code for {package.Name}");
             return new GitHubCodeSearchResult
             {
                 CheckStatus = CheckStatus.Error,

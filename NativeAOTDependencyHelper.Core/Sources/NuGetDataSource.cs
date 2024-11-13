@@ -1,12 +1,12 @@
 ﻿using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.Models;
+using NativeAOTDependencyHelper.Core.Services;
 using System.Net.Http.Json;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 
 namespace NativeAOTDependencyHelper.Core.Sources;
 
-public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
+public class NuGetDataSource(ILogger _logger) : IDataSource<NuGetPackageRegistration>
 {
     public string Name => "NuGet.org Package Information";
 
@@ -29,13 +29,18 @@ public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
         // Get service index
         var index = await _sharedHttpClient.GetFromJsonAsync<NuGetServiceIndex>("https://api.nuget.org/v3/index.json");
 
-        if (index == null) return false;
+        if (index == null)
+        {
+            _logger.Warning("Issue initializing NuGet data source");
+            return false;
+        }
 
         foreach (var service in index.Resources)
         {
             _serviceTypeToUri[service.Type] = service.Id;
         }
         IsInitialized = true;
+        _logger.Information("NuGet Data Source Initialized");
         return false;
     }
 
@@ -50,6 +55,7 @@ public class NuGetDataSource : IDataSource<NuGetPackageRegistration>
         }
         catch (Exception e)
         {
+            _logger.Error(e, $"Error retrieving NuGet package info for {package.Name}");
             return new NuGetPackageRegistration
             {
                 Id = package.Name,

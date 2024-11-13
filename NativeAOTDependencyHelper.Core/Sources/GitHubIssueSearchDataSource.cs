@@ -6,11 +6,11 @@ using Octokit;
 
 namespace NativeAOTDependencyHelper.Core.Sources;
 
-public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService) : IDataSource<GitHubIssueSearchResult?>
+public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSource<NuGetPackageRegistration> _nugetSource, GitHubOAuthService gitHubOAuthService, ILogger _logger) : IDataSource<GitHubIssueSearchResult?>
 {
     public string Name => "GitHub AOT Issue Search";
 
-    public string Description => "Searches GitHub repo for issues related to AOT";
+    public string Description => "Searches GitHub repo for open issues related to AOT";
 
     public bool IsInitialized { get; private set; }
 
@@ -24,6 +24,14 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
     {
         _gitHubClient = await gitHubOAuthService?.StartAuthRequest();
         IsInitialized = _gitHubClient != null;
+        if (!IsInitialized)
+        {
+            _logger.Warning("GitHub Issue Source hasn't authenticated to GitHub");
+        }
+        else
+        {
+            _logger.Information("GitHub Issue Source Authorized for GitHub");
+        }
         return _gitHubClient != null;
     }
 
@@ -34,7 +42,7 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
             // We mutex the datasource and artificially delay here as GH API is rate limited 5000/hr - https://docs.github.com/rest/using-the-rest-api/rate-limits-for-the-rest-api
             await Task.Delay(1000); // We could probably lessen this, but for now leaving as 1000 (over 720) in case we add more checks elsewhere, we should probably manage this in the AuthService centrally or something?
 
-            var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);
+            NuGetPackageRegistration? packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_nugetSource, package);
             if (packageMetadata?.RepositoryUrl == null || !packageMetadata.RepositoryUrl.Contains(gitHubUrl)) return null;
             // Parsing repo path
             var repoPath = packageMetadata?.RepositoryUrl.Replace(gitHubUrl, "");
@@ -47,14 +55,17 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
                 Type = IssueTypeQualifier.Issue,
                 State = ItemState.Open
             };
+
             try
             {
                 var result = await _gitHubClient?.Search.SearchIssues(request);
                 if (result == null || result.TotalCount == 0) return null;
                 var queryUri = new Uri($"{packageMetadata?.RepositoryUrl}/issues?q=type%3Aissue%20state%3Aopen%20aot");
                 return new GitHubIssueSearchResult(result.TotalCount, queryUri);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
+                _logger.Error(e, $"Error searching GitHub Issues for {package.Name}");
                 return new GitHubIssueSearchResult(0, null, e.Message);
             }
         }
