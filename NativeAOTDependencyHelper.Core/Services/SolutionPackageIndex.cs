@@ -6,7 +6,7 @@ namespace NativeAOTDependencyHelper.Core.Services;
 /// <summary>
 /// This is a special root data source which is expected to be used by all other data sources.
 /// </summary>
-public class SolutionPackageIndex
+public class SolutionPackageIndex(DotnetToolingInterop _dotnetInterop, ILogger _logger)
 {
     public string Name => "Root list of Packages";
 
@@ -21,13 +21,20 @@ public class SolutionPackageIndex
     public async Task<bool> InitializeAsync(string solutionFilePath)
     {
         // https://learn.microsoft.com/dotnet/core/tools/dotnet-list-package
-        RawPackageList = await DotnetToolingInterop.GetTransitiveDependencyListAsync(solutionFilePath);
+        RawPackageList = await _dotnetInterop.GetTransitiveDependencyListAsync(solutionFilePath);
 
-        if (RawPackageList != null)
+        if (RawPackageList != null
+            && RawPackageList.Projects != null
+            && RawPackageList.Projects.Length > 0)
         {
             Packages = NuGetPackageInfo.FromJsonModels(RawPackageList);
 
             HasLoaded = true;
+            _logger.Information($"Loaded Package Information for {solutionFilePath}");
+        }
+        else
+        {
+            _logger.Error(new InvalidOperationException("Couldn't load package dependency data"), $"Issue processing solution {solutionFilePath}");
         }
 
         return HasLoaded;

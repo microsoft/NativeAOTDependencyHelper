@@ -28,7 +28,8 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
         _logger.Information($"Initializing Solution: {solutionFilePath}");
 
         if (await _servicePackageIndex.InitializeAsync(solutionFilePath)
-            && _servicePackageIndex.Packages != null)
+            && _servicePackageIndex.Packages != null
+            && _servicePackageIndex.Packages.Any())
         {
             var providers = _serviceProvider.GetServices<IReportItemProvider>().ToArray();
 
@@ -66,6 +67,8 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
 
             return true;
         }
+
+        _logger.Warning("No Packages to Process or Issue Loading Package Index");
 
         return false;
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using NativeAOTDependencyHelper.Core;
 using NativeAOTDependencyHelper.Core.Checks;
 using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.Models;
@@ -56,6 +57,7 @@ public partial class App : Application
         services.AddSingleton<MainViewModel>();
 
         // Root service
+        services.AddSingleton<DotnetToolingInterop>();
         services.AddSingleton<SolutionPackageIndex>();
         services.AddSingleton<TaskOrchestrator>();
         services.AddSingleton(TaskScheduler.FromCurrentSynchronizationContext()); // Grab copy of UI thread

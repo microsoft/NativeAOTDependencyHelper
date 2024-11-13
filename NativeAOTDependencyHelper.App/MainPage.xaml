@@ -192,7 +192,7 @@
                 <ItemsControl ItemsSource="{x:Bind Logger.LogItems}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="services:LogItemData">
-                            <TextBlock Text="{x:Bind Message}" Foreground="{x:Bind Level, Converter={StaticResource LevelToColorSwitchConverter}}"/>
+                            <TextBlock Text="{x:Bind Message}" Foreground="{x:Bind Level, Converter={StaticResource LevelToColorSwitchConverter}}" TextWrapping="Wrap"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

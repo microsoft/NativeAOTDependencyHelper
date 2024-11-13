@@ -8,9 +8,9 @@ using System.Collections.ObjectModel;
 
 namespace NativeAOTDependencyHelper.ViewModels;
 
-public partial class MainViewModel(IServiceProvider _serviceProvider, TaskScheduler _uiScheduler) : ObservableObject
+public partial class MainViewModel(IServiceProvider _serviceProvider, TaskScheduler _uiScheduler, DotnetToolingInterop _dotnetInterop, ILogger _logger) : ObservableObject
 {
-    public IAsyncRelayCommand DotnetVersionCommand { get; } = new AsyncRelayCommand(DotnetToolingInterop.CheckDotnetVersion);
+    public IAsyncRelayCommand DotnetVersionCommand { get; } = new AsyncRelayCommand(_dotnetInterop.CheckDotnetVersion);
 
     [ObservableProperty]
     public partial ObservableCollection<NuGetPackageViewModel> Packages { get; set; } = new();
@@ -56,9 +56,14 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
 
             IsWorking = true;
 
-            await _taskOrchestrator.ProcessSolutionAsync(filepath);
+            var result = await _taskOrchestrator.ProcessSolutionAsync(filepath);
 
-            return true;
+            if (!result)
+            {
+                _logger.Error(new InvalidOperationException($"There was an issue processing the solution {filepath}"), "Processing Error");
+            }
+
+            return result;
         }
 
         return false;
