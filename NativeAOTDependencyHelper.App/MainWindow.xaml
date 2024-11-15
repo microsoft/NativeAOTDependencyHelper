@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Window
-    x:Class="NativeAOTDependencyHelper.App.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:NativeAOTDependencyHelper.App"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+<Window x:Class="NativeAOTDependencyHelper.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="using:NativeAOTDependencyHelper.App"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d">
     <Window.SystemBackdrop>
         <MicaBackdrop />
     </Window.SystemBackdrop>
@@ -16,15 +15,13 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Image
-                Width="16"
-                Margin="16,0,8,0"
-                VerticalAlignment="Center"
-                Source="ms-appx:///Assets/StoreLogo.png" />
-            <TextBlock
-                VerticalAlignment="Center"
-                Style="{StaticResource CaptionTextBlockStyle}"
-                Text="Native AOT Dependency Helper" />
+            <Image Width="16"
+                   Margin="16,0,8,0"
+                   VerticalAlignment="Center"
+                   Source="ms-appx:///Assets/StoreLogo.png" />
+            <TextBlock VerticalAlignment="Center"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       Text="Native AOT Dependency Helper" />
         </StackPanel>
         <local:MainPage Grid.Row="1" />
     </Grid>

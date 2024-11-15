@@ -9,6 +9,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeAOTDependencyHelper.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeAOTDependencyHelper.ViewModels", "NativeAOTDependencyHelper.ViewModels\NativeAOTDependencyHelper.ViewModels.csproj", "{E20FA404-676D-4A64-951C-68E3E49A0F84}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config", "Config", "{F58BA6FD-7033-4A4B-B42C-62CC54F47AAA}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		.config\dotnet-tools.json = .config\dotnet-tools.json
+		nuget.config = nuget.config
+		settings.xamlstyler = settings.xamlstyler
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
