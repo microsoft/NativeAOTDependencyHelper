@@ -188,7 +188,8 @@
             </Grid>
         </Grid>
 
-        <Expander Grid.Row="2"
+        <Expander x:Name="OperationalLogExpander"
+                  Grid.Row="2"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Stretch"
                   Header="Operation Log">

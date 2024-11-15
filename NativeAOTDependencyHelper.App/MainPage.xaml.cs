@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -15,7 +16,8 @@ namespace NativeAOTDependencyHelper.App;
 /// <summary>
 /// Main page for our application, hosted in our <see cref="MainWindow"/>.
 /// </summary>
-public sealed partial class MainPage : Page
+public sealed partial class MainPage : Page,
+    IRecipient<LoggedErrorMessage>
 {
     public MainViewModel ViewModel { get; } = ((App)App.Current).Services.GetService<MainViewModel>();
 
@@ -25,7 +27,15 @@ public sealed partial class MainPage : Page
     {
         InitializeComponent();
 
+        // Explicitly register our interaces as RegisterAll uses reflection
+        WeakReferenceMessenger.Default.Register<LoggedErrorMessage>(this);
+
         ViewModel.DotnetVersionCommand.Execute(this);
+    }
+
+    public void Receive(LoggedErrorMessage message)
+    {
+        OperationalLogExpander.IsExpanded = true;
     }
 
     private async void OpenSolution_Click(object sender, RoutedEventArgs e)

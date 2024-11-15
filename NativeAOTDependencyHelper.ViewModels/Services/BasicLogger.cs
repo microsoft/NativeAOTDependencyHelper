@@ -1,4 +1,6 @@
-﻿using NativeAOTDependencyHelper.Core.Services;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using NativeAOTDependencyHelper.Core;
+using NativeAOTDependencyHelper.Core.Services;
 using Octokit;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
@@ -38,6 +40,8 @@ public class BasicLogger(TaskScheduler _uiScheduler) : ILogger
         Task.Factory.StartNew(() =>
         {
             LogItems.Add(new($"{DateTime.Now} - {member} - {message}:\n\t{exception.Message}\n\t{exception.StackTrace}", LogItemLevel.Error));
+
+            WeakReferenceMessenger.Default.Send<LoggedErrorMessage>(new(message));
         }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler);
     }
 }
