@@ -66,20 +66,23 @@ public class NuGetDataSource(ILogger _logger) : IDataSource<NuGetPackageRegistra
 
     private async Task<NuGetPackageRegistration?> GetMetadataFromNuspec(NuGetPackageRegistration? registration, string packageId, string version)
     {
+        if (registration == null || version == null) return null;
+
         // Type = PackageBaseAddress/3.0.0
         var response = await _sharedHttpClient.GetAsync(_serviceTypeToUri["PackageBaseAddress/3.0.0"] + packageId.ToLower() + "/" + version + "/" + packageId.ToLower() + ".nuspec");
         response.EnsureSuccessStatusCode();
 
         using var nuspecStream = await response.Content.ReadAsStreamAsync();
-        XDocument doc = XDocument.Load(nuspecStream);
-        var repository = from element in doc.Descendants()
+        registration.Metadata = XDocument.Load(nuspecStream);
+        var repository = from element in registration.Metadata.Descendants()
                          where element.Name.LocalName == "repository"
                          select element;
 
-        if (registration != null && repository != null)
+        if (repository != null)
         {
             registration.RepositoryUrl = repository?.FirstOrDefault()?.Attribute("url")?.Value;
         }
+
         return registration;
     }
 }

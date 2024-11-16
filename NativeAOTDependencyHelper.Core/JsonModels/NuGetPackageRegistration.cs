@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using System.Xml.Linq;
 
 namespace NativeAOTDependencyHelper.Core.JsonModels;
 
@@ -18,6 +19,8 @@ public class NuGetPackageRegistration
     public string? RepositoryUrl { get; set; }
 
     public string? Error { get; set; }
+
+    public XDocument? Metadata { get; set; }
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]
