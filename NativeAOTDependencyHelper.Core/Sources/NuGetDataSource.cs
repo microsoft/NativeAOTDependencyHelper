@@ -12,9 +12,13 @@ public class NuGetDataSource(ILogger _logger) : IDataSource<NuGetPackageRegistra
 
     public string Description => "Retrieves information about package metadata from NuGet.org";
 
-    private static Dictionary<String, String> _serviceTypeToUri = new();
-
     public bool IsInitialized { get; private set; }
+
+    public string? PackageBaseAddress => _serviceTypeToUri.TryGetValue("PackageBaseAddress/3.0.0", out var value) ? value : null;
+
+    public string? RegistrationsBaseUrl => _serviceTypeToUri.TryGetValue("RegistrationsBaseUrl", out var value) ? value : null;
+
+    private static Dictionary<string, string> _serviceTypeToUri = new();
 
     // We're sharing this for all main calls within our source.
     // HttpClient lifecycle management best practices:
@@ -49,9 +53,9 @@ public class NuGetDataSource(ILogger _logger) : IDataSource<NuGetPackageRegistra
         try
         {
             // Type = RegistrationsBaseUrl
-            var registration = await _sharedHttpClient.GetFromJsonAsync<NuGetPackageRegistration>(_serviceTypeToUri["RegistrationsBaseUrl"] + package.Name.ToLower() + "/index.json");
+            var registration = await _sharedHttpClient.GetFromJsonAsync<NuGetPackageRegistration>($"{RegistrationsBaseUrl}{package.Name.ToLower()}/index.json");
             var version = registration?.Items?.FirstOrDefault()?.Upper;
-            return await GetMetadataFromNuspec(registration, package.Name, version);
+            return await GetMetadataFromNuspec(registration, package.Name, version!);
         }
         catch (Exception e)
         {
@@ -66,10 +70,10 @@ public class NuGetDataSource(ILogger _logger) : IDataSource<NuGetPackageRegistra
 
     private async Task<NuGetPackageRegistration?> GetMetadataFromNuspec(NuGetPackageRegistration? registration, string packageId, string version)
     {
-        if (registration == null || version == null) return null;
+        if (registration == null || PackageBaseAddress == null || version == null) return null;
 
         // Type = PackageBaseAddress/3.0.0
-        var response = await _sharedHttpClient.GetAsync(_serviceTypeToUri["PackageBaseAddress/3.0.0"] + packageId.ToLower() + "/" + version + "/" + packageId.ToLower() + ".nuspec");
+        var response = await _sharedHttpClient.GetAsync($"{PackageBaseAddress}{packageId.ToLower()}/{version}/{packageId.ToLower()}.nuspec");
         response.EnsureSuccessStatusCode();
 
         using var nuspecStream = await response.Content.ReadAsStreamAsync();
