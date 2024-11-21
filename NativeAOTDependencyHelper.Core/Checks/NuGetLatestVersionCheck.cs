@@ -39,7 +39,10 @@ public class NuGetLatestVersionCheck(TaskOrchestrator _orchestrator, IDataSource
                     // Check each project's version                    
                     foreach (var project in package.ProjectReferences)
                     {
-                        if (project.RequestedVersion != latest)
+                        // TODO: We probably have to do something with ResolvedVersion as well,
+                        // at least in the case where there are no requested versions (i.e. pure transitive across all projects)
+                        if (!string.IsNullOrWhiteSpace(project.RequestedVersion)
+                            && project.RequestedVersion != latest)
                         {
                             found = true;
 
