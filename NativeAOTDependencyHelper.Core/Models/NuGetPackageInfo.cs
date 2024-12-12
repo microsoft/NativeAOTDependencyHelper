@@ -1,4 +1,5 @@
-﻿using NativeAOTDependencyHelper.Core.JsonModels;
+﻿using Microsoft.Build.Evaluation;
+using NativeAOTDependencyHelper.Core.JsonModels;
 
 namespace NativeAOTDependencyHelper.Core.Models;
 
@@ -34,27 +35,56 @@ public record NuGetPackageInfo(string Name, NuGetPackageProjectReference[] Proje
 
         foreach (var project in packageList.Projects)
         {
-            foreach (var framework in project.Frameworks)
+            // If no frameworks, it is probably because the project was not restored yet.
+            // In that case, we need to load the project file and get the package references directly.
+            if (project.Frameworks.Count() == 0)
             {
-                // Layer is either TopLevel (0) or Transitive (1)
-                for (int layer = 0; layer <= 1; layer++)
-                {
-                    // See Switch Expression: https://learn.microsoft.com/dotnet/csharp/language-reference/operators/switch-expression
-                    foreach (var package in layer switch { 0 => framework.TopLevelPackages, 
-                                                           1 => framework.TransitivePackages, 
-                                                           _ => throw new IndexOutOfRangeException() })
-                    {
-                        if (!_uniquePackageIndex.ContainsKey(package.Id))
-                        {
-                            _uniquePackageIndex[package.Id] = new();
-                        }
+                var projectCollection = new ProjectCollection();
+                var msBuildProject = projectCollection.LoadProject(project.Path);
 
-                        _uniquePackageIndex[package.Id].Add(new NuGetPackageProjectReference(
-                            ParentProjectPath: project.Path.Substring(commonPathIndex),
-                            Framework: framework.Framework,
-                            RequestedVersion: package.RequestedVersion,
-                            ResolvedVersion: package.ResolvedVersion,
-                            TransitiveLayer: layer));
+                // Get all direct package references
+                var packageRefs = msBuildProject.GetItems("PackageReference");
+
+                foreach (var p in packageRefs)
+                {
+                    string packageName = p.EvaluatedInclude;
+                    string version = p.GetMetadataValue("Version");
+                    if (!_uniquePackageIndex.ContainsKey(packageName))
+                    {
+                        _uniquePackageIndex[packageName] = [];
+                    }
+                    _uniquePackageIndex[packageName].Add(new NuGetPackageProjectReference(
+                        ParentProjectPath: project.Path.Substring(commonPathIndex),
+                        Framework: string.Empty,
+                        RequestedVersion: version,
+                        ResolvedVersion: version,
+                        TransitiveLayer: 0));
+                }
+            }
+            else
+            {
+                foreach (var framework in project.Frameworks)
+                {
+                    // Layer is either TopLevel (0) or Transitive (1)
+                    for (int layer = 0; layer <= 1; layer++)
+                    {
+                        // See Switch Expression: https://learn.microsoft.com/dotnet/csharp/language-reference/operators/switch-expression
+                        foreach (var package in layer switch { 0 => framework.TopLevelPackages,
+                                                               1 => framework.TransitivePackages,
+                                                               _ => throw new IndexOutOfRangeException() })
+                        {
+                            if (!_uniquePackageIndex.ContainsKey(package.Id))
+                            {
+                                _uniquePackageIndex[package.Id] = new();
+                            }
+
+                            _uniquePackageIndex[package.Id].Add(new NuGetPackageProjectReference(
+                                ParentProjectPath: project.Path.Substring(commonPathIndex),
+                                Framework: framework.Framework,
+                                RequestedVersion: package.RequestedVersion,
+                                ResolvedVersion: package.ResolvedVersion,
+                                TransitiveLayer: layer));
+                        }
                     }
                 }
             }

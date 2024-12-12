@@ -1,8 +1,8 @@
 ﻿using NativeAOTDependencyHelper.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Nito.AsyncEx;
-using System.Collections;
 using System.Collections.Concurrent;
+using Microsoft.Build.Locator;
 
 namespace NativeAOTDependencyHelper.Core.Services;
 
@@ -26,6 +26,12 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
     public async Task<bool> ProcessSolutionAsync(string solutionFilePath)
     {
         _logger.Information($"Initializing Solution: {solutionFilePath}");
+
+        if (!MSBuildLocator.IsRegistered)
+        {
+            var instance = MSBuildLocator.RegisterDefaults();
+            Console.WriteLine($"Registered MSBuild from: {instance.MSBuildPath}");
+        }
 
         if (await _servicePackageIndex.InitializeAsync(solutionFilePath)
             && _servicePackageIndex.Packages != null
