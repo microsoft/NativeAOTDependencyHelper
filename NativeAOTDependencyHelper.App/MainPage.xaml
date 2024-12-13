@@ -188,7 +188,7 @@
             </Grid>
         </Grid>
 
-        <toolkit:HeaderedContentControl Grid.Row="1">
+        <toolkit:HeaderedContentControl Grid.Row="1" Visibility="{x:Bind ViewModel.IsViewEmpty, Converter={StaticResource BoolToVisibilityConverter}}">
             <toolkit:HeaderedContentControl.Header>
                 <TextBlock Padding="8" Text="Welcome to the Native AOT Dependency Helper Tool" Style="{StaticResource HeaderTextBlockStyle}"/>
             </toolkit:HeaderedContentControl.Header>
