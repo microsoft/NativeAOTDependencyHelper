@@ -211,31 +211,26 @@
                        ItemsSource="{x:Bind ViewModel.GetReportAndCheckTypes}"
                        SelectionMode="None">
                     <ListView.Header>
-                        <Grid Padding="16,12"
+                        <toolkit:DataTable Margin="12,12"
                                   ColumnSpacing="16">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200" />
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}"  Text="Type" />
-                            <TextBlock TextWrapping="WrapWholeWords" Grid.Column="1" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Name" />
-                            <TextBlock TextWrapping="WrapWholeWords" Grid.Column="2" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Description" />
-                        </Grid>
+                            <toolkit:DataColumn DesiredWidth="200">
+                                <TextBlock TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}"  Text="Type" />
+                            </toolkit:DataColumn>
+                            <toolkit:DataColumn DesiredWidth="300">
+                                <TextBlock  TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Name" />
+                            </toolkit:DataColumn>
+                            <toolkit:DataColumn CanResize="True">
+                                <TextBlock TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Description" />
+                            </toolkit:DataColumn>
+                        </toolkit:DataTable>
                     </ListView.Header>
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:IReportItemProvider"
-                                  x:DefaultBindMode="OneWay">
-                            <Grid ColumnSpacing="16">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="200" />
-                                    <ColumnDefinition Width="300" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock TextWrapping="WrapWholeWords" Grid.Column="0" Text="{x:Bind Category}"/>
-                                <TextBlock TextWrapping="WrapWholeWords" Grid.Column="1" Text="{x:Bind Name}"/>
-                                <TextBlock TextWrapping="WrapWholeWords" Grid.Column="2" Text="{x:Bind Description}"/>
-                            </Grid>
+                        <DataTemplate x:DataType="models:IReportItemProvider" x:DefaultBindMode="OneWay">
+                            <toolkit:DataRow HorizontalAlignment="Left">
+                                <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Category}"/>
+                                <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Name}"/>
+                                <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Description}"/>
+                            </toolkit:DataRow>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
