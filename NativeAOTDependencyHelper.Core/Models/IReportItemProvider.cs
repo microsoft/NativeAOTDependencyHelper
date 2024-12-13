@@ -22,6 +22,11 @@ public interface IReportItemProvider
     public int SortOrder { get; }
 
     /// <summary>
+    /// Gets a description of the report type for the provider.
+    /// </summary>
+    public string Description { get; }
+
+    /// <summary>
     /// Processes data from the given data sources (will happen for each package) and returns a new instance of <see cref="IReportItemProvider"/> to add to that package's checklist.
     /// </summary>
     /// <param name="sources">Instances of the requested <see cref="IDataSource"/> in <see cref="IDependsOnDataSource.DependentDataSourceIds"/>, will be in the same order as requested or empty if none.</param>

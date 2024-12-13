@@ -12,6 +12,8 @@ public class GitHubAotIssuesCheck(TaskOrchestrator _orchestrator, IDataSource<Gi
 
     public ReportCategory Category => ReportCategory.AOTCompatibility;
 
+    public string Description => "Searches GitHub (if available) for open issues containing 'AOT'";
+
     public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
     {
         var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<GitHubIssueSearchResult>(_gitHubSource, package);

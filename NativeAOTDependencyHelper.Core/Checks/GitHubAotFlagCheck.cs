@@ -12,6 +12,8 @@ public class GitHubAotFlagCheck(TaskOrchestrator _orchestrator, IDataSource<GitH
 
     public ReportCategory Category => ReportCategory.AOTCompatibility;
 
+    public string Description => "Searches GitHub source code (if available) for the <IsAotCompatible> project flag";
+
     public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
     {
         var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<GitHubCodeSearchResult>(_gitHubSource, package);

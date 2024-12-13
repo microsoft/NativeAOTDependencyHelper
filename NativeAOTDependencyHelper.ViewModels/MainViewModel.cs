@@ -20,6 +20,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotalChecks))]
+    [NotifyPropertyChangedFor(nameof(IsViewEmpty))]
     public partial int TotalPackages { get; set; }
 
     public int ChecksPerPackage => _taskOrchestrator?.NumberOfProviders ?? 0;
@@ -32,7 +33,11 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
     [ObservableProperty]
     public partial bool IsWorking { get; set; }
 
+    public bool IsViewEmpty => Packages.Count == 0;
+
     private TaskOrchestrator? _taskOrchestrator;
+
+    public IReportItemProvider[]? GetReportAndCheckTypes => _serviceProvider?.GetServices<IReportItemProvider>().ToArray();
 
     // TODO: Have error string to report back issues initializing?
 

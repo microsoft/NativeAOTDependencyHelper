@@ -18,7 +18,7 @@
         <converters:TaskResultConverter x:Key="TaskResultConverter" />
         <converters:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter"
                                                 GreaterThan="0" />
-
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:SwitchConverter x:Key="LevelToColorSwitchConverter"
                                     TargetType="services:LogItemLevel">
             <toolkit:Case Value="Info" Content="{ThemeResource SystemFillColorNeutralBrush}" />
@@ -186,6 +186,64 @@
                                              ViewModel="{x:Bind (viewModels:NuGetPackageViewModel)DependencyView.SelectedItem}" />
                 </ScrollViewer>
             </Grid>
+        </Grid>
+
+        <Grid Grid.Row="1"
+          ColumnSpacing="16"
+          RowSpacing="8"
+          Visibility="{x:Bind ViewModel.IsViewEmpty, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel Padding="8,0,0,0"
+                        Orientation="Vertical"
+                        Spacing="12">
+                <TextBlock Text="Welcome to the Native AOT Dependency Helper Tool" Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Text="To get started with using the tool, click the 'Open .sln' button in the top left corner and upload the solution file for the project you'd like to check."/>
+                <TextBlock Text="About this tool" Style="{StaticResource SubheaderTextBlockStyle}"/>
+
+                <TextBlock TextWrapping="WrapWholeWords">
+                       The tool bubbles up the following data and performs a series of 'checks' to gauge how well a dependency may support AOT.
+                        <LineBreak/><LineBreak/>This information is retrieved and bubbled up for each dependency in your project, as well as general information like the package ID, whether or not its directly referenced or a transitive dependency, as well as the requested and resolved versions from each referencing project.
+                        <LineBreak/><LineBreak/><Bold>'Reports'</Bold> just provide general information to bubble up for each package.
+                        <LineBreak/><LineBreak/><Bold>'Checks'</Bold> look specifically for things that may indicate potential issues with AOT compatibility.
+                        <LineBreak/><LineBreak/>Passing a check does not guarantee AOT compatibility, conversely failing a check indicated something to investigate or be aware of vs. it being strictly not able to function when AOT is turned on. These are aids to discovery of potentially short comings, known issues, or gaps with your dependency chain to be aware of before attempting to add this functionality to your application. Here are the following checks performed:
+                </TextBlock>
+
+                <ListView x:Name="InfoView"
+                       ItemsSource="{x:Bind ViewModel.GetReportAndCheckTypes}"
+                       SelectionMode="None">
+                    <ListView.Header>
+                        <Grid Padding="16,12"
+                                  ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="300" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}"  Text="Type" />
+                            <TextBlock Grid.Column="1" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Name" />
+                            <TextBlock Grid.Column="2" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Description" />
+                        </Grid>
+                    </ListView.Header>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:IReportItemProvider"
+                                  x:DefaultBindMode="OneWay">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{x:Bind Category}"/>
+                                <TextBlock Grid.Column="1" Text="{x:Bind Name}"/>
+                                <TextBlock Grid.Column="2" Text="{x:Bind Description}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
         </Grid>
 
         <Expander x:Name="OperationalLogExpander"

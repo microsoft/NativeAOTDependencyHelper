@@ -19,6 +19,8 @@ public class NuGetLatestVersionCheck(TaskOrchestrator _orchestrator, IDataSource
 
     public int SortOrder => 3;
 
+    public string Description => "Are you referencing the latest version available for the NuGet package?";
+
     public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
     {
         var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);
