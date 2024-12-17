@@ -17,9 +17,19 @@ public interface IReportItemProvider
     public ReportCategory Category { get; }
 
     /// <summary>
+    /// Gets the <see cref="ReportType"/> which is either a "Check" or "Report". Checks return a <see cref="AOTCheckItem"/> instead of a <see cref="ReportItem"/>.
+    /// </summary>
+    public ReportType Type { get; }
+
+    /// <summary>
     /// Gets the desired sort order for this item within the list of reports.
     /// </summary>
     public int SortOrder { get; }
+
+    /// <summary>
+    /// Gets a description of the report type for the provider.
+    /// </summary>
+    public string Description { get; }
 
     /// <summary>
     /// Processes data from the given data sources (will happen for each package) and returns a new instance of <see cref="IReportItemProvider"/> to add to that package's checklist.
@@ -34,4 +44,10 @@ public enum ReportCategory
     Informational,
     Health,
     AOTCompatibility
+}
+
+public enum ReportType
+{
+    Report,
+    Check
 }

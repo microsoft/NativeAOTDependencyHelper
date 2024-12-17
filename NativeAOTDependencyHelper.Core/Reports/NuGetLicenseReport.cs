@@ -12,6 +12,10 @@ public class NuGetLicenseReport(TaskOrchestrator _orchestrator, IDataSource<NuGe
 
     public int SortOrder => 10;
 
+    public string Description => "Displays the license of the dependency";
+
+    public ReportType Type => ReportType.Report;
+
     public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
     {
         var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);

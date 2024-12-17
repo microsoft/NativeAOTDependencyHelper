@@ -2,9 +2,9 @@
 using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
 
-namespace NativeAOTDependencyHelper.Core.Checks;
+namespace NativeAOTDependencyHelper.Core.Reports;
 
-public class GitHubAotIssuesCheck(TaskOrchestrator _orchestrator, IDataSource<GitHubIssueSearchResult> _gitHubSource) : IReportItemProvider
+public class GitHubAotIssuesReport(TaskOrchestrator _orchestrator, IDataSource<GitHubIssueSearchResult> _gitHubSource) : IReportItemProvider
 {
     public string Name => "AOT-related GitHub issues";
 
@@ -12,9 +12,13 @@ public class GitHubAotIssuesCheck(TaskOrchestrator _orchestrator, IDataSource<Gi
 
     public ReportCategory Category => ReportCategory.AOTCompatibility;
 
+    public ReportType Type => ReportType.Report;
+
+    public string Description => "Searches GitHub (if available) for open issues containing 'AOT'";
+
     public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
     {
-        var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<GitHubIssueSearchResult>(_gitHubSource, package);
+        var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_gitHubSource, package);
         if (packageMetadata == null) return new ReportItem(this, "No repository data given to search for AOT tag", null);
         if (packageMetadata.Error != null) return new ReportItem(this, "Error performing GitHub issues search for query " + packageMetadata.IssuesQuery, null, "Error performing GitHub issues search request: " + packageMetadata.Error);
         if (packageMetadata.TotalItems == 0) return new ReportItem(this, "No open issues found. Click to open search query.", packageMetadata.IssuesQuery);

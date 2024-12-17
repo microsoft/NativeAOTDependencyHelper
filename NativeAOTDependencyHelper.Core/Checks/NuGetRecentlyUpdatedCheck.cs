@@ -17,6 +17,10 @@ public class NuGetRecentlyUpdatedCheck(TaskOrchestrator _orchestrator, IDataSour
 
     public int SortOrder => 5;
 
+    public string Description => "Has this package been updated in the past 12 months?";
+
+    public ReportType Type => ReportType.Check;
+
     public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
     {
         var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);

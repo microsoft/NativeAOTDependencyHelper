@@ -75,7 +75,7 @@ public partial class App : Application
         services.AddSingleton<IReportItemProvider, NuGetLatestVersionCheck>();
         services.AddSingleton<IReportItemProvider, NuGetRecentlyUpdatedCheck>();
         services.AddSingleton<IReportItemProvider, GitHubAotFlagCheck>();
-        services.AddSingleton<IReportItemProvider, GitHubAotIssuesCheck>();
+        services.AddSingleton<IReportItemProvider, GitHubAotIssuesReport>();
 
         // Reports
         services.AddSingleton<IReportItemProvider, NuGetLicenseReport>();
