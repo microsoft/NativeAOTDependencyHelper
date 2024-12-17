@@ -213,8 +213,11 @@
                     <ListView.Header>
                         <toolkit:DataTable Margin="12,12"
                                   ColumnSpacing="16">
-                            <toolkit:DataColumn DesiredWidth="200">
+                            <toolkit:DataColumn DesiredWidth="100">
                                 <TextBlock TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}"  Text="Type" />
+                            </toolkit:DataColumn>
+                            <toolkit:DataColumn DesiredWidth="200">
+                                <TextBlock TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Category" />
                             </toolkit:DataColumn>
                             <toolkit:DataColumn DesiredWidth="300">
                                 <TextBlock  TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Name" />
@@ -227,6 +230,7 @@
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:IReportItemProvider" x:DefaultBindMode="OneWay">
                             <toolkit:DataRow HorizontalAlignment="Left">
+                                <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Type}"/>
                                 <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Category}"/>
                                 <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Name}"/>
                                 <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Description}"/>
