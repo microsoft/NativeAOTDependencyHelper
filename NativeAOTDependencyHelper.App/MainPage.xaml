@@ -18,7 +18,6 @@
         <converters:TaskResultConverter x:Key="TaskResultConverter" />
         <converters:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter"
                                                 GreaterThan="0" />
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:SwitchConverter x:Key="LevelToColorSwitchConverter"
                                     TargetType="services:LogItemLevel">
             <toolkit:Case Value="Info" Content="{ThemeResource SystemFillColorNeutralBrush}" />
@@ -188,7 +187,7 @@
             </Grid>
         </Grid>
 
-        <toolkit:HeaderedContentControl Grid.Row="1" Visibility="{x:Bind ViewModel.IsViewEmpty, Converter={StaticResource BoolToVisibilityConverter}}">
+        <toolkit:HeaderedContentControl Grid.Row="1" Visibility="{x:Bind ViewModel.IsViewEmpty}">
             <toolkit:HeaderedContentControl.Header>
                 <TextBlock Padding="8" Text="Welcome to the Native AOT Dependency Helper Tool" Style="{StaticResource HeaderTextBlockStyle}"/>
             </toolkit:HeaderedContentControl.Header>
@@ -206,11 +205,16 @@
                         <LineBreak/><LineBreak/>Passing a check does not guarantee AOT compatibility, conversely failing a check indicated something to investigate or be aware of vs. it being strictly not able to function when AOT is turned on. These are aids to discovery of potentially short comings, known issues, or gaps with your dependency chain to be aware of before attempting to add this functionality to your application.
                         <LineBreak/><LineBreak/>Here are the following checks performed:
                 </TextBlock>
-                
-                <ListView x:Name="InfoView"
-                       ItemsSource="{x:Bind ViewModel.GetReportAndCheckTypes}"
-                       SelectionMode="None">
-                    <ListView.Header>
+
+                <toolkit:HeaderedItemsControl
+                       ItemsSource="{x:Bind ViewModel.GetReportAndCheckTypes}">
+                    <toolkit:HeaderedItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Margin" Value="16,6,5,5"/>
+                            <Setter Property="HorizontalContentAlignment"  Value="Stretch"></Setter>
+                        </Style>
+                    </toolkit:HeaderedItemsControl.ItemContainerStyle>
+                    <toolkit:HeaderedItemsControl.Header>
                         <toolkit:DataTable Margin="12,12"
                                   ColumnSpacing="16">
                             <toolkit:DataColumn DesiredWidth="100">
@@ -226,8 +230,8 @@
                                 <TextBlock TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Description" />
                             </toolkit:DataColumn>
                         </toolkit:DataTable>
-                    </ListView.Header>
-                    <ListView.ItemTemplate>
+                    </toolkit:HeaderedItemsControl.Header>
+                    <toolkit:HeaderedItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="models:IReportItemProvider" x:DefaultBindMode="OneWay">
                             <toolkit:DataRow HorizontalAlignment="Left">
                                 <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Type}"/>
@@ -236,8 +240,8 @@
                                 <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Description}"/>
                             </toolkit:DataRow>
                         </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    </toolkit:HeaderedItemsControl.ItemTemplate>
+                </toolkit:HeaderedItemsControl>
             </StackPanel>
         </toolkit:HeaderedContentControl>
 
