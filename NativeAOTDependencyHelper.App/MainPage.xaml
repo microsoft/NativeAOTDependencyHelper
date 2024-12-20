@@ -63,7 +63,7 @@
                         <Viewbox Width="16">
                             <PathIcon Data="M2048 335v1378q0 37-19 67t-52 47l-358 180q-26 13-58 13-25 0-48-9t-42-28l-726-726-461 353q-19 14-39 14-12 0-40-9t-59-22-61-24-43-17q-18-7-30-23t-12-37V556q0-20 12-36t30-24q14-5 43-17t60-24 60-21 40-10q20 0 39 14l461 353 726-726q18-18 41-27t49-10q32 0 58 13l358 180q33 17 52 47t19 67zM256 1280l256-256-256-256v512zm1280 119V649l-488 375 488 375z" />
                         </Viewbox>
-                        <TextBlock Text="Open solution" />
+                        <TextBlock Text="Open solution or project" />
                     </StackPanel>
                 </Button>
                 <ProgressBar Value="{x:Bind ViewModel.ChecksProcessed}"
@@ -321,7 +321,7 @@
                                          HorizontalAlignment="Left"
                                          PasswordChanged="PasswordBox_PasswordChanged"
                                          PlaceholderText="Add or update your GitHub PAT here" />
-                            <TextBlock Text="2. Click on the 'Open .sln..' button in the top left corner to select the solution file of your project. If the button is disabled, please enter a PAT and try again." />
+                            <TextBlock Text="2. Click on the 'Open solution or project' button in the top left corner to select your Visual Studio solution file of your project you'd like to check or the individual C# project file. If the button is disabled, please enter a PAT and try again." />
                             <TextBlock Margin="0,20,0,20"
                                        Text="** Note: Due to API rate limits, the app will take some time generating the report. Loading errors can be analyzed in the logger and will be indicated with a '!' icon next to the package item."
                                        TextWrapping="WrapWholeWords" />

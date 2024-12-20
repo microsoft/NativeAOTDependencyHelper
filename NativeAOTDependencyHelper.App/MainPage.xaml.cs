@@ -56,6 +56,7 @@ public sealed partial class MainPage : Page,
         // Set options for your file picker
         openPicker.ViewMode = PickerViewMode.List;
         openPicker.FileTypeFilter.Add(".sln");
+        openPicker.FileTypeFilter.Add(".csproj");
 
         // Open the picker for the user to pick a file
         var file = await openPicker.PickSingleFileAsync();
