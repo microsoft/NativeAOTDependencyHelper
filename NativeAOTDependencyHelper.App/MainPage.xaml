@@ -157,6 +157,7 @@
                 </Grid.ColumnDefinitions>
                 <ListView x:Name="DependencyView"
                           ItemsSource="{x:Bind ViewModel.Packages}"
+                          SelectedIndex="0"
                           SelectionMode="Single">
                     <!--<ListView.Layout>
            <StackLayout Spacing="4" />
