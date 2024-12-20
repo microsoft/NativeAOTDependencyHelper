@@ -290,57 +290,78 @@
             </Grid>
         </Grid>
 
-        <toolkit:HeaderedContentControl Grid.Row="1" Visibility="{x:Bind ViewModel.IsViewEmpty}">
+        <toolkit:HeaderedContentControl Grid.Row="1"
+                                        Visibility="{x:Bind ViewModel.IsViewEmpty}">
             <toolkit:HeaderedContentControl.Header>
-                <TextBlock Padding="8" Text="Welcome to the Native AOT Dependency Helper Tool" Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Padding="8"
+                           Style="{StaticResource HeaderTextBlockStyle}"
+                           Text="Welcome to the Native AOT Dependency Helper Tool" />
             </toolkit:HeaderedContentControl.Header>
             <StackPanel Padding="8,0,0,0"
                         Orientation="Vertical"
                         Spacing="12">
-                <TextBlock Text="To get started with using the tool, click the 'Open .sln' button in the top left corner and upload the solution file for the project you'd like to check."/>
-                <TextBlock Text="About this tool" Style="{StaticResource SubheaderTextBlockStyle}"/>
+                <TextBlock Text="To get started with using the tool, click the 'Open .sln' button in the top left corner and upload the solution file for the project you'd like to check." />
+                <TextBlock Style="{StaticResource SubheaderTextBlockStyle}"
+                           Text="About this tool" />
 
                 <TextBlock TextWrapping="WrapWholeWords">
-                       The tool bubbles up the following data and performs a series of 'checks' to gauge how well a dependency may support AOT.
-                        <LineBreak/><LineBreak/>This information is retrieved and bubbled up for each dependency in your project, as well as general information like the package ID, whether or not its directly referenced or a transitive dependency, as well as the requested and resolved versions from each referencing project.
-                        <LineBreak/><LineBreak/><Bold>'Reports'</Bold> just provide general information to bubble up for each package.
-                        <LineBreak/><LineBreak/><Bold>'Checks'</Bold> look specifically for things that may indicate potential issues with AOT compatibility.
-                        <LineBreak/><LineBreak/>Passing a check does not guarantee AOT compatibility, conversely failing a check indicated something to investigate or be aware of vs. it being strictly not able to function when AOT is turned on. These are aids to discovery of potentially short comings, known issues, or gaps with your dependency chain to be aware of before attempting to add this functionality to your application.
-                        <LineBreak/><LineBreak/>Here are the following checks performed:
-                </TextBlock>
+                    The tool bubbles up the following data and performs a series of 'checks' to gauge how well a dependency may support AOT.<LineBreak /><LineBreak />
+                    This information is retrieved and bubbled up for each dependency in your project, as well as general information like the package ID, whether or not its directly referenced or a transitive dependency, as well as the requested and resolved versions from each referencing project.<LineBreak /><LineBreak />
+                    <Bold>'Reports'</Bold>
+                    just provide general information to bubble up for each package.<LineBreak /><LineBreak />
+                    <Bold>'Checks'</Bold>
+                    look specifically for things that may indicate potential issues with AOT compatibility.<LineBreak /><LineBreak />
+                    Passing a check does not guarantee AOT compatibility, conversely failing a check indicated something to investigate or be aware of vs. it being strictly not able to function when AOT is turned on. These are aids to discovery of potentially short comings, known issues, or gaps with your dependency chain to be aware of before attempting to add this functionality to your application.<LineBreak /><LineBreak />
+                    Here are the following checks performed:</TextBlock>
 
-                <toolkit:HeaderedItemsControl
-                       ItemsSource="{x:Bind ViewModel.GetReportAndCheckTypes}">
+                <toolkit:HeaderedItemsControl ItemsSource="{x:Bind ViewModel.GetReportAndCheckTypes}">
                     <toolkit:HeaderedItemsControl.ItemContainerStyle>
                         <Style TargetType="ContentPresenter">
-                            <Setter Property="Margin" Value="16,6,5,5"/>
-                            <Setter Property="HorizontalContentAlignment"  Value="Stretch"></Setter>
+                            <Setter Value="16,6,5,5" Property="Margin" />
+                            <Setter Value="Stretch" Property="HorizontalContentAlignment" />
                         </Style>
                     </toolkit:HeaderedItemsControl.ItemContainerStyle>
                     <toolkit:HeaderedItemsControl.Header>
                         <toolkit:DataTable Margin="12,12"
-                                  ColumnSpacing="16">
+                                           ColumnSpacing="16">
                             <toolkit:DataColumn DesiredWidth="100">
-                                <TextBlock TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}"  Text="Type" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           Text="Type"
+                                           TextWrapping="WrapWholeWords" />
                             </toolkit:DataColumn>
                             <toolkit:DataColumn DesiredWidth="200">
-                                <TextBlock TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Category" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           Text="Category"
+                                           TextWrapping="WrapWholeWords" />
                             </toolkit:DataColumn>
                             <toolkit:DataColumn DesiredWidth="300">
-                                <TextBlock  TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Name" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           Text="Name"
+                                           TextWrapping="WrapWholeWords" />
                             </toolkit:DataColumn>
                             <toolkit:DataColumn CanResize="True">
-                                <TextBlock TextWrapping="WrapWholeWords" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Text="Description" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           Text="Description"
+                                           TextWrapping="WrapWholeWords" />
                             </toolkit:DataColumn>
                         </toolkit:DataTable>
                     </toolkit:HeaderedItemsControl.Header>
                     <toolkit:HeaderedItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="models:IReportItemProvider" x:DefaultBindMode="OneWay">
+                        <DataTemplate x:DataType="models:IReportItemProvider"
+                                      x:DefaultBindMode="OneWay">
                             <toolkit:DataRow HorizontalAlignment="Left">
-                                <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Type}"/>
-                                <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Category}"/>
-                                <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Name}"/>
-                                <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind Description}"/>
+                                <TextBlock Text="{x:Bind Type}"
+                                           TextWrapping="WrapWholeWords" />
+                                <TextBlock Text="{x:Bind Category}"
+                                           TextWrapping="WrapWholeWords" />
+                                <TextBlock Text="{x:Bind Name}"
+                                           TextWrapping="WrapWholeWords" />
+                                <TextBlock Text="{x:Bind Description}"
+                                           TextWrapping="WrapWholeWords" />
                             </toolkit:DataRow>
                         </DataTemplate>
                     </toolkit:HeaderedItemsControl.ItemTemplate>
