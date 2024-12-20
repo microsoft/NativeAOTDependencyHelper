@@ -16,6 +16,7 @@
   <ItemGroup>
     <None Remove="Controls\DetailsControl.xaml" />
     <None Remove="MainPage.xaml" />
+    <None Remove="Styles\Button.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,6 +59,11 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\DetailsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Styles\Button.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

@@ -10,6 +10,7 @@
       xmlns:models="using:NativeAOTDependencyHelper.Core.Models"
       xmlns:services="using:NativeAOTDependencyHelper.ViewModels.Services"
       xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+      xmlns:ui="using:CommunityToolkit.WinUI"
       xmlns:viewModels="using:NativeAOTDependencyHelper.ViewModels"
       x:DefaultBindMode="OneWay"
       mc:Ignorable="d">
@@ -24,18 +25,24 @@
             <toolkit:Case Value="Warning" Content="{ThemeResource SystemFillColorCautionBrush}" />
             <toolkit:Case Value="Error" Content="{ThemeResource SystemFillColorCriticalBrush}" />
         </converters:SwitchConverter>
+        <Style x:Key="CustomFlyoutPresenterStyle"
+               BasedOn="{StaticResource DefaultFlyoutPresenterStyle}"
+               TargetType="FlyoutPresenter">
+            <Setter Value="8000" Property="MaxWidth" />
+            <Setter Value="640" Property="Width" />
+        </Style>
     </Page.Resources>
 
     <Grid Padding="16"
           RowSpacing="8">
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.ColumnSpan="2"
+        <Grid Padding="2,8,8,8"
               Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
               BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
               BorderThickness="1"
@@ -49,9 +56,16 @@
                         Spacing="12">
                 <!--  TODO: We should also disable this button when our ProcessSolutionFileCommand is working...  -->
                 <Button Click="OpenSolution_Click"
-                        Content="Open .sln.."
                         IsEnabled="{x:Bind local:MainPage.IsTaskSuccessful(ViewModel.DotnetVersionCommand.ExecutionTask.Status)}"
-                        Style="{StaticResource AccentButtonStyle}" />
+                        Style="{StaticResource AccentButtonStyle}">
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="8">
+                        <Viewbox Width="16">
+                            <PathIcon Data="M2048 335v1378q0 37-19 67t-52 47l-358 180q-26 13-58 13-25 0-48-9t-42-28l-726-726-461 353q-19 14-39 14-12 0-40-9t-59-22-61-24-43-17q-18-7-30-23t-12-37V556q0-20 12-36t30-24q14-5 43-17t60-24 60-21 40-10q20 0 39 14l461 353 726-726q18-18 41-27t49-10q32 0 58 13l358 180q33 17 52 47t19 67zM256 1280l256-256-256-256v512zm1280 119V649l-488 375 488 375z" />
+                        </Viewbox>
+                        <TextBlock Text="Open solution" />
+                    </StackPanel>
+                </Button>
                 <ProgressBar Value="{x:Bind ViewModel.ChecksProcessed}"
                              Width="128"
                              Height="24"
@@ -66,27 +80,58 @@
                         <Run Text=" packages processed" />
                     </TextBlock>
                 </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="{ui:FontIcon Glyph=&#xE711;,
+                                                  FontSize=16}"
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Visibility="{x:Bind ViewModel.IsWorking}" />
+                    <Button Content="{ui:FontIcon Glyph=&#xE72C;,
+                                                  FontSize=16}"
+                            Style="{StaticResource SubtleButtonStyle}" />
+                </StackPanel>
             </StackPanel>
             <StackPanel Grid.Column="1"
                         HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal"
-                        Spacing="8">
-                <TextBlock Margin="0,0,0,-12"
-                           VerticalAlignment="Center"
-                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           Text="{x:Bind ViewModel.DotnetVersionCommand.ExecutionTask, Converter={StaticResource TaskResultConverter}}" />
-                <CommandBar VerticalAlignment="Center"
-                            Background="Transparent"
-                            DefaultLabelPosition="Right"
-                            IsOpen="False">
-                    <!--  TO DO: Make these work  -->
-                    <AppBarButton Icon="Refresh"
-                                  Label="Reload" />
-                    <AppBarButton Icon="Cancel"
-                                  Label="Cancel" />
-                </CommandBar>
+                        Orientation="Horizontal">
+                <Button Content="{ui:FontIcon Glyph=&#xEBE8;,
+                                              FontSize=16}"
+                        Style="{StaticResource SubtleButtonStyle}">
+                    <Button.Flyout>
+                        <Flyout FlyoutPresenterStyle="{StaticResource CustomFlyoutPresenterStyle}"
+                                ShouldConstrainToRootBounds="False">
+                            <!--  Use VerticalAnchorRatio 1.0 to prefer to be on the bottom of the incoming items  -->
+                            <ScrollView VerticalAnchorRatio="1.0">
+                                <ItemsControl ItemsSource="{x:Bind Logger.LogItems}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="services:LogItemData">
+                                            <TextBlock Foreground="{x:Bind Level, Converter={StaticResource LevelToColorSwitchConverter}}"
+                                                       IsTextSelectionEnabled="True"
+                                                       Text="{x:Bind Message}"
+                                                       TextWrapping="Wrap" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollView>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button Content="{ui:FontIcon Glyph=&#xE897;,
+                                              FontSize=16}"
+                        Style="{StaticResource SubtleButtonStyle}">
+                    <Button.Flyout>
+                        <Flyout>
+                            <Grid>
+                                <TextBlock FontSize="12">
+                                    <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                         Text="DotNet Version" />
+                                    <LineBreak />
+                                    <Run Text="{x:Bind ViewModel.DotnetVersionCommand.ExecutionTask, Converter={StaticResource TaskResultConverter}}" />
+                                </TextBlock>
+                            </Grid>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
             </StackPanel>
         </Grid>
 
@@ -94,96 +139,154 @@
               ColumnSpacing="16"
               RowSpacing="8"
               Visibility="{x:Bind ViewModel.Packages.Count, Converter={StaticResource DoubleToVisibilityConverter}}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
 
-            <TextBlock Margin="1,16,0,4"
+
+
+            <!--<TextBlock Margin="1,16,0,4"
                        Style="{StaticResource BodyStrongTextBlockStyle}">
                 <Run Text="Packages (" /><Run Text="{x:Bind ViewModel.Packages.Count}" /><Run Text=")" />
-            </TextBlock>
+            </TextBlock>-->
 
-            <ItemsView x:Name="DependencyView"
-                       Grid.Row="1"
-                       ItemsSource="{x:Bind ViewModel.Packages}"
-                       SelectionMode="Single">
-                <ItemsView.Layout>
-                    <StackLayout Spacing="4" />
-                </ItemsView.Layout>
-                <ItemsView.ItemTemplate>
-                    <DataTemplate x:DataType="viewModels:NuGetPackageViewModel"
-                                  x:DefaultBindMode="OneWay">
-                        <ItemContainer>
-                            <toolkit:SettingsCard Header="{x:Bind Info.Name}">
-                                <toolkit:SettingsCard.HeaderIcon>
-                                    <!--  TO DO: Replace with Nuget package icon?  -->
-                                    <FontIcon Glyph="&#xF158;" />
-                                </toolkit:SettingsCard.HeaderIcon>
-                                <toolkit:SettingsCard.Description>
-                                    <ItemsControl ItemsSource="{x:Bind Info.ProjectReferences}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate x:DataType="models:NuGetPackageProjectReference">
-                                                <TextBlock>
-                                                    <Run Text="{x:Bind ParentProjectPath}" />
-                                                    <Run Text=" • " />
-                                                    <Run Text="{x:Bind Framework}" />
-                                                </TextBlock>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </toolkit:SettingsCard.Description>
-                                <toolkit:SwitchPresenter Value="{x:Bind LoadStatus}"
-                                                         TargetType="models:PackageLoadStatus">
-                                    <toolkit:Case Value="Success">
-                                        <TextBlock VerticalAlignment="Center">
-                                            <Run Text="{x:Bind PassedChecks}" />
-                                            <Run Text=" / " />
-                                            <Run Text="{x:Bind TotalChecks}" />
-                                            <Run Text=" checks passed" />
-                                        </TextBlock>
-                                    </toolkit:Case>
-                                    <toolkit:Case Value="Error">
-                                        <TextBlock FontSize="20"
-                                                   Text="❗" />
-                                    </toolkit:Case>
-                                    <toolkit:Case IsDefault="True">
-                                        <ProgressRing Value="{x:Bind ReportsCompleted}"
-                                                      Width="24"
-                                                      Height="24"
-                                                      Background="DarkGray"
-                                                      IsActive="True"
-                                                      IsIndeterminate="False"
-                                                      Maximum="{x:Bind TotalReports}" />
-                                    </toolkit:Case>
-                                </toolkit:SwitchPresenter>
-                            </toolkit:SettingsCard>
-                        </ItemContainer>
-                    </DataTemplate>
-                </ItemsView.ItemTemplate>
-            </ItemsView>
-            <!--  Details Page  -->
-
-            <TextBlock Grid.Column="1"
-                       Margin="1,16,0,4"
-                       Style="{StaticResource BodyStrongTextBlockStyle}"
-                       Text="Details" />
-            <Grid Grid.Row="1"
-                  Grid.Column="1"
-                  Padding="12"
-                  Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                   BorderThickness="1"
                   CornerRadius="{StaticResource OverlayCornerRadius}">
-                <ScrollViewer>
-                    <controls:DetailsControl x:Name="DetailsController"
-                                             Margin="12"
-                                             ViewModel="{x:Bind (viewModels:NuGetPackageViewModel)DependencyView.SelectedItem}" />
-                </ScrollViewer>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"
+                                      MinWidth="600" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ListView x:Name="DependencyView"
+                          ItemsSource="{x:Bind ViewModel.Packages}"
+                          SelectionMode="Single">
+                    <!--<ListView.Layout>
+           <StackLayout Spacing="4" />
+       </ListView.Layout>-->
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:NuGetPackageViewModel"
+                                      x:DefaultBindMode="OneWay">
+                            <Grid Padding="0,12,12,12"
+                                  ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <!--  TO DO: Replace with Nuget package icon?  -->
+                                <FontIcon VerticalAlignment="Center"
+                                          FontSize="16"
+                                          Glyph="&#xF158;" />
+                                <TextBlock Grid.Column="1"
+                                           Margin="0,-1,0,0"
+                                           VerticalAlignment="Center"
+                                           Text="{x:Bind Info.Name}" />
+                                <toolkit:SwitchPresenter Grid.Column="2"
+                                                         Value="{x:Bind LoadStatus}"
+                                                         VerticalAlignment="Center"
+                                                         TargetType="models:PackageLoadStatus">
+                                    <toolkit:Case Value="Success">
+                                        <StackPanel Height="24"
+                                                    Padding="4,0,8,0"
+                                                    Background="{ThemeResource SystemFillColorSuccessBackgroundBrush}"
+                                                    CornerRadius="12"
+                                                    Orientation="Horizontal"
+                                                    Spacing="4">
+                                            <FontIcon Margin="0,1,0,0"
+                                                      VerticalAlignment="Center"
+                                                      FontSize="14"
+                                                      Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                                                      Glyph="&#xEC61;" />
+                                            <TextBlock Margin="0,-2,0,0"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="12"
+                                                       Foreground="{ThemeResource SystemFillColorSuccessBrush}">
+                                                <Run Text="{x:Bind PassedChecks}" /><Run Text="/" /><Run Text="{x:Bind TotalChecks}" />
+                                                <Run Text="passed" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </toolkit:Case>
+                                    <toolkit:Case Value="Error">
+                                        <StackPanel Height="24"
+                                                    Padding="4,0,8,0"
+                                                    Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}"
+                                                    CornerRadius="12"
+                                                    Orientation="Horizontal"
+                                                    Spacing="4">
+                                            <FontIcon Margin="0,1,0,0"
+                                                      VerticalAlignment="Center"
+                                                      FontSize="14"
+                                                      Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                      Glyph="&#xEC61;" />
+                                            <TextBlock Margin="0,-2,0,0"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="12"
+                                                       Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                       Text="Error" />
+                                        </StackPanel>
+                                    </toolkit:Case>
+                                    <!--  TO DO: Should this state show when not all tests pass?  -->
+                                    <!--<toolkit:Case Value="Warning">
+                                        <StackPanel Height="24"
+                                                    Padding="6,0,8,0"
+                                                    Background="{ThemeResource SystemFillColorCautionBackgroundBrush}"
+
+                                                    CornerRadius="12"
+                                                    Orientation="Horizontal"
+                                                    Spacing="4">
+                                            <FontIcon Margin="0,1,0,0"
+                                                      VerticalAlignment="Center"
+                                                      FontSize="12"
+                                                      Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                                                      Glyph="&#xE814;" />
+                                            <TextBlock Margin="0,-1,0,0"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="12"
+                                                       Foreground="{ThemeResource SystemFillColorCautionBrush}">
+
+                                                <Run Text="{x:Bind PassedChecks}" /><Run Text="/" /><Run Text="{x:Bind TotalChecks}" />
+                                                <Run Text="passed" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </toolkit:Case>-->
+                                    <toolkit:Case IsDefault="True">
+                                        <StackPanel Height="24"
+                                                    Padding="4,0,8,0"
+                                                    Orientation="Horizontal"
+                                                    Spacing="8">
+                                            <ProgressRing Value="{x:Bind ReportsCompleted}"
+                                                          Width="16"
+                                                          Height="16"
+                                                          Background="DarkGray"
+                                                          IsActive="True"
+                                                          IsIndeterminate="False"
+                                                          Maximum="{x:Bind TotalReports}" />
+                                            <TextBlock Margin="0,-2,0,0"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="12"
+                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                       Text="Checking.." />
+                                        </StackPanel>
+                                    </toolkit:Case>
+                                </toolkit:SwitchPresenter>
+                            </Grid>
+
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <!--  Details Page  -->
+
+                <Grid Grid.Column="2"
+                      Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                      BorderThickness="1,0,0,0">
+                    <ScrollViewer>
+                        <controls:DetailsControl x:Name="DetailsController"
+                                                 Margin="24,12,24,16"
+                                                 ViewModel="{x:Bind (viewModels:NuGetPackageViewModel)DependencyView.SelectedItem}" />
+                    </ScrollViewer>
+                </Grid>
+
             </Grid>
         </Grid>
 
@@ -244,26 +347,6 @@
                 </toolkit:HeaderedItemsControl>
             </StackPanel>
         </toolkit:HeaderedContentControl>
-
-        <Expander x:Name="OperationalLogExpander"
-                  Grid.Row="2"
-                  HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Stretch"
-                  Header="Operation Log">
-            <!--  Use VerticalAnchorRatio 1.0 to prefer to be on the bottom of the incoming items  -->
-            <ScrollView Height="320"
-                        VerticalAnchorRatio="1.0">
-                <ItemsControl ItemsSource="{x:Bind Logger.LogItems}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="services:LogItemData">
-                            <TextBlock Foreground="{x:Bind Level, Converter={StaticResource LevelToColorSwitchConverter}}"
-                                       Text="{x:Bind Message}"
-                                       TextWrapping="Wrap" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollView>
-        </Expander>
     </Grid>
     <!--  TODO: We should have a status with a progress bar and the count of reports done vs. total, etc...  -->
     <!--  TODO: Can we cancel all this? (i.e. add cancel button?)  -->

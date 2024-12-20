@@ -8,9 +8,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:models="using:NativeAOTDependencyHelper.Core.Models"
              xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+             xmlns:ui="using:CommunityToolkit.WinUI"
              x:DefaultBindMode="OneWay"
              mc:Ignorable="d">
     <UserControl.Resources>
+        <x:Double x:Key="SettingsCardMinHeight">0</x:Double>
         <converters:SwitchConverter x:Key="StatusToColorSwitchConverter"
                                     TargetType="models:CheckStatus">
             <toolkit:Case Value="Error" Content="{ThemeResource SystemFillColorCriticalBrush}" />
@@ -18,92 +20,172 @@
             <toolkit:Case Value="Passed" Content="{ThemeResource SystemFillColorSuccessBrush}" />
             <toolkit:Case Value="Unavailable" Content="{ThemeResource SystemFillColorNeutralBrush}" />
         </converters:SwitchConverter>
+        <converters:SwitchConverter x:Key="StatusToIconSwitchConverter"
+                                    TargetType="models:CheckStatus">
+            <toolkit:Case Value="Error" Content="&#xEB90;" />
+            <toolkit:Case Value="Warning" Content="&#xE814;" />
+            <toolkit:Case Value="Passed" Content="&#xEC61;" />
+            <toolkit:Case Value="Unavailable" Content="&#xEA3A;" />
+        </converters:SwitchConverter>
     </UserControl.Resources>
-    <StackPanel Orientation="Vertical"
-                Spacing="12">
-        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+    <StackPanel Orientation="Vertical">
+        <TextBlock FontSize="22"
+                   Style="{StaticResource SubtitleTextBlockStyle}"
                    Text="{x:Bind ViewModel.Info.Name}" />
-        <toolkit:HeaderedContentControl Header="Name">
-            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                       Text="{x:Bind ViewModel.Info.Name}" />
-        </toolkit:HeaderedContentControl>
-        <ItemsControl ItemsSource="{x:Bind ViewModel.Info.ProjectReferences}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="models:NuGetPackageProjectReference"
-                              x:DefaultBindMode="OneTime">
-                    <toolkit:HeaderedContentControl Header="{x:Bind ParentProjectPath}">
-                        <StackPanel Margin="16,4,0,8">
-                            <toolkit:HeaderedContentControl Header="Is transitive">
-                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                           Text="{x:Bind IsTransitive}" />
-                            </toolkit:HeaderedContentControl>
-                            <toolkit:HeaderedContentControl Header="Requested version">
-                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                           Text="{x:Bind RequestedVersion}" />
-                            </toolkit:HeaderedContentControl>
-                            <toolkit:HeaderedContentControl Header="Resolved version">
-                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                           Text="{x:Bind ResolvedVersion}" />
-                            </toolkit:HeaderedContentControl>
-                        </StackPanel>
-                    </toolkit:HeaderedContentControl>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
 
-        <ItemsRepeater ItemsSource="{x:Bind ViewModel.CheckItems}">
-            <ItemsRepeater.ItemTemplate>
-                <DataTemplate x:DataType="models:AOTCheckItem">
-                    <StackPanel Margin="10"
-                                Orientation="Vertical">
-                        <TextBlock Style="{StaticResource FlyoutPickerTitleTextBlockStyle}"
-                                   Text="{x:Bind Provider.Name}" />
-                        <toolkit:HeaderedContentControl Header="Details">
-                            <toolkit:SwitchPresenter Value="{x:Bind ResultDetailLink}">
-                                <toolkit:Case Value="{x:Null}">
-                                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                               Text="{x:Bind ReportDetails}" />
-                                </toolkit:Case>
-                                <toolkit:Case IsDefault="true">
-                                    <HyperlinkButton Content="{x:Bind ReportDetails}"
-                                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                     NavigateUri="{x:Bind ResultDetailLink}" />
-                                </toolkit:Case>
-                            </toolkit:SwitchPresenter>
-                        </toolkit:HeaderedContentControl>
-                        <toolkit:HeaderedContentControl Header="Passed">
+        <toolkit:HeaderedContentControl Margin="0,16,0,0">
+            <toolkit:HeaderedContentControl.Header>
+                <StackPanel Margin="0,0,0,8"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                    <TextBlock VerticalAlignment="Center"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"
+                               Text="Checks" />
+                    <FontIcon Margin="0,2,0,0"
+                              VerticalAlignment="Center"
+                              FontSize="12"
+                              Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                              Glyph="&#xE946;"
+                              ToolTipService.ToolTip="These are a list of checks to help understand potential AOT compatibility. An individual checks success or failure is not a guaranteed to ensure compatibility or lack of compatibility with AOT. Similarly, all checks passing may still not mean a package is AOT compatibility. Think of these as a general confidence indicator and a place to start investigating if a check does not pass." />
+                </StackPanel>
+            </toolkit:HeaderedContentControl.Header>
+            <ItemsRepeater ItemsSource="{x:Bind ViewModel.CheckItems}">
+                <ItemsRepeater.Layout>
+                    <StackLayout Spacing="4" />
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="models:AOTCheckItem">
+                        <toolkit:SettingsExpander>
+                            <toolkit:SettingsExpander.Header>
+                                <TextBlock Foreground="{x:Bind Status, Converter={StaticResource StatusToColorSwitchConverter}}"
+                                           Text="{x:Bind Provider.Name}" />
+                            </toolkit:SettingsExpander.Header>
+                            <toolkit:SettingsExpander.HeaderIcon>
+                                <FontIcon Foreground="{x:Bind Status, Converter={StaticResource StatusToColorSwitchConverter}}"
+                                          Glyph="{x:Bind Status, Converter={StaticResource StatusToIconSwitchConverter}}" />
+                            </toolkit:SettingsExpander.HeaderIcon>
                             <TextBlock FontWeight="SemiBold"
                                        Foreground="{x:Bind Status, Converter={StaticResource StatusToColorSwitchConverter}}"
                                        Text="{x:Bind Status}" />
-                        </toolkit:HeaderedContentControl>
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsRepeater.ItemTemplate>
-        </ItemsRepeater>
+                            <toolkit:SettingsExpander.Items>
+                                <toolkit:SettingsCard MinHeight="0"
+                                                      Header="Details">
+                                    <toolkit:SettingsCard.Description>
+                                        <toolkit:SwitchPresenter Value="{x:Bind ResultDetailLink}">
+                                            <toolkit:Case Value="{x:Null}">
+                                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                           Text="{x:Bind ReportDetails}" />
+                                            </toolkit:Case>
+                                            <toolkit:Case IsDefault="true">
+                                                <HyperlinkButton Content="{x:Bind ReportDetails}"
+                                                                 NavigateUri="{x:Bind ResultDetailLink}" />
+                                            </toolkit:Case>
+                                        </toolkit:SwitchPresenter>
+                                    </toolkit:SettingsCard.Description>
 
-        <ItemsRepeater ItemsSource="{x:Bind ViewModel.ReportItems}">
-            <ItemsRepeater.ItemTemplate>
-                <DataTemplate x:DataType="models:ReportItem">
-                    <StackPanel Margin="10"
-                                Orientation="Vertical">
-                        <TextBlock Style="{StaticResource FlyoutPickerTitleTextBlockStyle}"
-                                   Text="{x:Bind Provider.Name}" />
-                        <toolkit:SwitchPresenter Value="{x:Bind ResultDetailLink}">
-                            <toolkit:Case Value="{x:Null}">
-                                <TextBlock Padding="5"
-                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                           Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Bind ReportDetails}" />
-                            </toolkit:Case>
-                            <toolkit:Case IsDefault="true">
-                                <HyperlinkButton Content="{x:Bind ReportDetails}"
-                                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                 NavigateUri="{x:Bind ResultDetailLink}" />
-                            </toolkit:Case>
-                        </toolkit:SwitchPresenter>
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsRepeater.ItemTemplate>
-        </ItemsRepeater>
+                                </toolkit:SettingsCard>
+                            </toolkit:SettingsExpander.Items>
+                        </toolkit:SettingsExpander>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </toolkit:HeaderedContentControl>
+
+
+
+        <toolkit:HeaderedContentControl Margin="0,32,0,0">
+            <toolkit:HeaderedContentControl.Header>
+                <StackPanel Margin="0,0,0,8"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                    <TextBlock VerticalAlignment="Center"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"
+                               Text="Reports" />
+                    <FontIcon Margin="0,2,0,0"
+                              VerticalAlignment="Center"
+                              FontSize="12"
+                              Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                              Glyph="&#xE946;"
+                              ToolTipService.ToolTip="Reports provide additional information and metadata about this dependency." />
+                </StackPanel>
+            </toolkit:HeaderedContentControl.Header>
+            <ItemsRepeater ItemsSource="{x:Bind ViewModel.ReportItems}">
+                <ItemsRepeater.Layout>
+                    <StackLayout Spacing="4" />
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="models:ReportItem">
+                        <toolkit:SettingsCard MinHeight="48"
+                                              Padding="16,12,16,12"
+                                              Header="{x:Bind Provider.Name}">
+                            <toolkit:SwitchPresenter Value="{x:Bind ResultDetailLink}">
+                                <toolkit:Case Value="{x:Null}">
+                                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               Text="{x:Bind ReportDetails}" />
+                                </toolkit:Case>
+                                <toolkit:Case IsDefault="true">
+                                    <HyperlinkButton Padding="0"
+                                                     Content="{x:Bind ReportDetails}"
+                                                     NavigateUri="{x:Bind ResultDetailLink}" />
+                                </toolkit:Case>
+                            </toolkit:SwitchPresenter>
+                        </toolkit:SettingsCard>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </toolkit:HeaderedContentControl>
+
+        <toolkit:HeaderedContentControl Margin="0,32,0,0">
+            <toolkit:HeaderedContentControl.Header>
+                <StackPanel Margin="0,0,0,8"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                    <TextBlock VerticalAlignment="Center"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"
+                               Text="Project references" />
+                    <FontIcon Margin="0,2,0,0"
+                              VerticalAlignment="Center"
+                              FontSize="12"
+                              Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                              Glyph="&#xE946;"
+                              ToolTipService.ToolTip="The projects that are using this package." />
+                </StackPanel>
+            </toolkit:HeaderedContentControl.Header>
+            <ItemsRepeater ItemsSource="{x:Bind ViewModel.Info.ProjectReferences}">
+                <ItemsRepeater.Layout>
+                    <StackLayout Spacing="4" />
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="models:NuGetPackageProjectReference"
+                                  x:DefaultBindMode="OneTime">
+                        <toolkit:SettingsExpander MinHeight="48"
+                                                  Padding="16,12,16,12"
+                                                  Header="{x:Bind ParentProjectPath}"
+                                                  HeaderIcon="{ui:FontIcon Glyph=&#xE737;}">
+                            <toolkit:SettingsExpander.Items>
+                                <toolkit:SettingsCard MinHeight="0"
+                                                      Header="Is transitive">
+                                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                               Text="{x:Bind IsTransitive}" />
+                                </toolkit:SettingsCard>
+                                <toolkit:SettingsCard MinHeight="0"
+                                                      Header="Requested version">
+                                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                               IsTextSelectionEnabled="True"
+                                               Text="{x:Bind RequestedVersion}" />
+                                </toolkit:SettingsCard>
+
+                                <toolkit:SettingsCard MinHeight="0"
+                                                      Header="Resolved version">
+                                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                               Text="{x:Bind ResolvedVersion}" />
+                                </toolkit:SettingsCard>
+                            </toolkit:SettingsExpander.Items>
+                        </toolkit:SettingsExpander>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </toolkit:HeaderedContentControl>
     </StackPanel>
 </UserControl>

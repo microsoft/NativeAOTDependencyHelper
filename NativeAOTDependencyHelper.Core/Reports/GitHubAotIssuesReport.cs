@@ -25,7 +25,7 @@ public class GitHubAotIssuesReport(TaskOrchestrator _orchestrator, IDataSource<G
         var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_gitHubSource, package);
         if (packageMetadata == null) return new ReportItem(this, "No repository data given to search for AOT tag", null);
         if (packageMetadata.Error != null) return new ReportItem(this, "Error performing GitHub issues search for query " + packageMetadata.IssuesQuery, null, "Error performing GitHub issues search request: " + packageMetadata.Error);
-        if (packageMetadata.TotalItems == 0) return new ReportItem(this, "No open issues found. Click to open search query.", packageMetadata.IssuesQuery);
-        return new ReportItem(this, $"{packageMetadata.TotalItems} open issues found. Click to view list of issues", packageMetadata.IssuesQuery);
+        if (packageMetadata.TotalItems == 0) return new ReportItem(this, "No open issues found. View search query.", packageMetadata.IssuesQuery);
+        return new ReportItem(this, $"{packageMetadata.TotalItems} open issues found on GitHub", packageMetadata.IssuesQuery);
     }
 }

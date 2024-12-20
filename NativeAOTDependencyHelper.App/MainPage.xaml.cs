@@ -38,7 +38,7 @@ public sealed partial class MainPage : Page,
 
     public void Receive(LoggedErrorMessage message)
     {
-        OperationalLogExpander.IsExpanded = true;
+        //OperationalLogExpander.IsExpanded = true;
     }
 
     private async void OpenSolution_Click(object sender, RoutedEventArgs e)
