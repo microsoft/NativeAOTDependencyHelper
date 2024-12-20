@@ -11,7 +11,6 @@ using NativeAOTDependencyHelper.Core.Services;
 using NativeAOTDependencyHelper.ViewModels;
 using NativeAOTDependencyHelper.ViewModels.Services;
 using System;
-using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 
 namespace NativeAOTDependencyHelper.App;
@@ -25,6 +24,8 @@ public sealed partial class MainPage : Page,
     public MainViewModel ViewModel { get; } = ((App)App.Current).Services.GetService<MainViewModel>();
 
     public BasicLogger Logger { get; private set; } = ((App)App.Current).Services.GetService<ILogger>() as BasicLogger;
+
+    public CredentialManager CredentialManager { get; } = ((App)App.Current).Services.GetService<CredentialManager>();
 
     public MainPage()
     {
@@ -59,8 +60,15 @@ public sealed partial class MainPage : Page,
         // Open the picker for the user to pick a file
         var file = await openPicker.PickSingleFileAsync();
 
+        // If no file was selected, cancel operation
+        if (file == null) return; 
+
         await ViewModel.ProcessSolutionFileCommand.ExecuteAsync(file.Path);
     }
 
-    private static bool IsTaskSuccessful(TaskStatus status) => status == TaskStatus.RanToCompletion;
+    private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        CredentialManager.WriteCredential(CredentialInputBox.Password);
+        ViewModel.UpdateIsOpenSolutionEnabledProperty();
+    }
 }

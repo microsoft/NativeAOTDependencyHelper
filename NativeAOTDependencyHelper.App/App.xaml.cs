@@ -74,6 +74,7 @@ public partial class App : Application
         // Other services
         services.AddSingleton<ILogger, BasicLogger>();
         services.AddSingleton<GitHubOAuthService>();
+        services.AddSingleton<CredentialManager>();
 
         // Checks
         services.AddSingleton<IReportItemProvider, NuGetLatestVersionCheck>();

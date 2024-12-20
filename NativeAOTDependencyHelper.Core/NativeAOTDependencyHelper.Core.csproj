@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.7.1" />
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
 	<PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.2" />
 	<PackageReference Include="Octokit" Version="13.0.1" />

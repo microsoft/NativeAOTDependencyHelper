@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0-preview1" />
+    <PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>

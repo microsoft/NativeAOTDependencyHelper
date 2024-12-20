@@ -48,10 +48,10 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
 
             NuGetPackageRegistration? packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_nugetSource, package);
             if (packageMetadata?.RepositoryUrl == null || !packageMetadata.RepositoryUrl.Contains(gitHubUrl)) return null;
-            // Parsing repo path
-            var repoPath = packageMetadata?.RepositoryUrl.Replace(gitHubUrl, "");
-            // Remove .git url suffix since this doesn't work in search
-            if (repoPath?.EndsWith(".git") == true) repoPath = repoPath.Replace(".git", "");
+            // Parsing repo path. Remove .git url suffix since this doesn't work in search
+
+            var repoUrl = packageMetadata?.RepositoryUrl.Replace(".git", "");
+            var repoPath = repoUrl?.Replace(gitHubUrl, "");
 
             var request = new SearchIssuesRequest("aot")
             {
@@ -64,7 +64,7 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
             {
                 var result = await _gitHubClient?.Search.SearchIssues(request);
                 if (result == null || result.TotalCount == 0) return null;
-                var queryUri = new Uri($"{packageMetadata?.RepositoryUrl}/issues?q=type%3Aissue%20state%3Aopen%20aot");
+                var queryUri = new Uri($"{repoUrl}/issues?q=type%3Aissue%20state%3Aopen%20aot");
                 return new GitHubIssueSearchResult(result.TotalCount, queryUri);
             }
             catch (Exception e)

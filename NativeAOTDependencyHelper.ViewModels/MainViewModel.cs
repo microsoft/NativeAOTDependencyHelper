@@ -12,7 +12,7 @@ using System.Collections.ObjectModel;
 
 namespace NativeAOTDependencyHelper.ViewModels;
 
-public partial class MainViewModel(IServiceProvider _serviceProvider, TaskScheduler _uiScheduler, DotnetToolingInterop _dotnetInterop, ILogger _logger) : ObservableObject
+public partial class MainViewModel(IServiceProvider _serviceProvider, TaskScheduler _uiScheduler, DotnetToolingInterop _dotnetInterop, ILogger _logger, CredentialManager _credentialManager) : ObservableObject
 {
     public IAsyncRelayCommand DotnetVersionCommand { get; } = new AsyncRelayCommand(_dotnetInterop.CheckDotnetVersion);
 
@@ -35,15 +35,22 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
     public int TotalChecks => TotalPackages * ChecksPerPackage;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsOpenSolutionEnabled))]
     public partial bool IsWorking { get; set; }
 
     public bool IsViewEmpty => Packages.Count == 0;
+
+    public bool IsOpenSolutionEnabled => !IsWorking && _credentialManager.HasCredential && IsTaskSuccessful(DotnetVersionCommand.ExecutionTask.Status);
 
     private TaskOrchestrator? _taskOrchestrator;
 
     public IReportItemProvider[]? GetReportAndCheckTypes => _serviceProvider?.GetServices<IReportItemProvider>().ToArray();
 
+    private static bool IsTaskSuccessful(TaskStatus status) => status == TaskStatus.RanToCompletion;
+
     // TODO: Have error string to report back issues initializing?
+
+    public void UpdateIsOpenSolutionEnabledProperty() => OnPropertyChanged(nameof(IsOpenSolutionEnabled));
 
     [RelayCommand]
     public async Task<bool> ProcessSolutionFileAsync(string filepath)
