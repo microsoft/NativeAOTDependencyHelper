@@ -216,12 +216,24 @@
                                                       VerticalAlignment="Center"
                                                       FontSize="14"
                                                       Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                                                      Glyph="&#xEC61;" />
+                                                      Glyph="&#xE783;" />
                                             <TextBlock Margin="0,-2,0,0"
                                                        VerticalAlignment="Center"
                                                        FontSize="12"
-                                                       Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                                                       Text="Error" />
+                                                       Foreground="{ThemeResource SystemFillColorCriticalBrush}">
+                                                <ToolTipService.ToolTip>
+                                                    <ItemsControl ItemsSource="{x:Bind ProcessingErrors}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate x:DataType="x:String">
+                                                                <TextBlock IsTextSelectionEnabled="True"
+                                                                           Text="{x:Bind}"
+                                                                           TextWrapping="Wrap" />
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </ToolTipService.ToolTip>
+                                                <Run Text="{x:Bind ErroredChecks}" /><Run Text=" Error(s)" />
+                                            </TextBlock>
                                         </StackPanel>
                                     </toolkit:Case>
                                     <!--  TO DO: Should this state show when not all tests pass?  -->

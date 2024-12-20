@@ -33,9 +33,15 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasAnyFailedChecks))]
+    [NotifyPropertyChangedFor(nameof(ErroredChecks))]
     [NotifyPropertyChangedFor(nameof(PassedChecks))]
     [NotifyPropertyChangedFor(nameof(TotalChecks))]
     public partial int ReportsCompleted { get; set; }
+
+    /// <summary>
+    /// Number of checks with errors.
+    /// </summary>
+    public int ErroredChecks => CheckItems.Count(check => check.Status == CheckStatus.Error);
 
     /// <summary>
     /// Number of passed checks.
