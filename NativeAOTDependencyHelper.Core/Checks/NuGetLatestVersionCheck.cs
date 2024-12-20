@@ -1,4 +1,8 @@
-﻿using NativeAOTDependencyHelper.Core.JsonModels;
+﻿// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
 using NativeAOTDependencyHelper.Core.Sources;
@@ -39,7 +43,7 @@ public class NuGetLatestVersionCheck(TaskOrchestrator _orchestrator, IDataSource
             foreach (var registration in registrationList.Items)
             {
                 if (registration.CatalogEntry.Version == latest)
-                {                    
+                {
                     // Check each project's version                    
                     foreach (var project in package.ProjectReferences)
                     {

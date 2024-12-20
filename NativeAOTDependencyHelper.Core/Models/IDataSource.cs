@@ -1,4 +1,8 @@
-﻿namespace NativeAOTDependencyHelper.Core.Models;
+﻿// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+namespace NativeAOTDependencyHelper.Core.Models;
 
 /// <summary>
 /// Defines a source of data which will be needed for various <see cref="AOTCheckItem"/>
@@ -30,18 +34,3 @@ public interface IDataSource<T> // TODO: Needed to make this generic for how we 
     /// <returns>The requested information of the requested type parameter from the data source or null.</returns>
     public Task<T?> GetInfoForPackageAsync(NuGetPackageInfo package);
 }
-
-/*
- * dotnet data [Main Source]
-NuGet.org data [Source]
-  recently updated package [Check]
-  are you using latest package? [Check]
-  Get repository Info [Source]
-    Is code available? [Report]
-    Get GitHub Data [Source]
-      recently committed [Check]
-      code contains "<IsAotCompatible>" near "true" [Check]
-    Get GitHub Issues [Source]
-      Are there open issues with "AOT" [Check]
-      Number/Links to issues containing "AOT" [Report]
-*/

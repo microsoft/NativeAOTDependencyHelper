@@ -1,4 +1,8 @@
-﻿namespace NativeAOTDependencyHelper.Core.Models;
+﻿// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+namespace NativeAOTDependencyHelper.Core.Models;
 
 /// <summary>
 /// Defines a singleton provider of <see cref="ReportItem"/> items.

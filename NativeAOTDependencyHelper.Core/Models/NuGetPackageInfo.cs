@@ -1,4 +1,8 @@
-﻿using NativeAOTDependencyHelper.Core.JsonModels;
+﻿// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using NativeAOTDependencyHelper.Core.JsonModels;
 
 namespace NativeAOTDependencyHelper.Core.Models;
 
@@ -40,9 +44,12 @@ public record NuGetPackageInfo(string Name, NuGetPackageProjectReference[] Proje
                 for (int layer = 0; layer <= 1; layer++)
                 {
                     // See Switch Expression: https://learn.microsoft.com/dotnet/csharp/language-reference/operators/switch-expression
-                    foreach (var package in layer switch { 0 => framework.TopLevelPackages, 
-                                                           1 => framework.TransitivePackages, 
-                                                           _ => throw new IndexOutOfRangeException() })
+                    foreach (var package in layer switch
+                    {
+                        0 => framework.TopLevelPackages,
+                        1 => framework.TransitivePackages,
+                        _ => throw new IndexOutOfRangeException()
+                    })
                     {
                         if (!_uniquePackageIndex.ContainsKey(package.Id))
                         {

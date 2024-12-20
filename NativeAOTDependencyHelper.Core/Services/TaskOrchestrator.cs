@@ -1,7 +1,10 @@
-﻿using NativeAOTDependencyHelper.Core.Models;
+﻿// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using Microsoft.Extensions.DependencyInjection;
+using NativeAOTDependencyHelper.Core.Models;
 using Nito.AsyncEx;
-using System.Collections;
 using System.Collections.Concurrent;
 
 namespace NativeAOTDependencyHelper.Core.Services;
@@ -14,7 +17,7 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
     public event EventHandler<ProcessingPackageEventArgs>? StartedProcessingPackage;
 
     public event EventHandler<ProcessingPackageEventArgs>? FinishedProcessingPackage;
-    
+
     public event EventHandler<ReportPackageProgressEventArgs>? ReportPackageProgress;
 
     public int NumberOfProviders { get; private set; }

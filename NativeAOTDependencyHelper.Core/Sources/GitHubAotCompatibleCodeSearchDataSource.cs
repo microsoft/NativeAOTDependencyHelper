@@ -1,9 +1,12 @@
-﻿using NativeAOTDependencyHelper.Core.JsonModels;
+﻿// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
 using Nito.AsyncEx;
 using Octokit;
-using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Xml.Linq;
 using CheckStatus = NativeAOTDependencyHelper.Core.Models.CheckStatus;
@@ -45,8 +48,9 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
     public async Task<GitHubCodeSearchResult?> GetInfoForPackageAsync(NuGetPackageInfo package)
     {
         SearchCodeResult result;
-    
-        try {
+
+        try
+        {
             using (await _mutex.LockAsync())
             {
                 // We mutex the datasource and artificially delay here as Code Search API is rate limited 10/min - https://docs.github.com/rest/search/search

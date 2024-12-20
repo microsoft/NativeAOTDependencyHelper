@@ -1,4 +1,8 @@
-﻿namespace NativeAOTDependencyHelper.Core.Models;
+﻿// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+namespace NativeAOTDependencyHelper.Core.Models;
 
 /// <summary>
 /// Represents a .NET Project's reference to a NuGet package, contained within <see cref="NuGetPackageInfo"/>.

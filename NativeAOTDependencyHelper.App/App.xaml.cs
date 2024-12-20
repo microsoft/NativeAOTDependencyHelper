@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using NativeAOTDependencyHelper.Core;
 using NativeAOTDependencyHelper.Core.Checks;
@@ -61,7 +65,7 @@ public partial class App : Application
         services.AddSingleton<SolutionPackageIndex>();
         services.AddSingleton<TaskOrchestrator>();
         services.AddSingleton(TaskScheduler.FromCurrentSynchronizationContext()); // Grab copy of UI thread
-        
+
         // Data Sources
         services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
         services.AddSingleton<IDataSource<GitHubIssueSearchResult>, GitHubIssueSearchDataSource>();

@@ -1,5 +1,9 @@
-﻿using NativeAOTDependencyHelper.Core.Models;
+﻿// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using NativeAOTDependencyHelper.Core.JsonModels;
+using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
 
 namespace NativeAOTDependencyHelper.Core.Checks;

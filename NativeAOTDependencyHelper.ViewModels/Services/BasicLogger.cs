@@ -1,7 +1,10 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using CommunityToolkit.Mvvm.Messaging;
 using NativeAOTDependencyHelper.Core;
 using NativeAOTDependencyHelper.Core.Services;
-using Octokit;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 
@@ -16,7 +19,7 @@ public class BasicLogger(TaskScheduler _uiScheduler) : ILogger
         Task.Factory.StartNew(() =>
         {
             LogItems.Clear();
-        }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler);        
+        }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler);
     }
 
     public void Information(string message, [CallerMemberName] string member = "")

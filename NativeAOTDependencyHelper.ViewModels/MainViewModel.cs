@@ -1,4 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using NativeAOTDependencyHelper.Core;
@@ -50,7 +54,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
         Packages.Clear();
         PackagesProcessed = 0;
         TotalPackages = 0;
-        ChecksProcessed = 0;        
+        ChecksProcessed = 0;
 
         if (_taskOrchestrator != null)
         {
@@ -123,7 +127,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
     {
         Task.Factory.StartNew(() =>
         {
-            
+
             // Keep track of how many packages we've processed
             PackagesProcessed++;
             var package = Packages.FirstOrDefault(p => p.Info == e.Package);
@@ -151,5 +155,5 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
                 }
             }
         }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler).Wait();
-    }    
+    }
 }
