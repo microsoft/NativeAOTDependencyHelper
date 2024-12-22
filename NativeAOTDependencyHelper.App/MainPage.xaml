@@ -304,18 +304,18 @@
             <toolkit:HeaderedContentControl>
                 <toolkit:HeaderedContentControl.Header>
                     <TextBlock Padding="8"
-                               Style="{StaticResource HeaderTextBlockStyle}"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
                                Text="Welcome to the Native AOT Dependency Helper Tool" />
                 </toolkit:HeaderedContentControl.Header>
                 <StackPanel Padding="8,0,0,0"
                             Orientation="Vertical"
-                            Spacing="12">
+                            Spacing="8">
                     <toolkit:HeaderedContentControl>
                         <toolkit:HeaderedContentControl.Header>
-                            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}"
+                            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}"
                                        Text="Steps to get started" />
                         </toolkit:HeaderedContentControl.Header>
-                        <StackPanel Margin="15,10,0,0"
+                        <StackPanel Margin="0,12,0,0"
                                     Orientation="Vertical">
                             <RichTextBlock>
                                 <Paragraph>
@@ -328,26 +328,28 @@
                             </RichTextBlock>
                             <PasswordBox Name="CredentialInputBox"
                                          Width="300"
-                                         Margin="12"
+                                         Margin="0,12,0,12"
                                          HorizontalAlignment="Left"
                                          PasswordChanged="PasswordBox_PasswordChanged"
                                          PlaceholderText="Add or update your GitHub PAT here" />
-                            <TextBlock Text="2. Click on the 'Open solution or project' button in the top left corner to select your Visual Studio solution file of your project you'd like to check or the individual C# project file. If the button is disabled, please enter a PAT and try again." />
-                            <TextBlock Margin="0,20,0,20"
-                                       Text="** Note: Due to API rate limits, the app will take some time generating the report. Loading errors can be analyzed in the logger and will be indicated with a '!' icon next to the package item."
+                            <TextBlock Text="2. Click on the 'Open solution or project' button in the top left corner to select your Visual Studio solution file of your project you'd like to check or the individual C# project file. If the button is disabled, please enter a PAT and try again."
+                                       TextWrapping="Wrap" />
+                            <TextBlock Margin="0,8,0,12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Text="Note: Due to API rate limits, the app will take some time generating the report. Loading errors can be analyzed in the logger and will be indicated with a '!' icon next to the package item."
                                        TextWrapping="WrapWholeWords" />
                         </StackPanel>
                     </toolkit:HeaderedContentControl>
 
-                    <TextBlock Style="{StaticResource SubheaderTextBlockStyle}"
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
                                Text="About this tool" />
 
                     <TextBlock TextWrapping="WrapWholeWords">
-                        The tool bubbles up the following data and performs a series of 'checks' to gauge how well a dependency may support AOT.<LineBreak /><LineBreak />
-                        This information is retrieved and bubbled up for each dependency in your project, as well as general information like the package ID, whether or not its directly referenced or a transitive dependency, as well as the requested and resolved versions from each referencing project.<LineBreak /><LineBreak />
-                        <Bold>'Reports'</Bold>
-                        just provide general information to bubble up for each package.<LineBreak /><LineBreak />
-                        <Bold>'Checks'</Bold>
+                        The tool bubbles up the following data and performs a series of 'checks' to gauge how well a dependency may support AOT. This information is retrieved and bubbled up for each dependency in your project, as well as general information like the package ID, whether or not its directly referenced or a transitive dependency, as well as the requested and resolved versions from each referencing project.<LineBreak /><LineBreak />
+                        <Bold>Reports</Bold>
+                        just provide general information to bubble up for each package.<LineBreak />
+                        <Bold>Checks</Bold>
                         look specifically for things that may indicate potential issues with AOT compatibility.<LineBreak /><LineBreak />
                         Passing a check does not guarantee AOT compatibility, conversely failing a check indicated something to investigate or be aware of vs. it being strictly not able to function when AOT is turned on. These are aids to discovery of potentially short comings, known issues, or gaps with your dependency chain to be aware of before attempting to add this functionality to your application.<LineBreak /><LineBreak />
                         Here are the following checks performed:</TextBlock>
@@ -355,34 +357,34 @@
                     <toolkit:HeaderedItemsControl ItemsSource="{x:Bind ViewModel.GetReportAndCheckTypes}">
                         <toolkit:HeaderedItemsControl.ItemContainerStyle>
                             <Style TargetType="ContentPresenter">
-                                <Setter Value="16,6,5,5" Property="Margin" />
+                                <Setter Value="4,8,4,0" Property="Margin" />
                                 <Setter Value="Stretch" Property="HorizontalContentAlignment" />
                             </Style>
                         </toolkit:HeaderedItemsControl.ItemContainerStyle>
                         <toolkit:HeaderedItemsControl.Header>
-                            <toolkit:DataTable Margin="12,12"
+                            <toolkit:DataTable Margin="0,12,0,0"
                                                ColumnSpacing="16">
                                 <toolkit:DataColumn DesiredWidth="100">
                                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                               Style="{StaticResource SubtitleTextBlockStyle}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}"
                                                Text="Type"
                                                TextWrapping="WrapWholeWords" />
                                 </toolkit:DataColumn>
                                 <toolkit:DataColumn DesiredWidth="200">
                                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                               Style="{StaticResource SubtitleTextBlockStyle}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}"
                                                Text="Category"
                                                TextWrapping="WrapWholeWords" />
                                 </toolkit:DataColumn>
-                                <toolkit:DataColumn DesiredWidth="300">
+                                <toolkit:DataColumn DesiredWidth="200">
                                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                               Style="{StaticResource SubtitleTextBlockStyle}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}"
                                                Text="Name"
                                                TextWrapping="WrapWholeWords" />
                                 </toolkit:DataColumn>
                                 <toolkit:DataColumn CanResize="True">
                                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                               Style="{StaticResource SubtitleTextBlockStyle}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}"
                                                Text="Description"
                                                TextWrapping="WrapWholeWords" />
                                 </toolkit:DataColumn>
