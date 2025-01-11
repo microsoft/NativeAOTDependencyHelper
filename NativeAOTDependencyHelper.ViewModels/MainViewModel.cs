@@ -40,13 +40,33 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
 
     public bool IsViewEmpty => Packages.Count == 0;
 
-    public bool IsOpenSolutionEnabled => !IsWorking && _credentialManager.HasCredential && IsTaskSuccessful(DotnetVersionCommand.ExecutionTask.Status);
+    public bool IsOpenSolutionEnabled => (!IsWorking || IsCancelled) && _credentialManager.HasCredential && (IsTaskSuccessful(DotnetVersionCommand.ExecutionTask.Status));
 
     private TaskOrchestrator? _taskOrchestrator;
 
     public IReportItemProvider[]? GetReportAndCheckTypes => _serviceProvider?.GetServices<IReportItemProvider>().ToArray();
 
     private static bool IsTaskSuccessful(TaskStatus status) => status == TaskStatus.RanToCompletion;
+
+    private CancellationTokenSource? _cancellationToken;
+
+    public bool IsCancelled => _cancellationToken?.IsCancellationRequested ?? false;
+
+    public void CancelProcess()
+    {
+        if (_cancellationToken != null)
+        {
+            foreach (NuGetPackageViewModel package in Packages)
+            {
+                if (package.LoadStatus == PackageLoadStatus.Loading)
+                {
+                    package.LoadStatus = PackageLoadStatus.Cancelled;
+                }
+            }
+            _cancellationToken.Cancel();
+            UpdateIsOpenSolutionEnabledProperty();
+        }
+    }
 
     // TODO: Have error string to report back issues initializing?
 
@@ -62,6 +82,8 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
         PackagesProcessed = 0;
         TotalPackages = 0;
         ChecksProcessed = 0;
+
+        _cancellationToken = new CancellationTokenSource();
 
         if (_taskOrchestrator != null)
         {
@@ -93,7 +115,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
             Packages.Add(new(e.Package, ChecksPerPackage));
             // Keep track of how many packages we have.
             TotalPackages++;
-        }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler).Wait();
+        }, _cancellationToken == null ? CancellationToken.None : _cancellationToken.Token, TaskCreationOptions.None, _uiScheduler).Wait();
     }
 
     private void _taskOrchestrator_ReportPackageProgress(object? sender, ReportPackageProgressEventArgs e)
@@ -125,7 +147,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
             }
 
             ChecksProcessed++;
-        }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler);
+        }, _cancellationToken == null ? CancellationToken.None : _cancellationToken.Token, TaskCreationOptions.None, _uiScheduler);
 
         reportProgressTask.Wait();
     }
@@ -140,6 +162,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
             var package = Packages.FirstOrDefault(p => p.Info == e.Package);
             if (package != null)
             {
+
                 if (package.ProcessingErrors.Count > 0)
                 {
                     package.LoadStatus = PackageLoadStatus.Error;
@@ -159,8 +182,12 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
                     _taskOrchestrator.StartedProcessingPackage -= _taskOrchestrator_StartedProcessingPackage;
                     _taskOrchestrator.ReportPackageProgress -= _taskOrchestrator_ReportPackageProgress;
                     _taskOrchestrator.FinishedProcessingPackage -= _taskOrchestrator_FinishedProcessingPackage;
+
+                    _cancellationToken?.Dispose();
+                    _cancellationToken = null;
                 }
             }
-        }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler).Wait();
+        }, _cancellationToken == null ? CancellationToken.None : _cancellationToken.Token, TaskCreationOptions.None, _uiScheduler).Wait();
+
     }
 }

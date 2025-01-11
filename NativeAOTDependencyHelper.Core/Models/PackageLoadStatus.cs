@@ -17,5 +17,9 @@ public enum PackageLoadStatus
     /// <summary>
     /// Package was found but there was an error processing it.
     /// </summary>
-    Error
+    Error,
+    /// <summary>
+    /// Package processing was cancelled
+    /// </summary>
+    Cancelled
 }
