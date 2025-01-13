@@ -168,11 +168,9 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
         {
 
             // Keep track of how many packages we've processed
-            PackagesProcessed++;
             var package = Packages.FirstOrDefault(p => p.Info == e.Package);
             if (package != null)
             {
-
                 if (package.ProcessingErrors.Count > 0)
                 {
                     package.LoadStatus = PackageLoadStatus.Error;
@@ -181,6 +179,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
                 {
                     package.LoadStatus = PackageLoadStatus.Success;
                 }
+                PackagesProcessed++;
             }
 
             // All of our processing is done!
