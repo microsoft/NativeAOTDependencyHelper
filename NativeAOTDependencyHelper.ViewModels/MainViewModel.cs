@@ -64,20 +64,25 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
                 }
             }
 
-            IsWorking = false;
-            if (_taskOrchestrator != null)
-            {
-                _taskOrchestrator.StartedProcessingPackage -= _taskOrchestrator_StartedProcessingPackage;
-                _taskOrchestrator.ReportPackageProgress -= _taskOrchestrator_ReportPackageProgress;
-                _taskOrchestrator.FinishedProcessingPackage -= _taskOrchestrator_FinishedProcessingPackage;
-            }
-
-            _cancellationToken?.Dispose();
-            _cancellationToken = null;
+            OnProcessFinished();
             UpdateIsOpenSolutionEnabledProperty();
         }
     }
 
+    public void OnProcessFinished()
+    {
+        IsWorking = false;
+        if (_taskOrchestrator != null)
+        {
+            _taskOrchestrator.StartedProcessingPackage -= _taskOrchestrator_StartedProcessingPackage;
+            _taskOrchestrator.ReportPackageProgress -= _taskOrchestrator_ReportPackageProgress;
+            _taskOrchestrator.FinishedProcessingPackage -= _taskOrchestrator_FinishedProcessingPackage;
+        }
+        _cancellationToken?.Dispose();
+        _cancellationToken = null;
+    }
+
+ 
     // TODO: Have error string to report back issues initializing?
 
     public void UpdateIsOpenSolutionEnabledProperty() => OnPropertyChanged(nameof(IsOpenSolutionEnabled));
@@ -185,16 +190,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
             // All of our processing is done!
             if (PackagesProcessed == TotalPackages)
             {
-                IsWorking = false;
-                if (_taskOrchestrator != null)
-                {
-                    _taskOrchestrator.StartedProcessingPackage -= _taskOrchestrator_StartedProcessingPackage;
-                    _taskOrchestrator.ReportPackageProgress -= _taskOrchestrator_ReportPackageProgress;
-                    _taskOrchestrator.FinishedProcessingPackage -= _taskOrchestrator_FinishedProcessingPackage;
-
-                    _cancellationToken?.Dispose();
-                    _cancellationToken = null;
-                }
+                OnProcessFinished();
             }
         }, _cancellationToken == null ? CancellationToken.None : _cancellationToken.Token, TaskCreationOptions.None, _uiScheduler).Wait();
 

@@ -88,7 +88,8 @@
                             Click="{x:Bind ViewModel.CancelProcess}"/>
                         <Button Content="{ui:FontIcon Glyph=&#xE72C;,
                                                   FontSize=16}"
-                            Style="{StaticResource SubtleButtonStyle}" />
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Click="ReloadSolution_Click"/>
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Column="1"
