@@ -63,7 +63,17 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
                     package.LoadStatus = PackageLoadStatus.Cancelled;
                 }
             }
-            _cancellationToken.Cancel();
+
+            IsWorking = false;
+            if (_taskOrchestrator != null)
+            {
+                _taskOrchestrator.StartedProcessingPackage -= _taskOrchestrator_StartedProcessingPackage;
+                _taskOrchestrator.ReportPackageProgress -= _taskOrchestrator_ReportPackageProgress;
+                _taskOrchestrator.FinishedProcessingPackage -= _taskOrchestrator_FinishedProcessingPackage;
+            }
+
+            _cancellationToken?.Dispose();
+            _cancellationToken = null;
             UpdateIsOpenSolutionEnabledProperty();
         }
     }

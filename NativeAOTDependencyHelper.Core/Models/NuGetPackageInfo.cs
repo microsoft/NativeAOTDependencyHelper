@@ -19,6 +19,8 @@ public record NuGetPackageInfo(string Name, NuGetPackageProjectReference[] Proje
     /// </summary>
     public bool IsTransitiveOnly => ProjectReferences.All(p => p.IsTransitive);
 
+    public override int GetHashCode() => HashCode.Combine(Name, ProjectReferences);
+
     /// <summary>
     /// Takes the Json data from <see cref="DotnetPackageList"/> and flattens into a straight list of <see cref="NuGetPackageInfo"/> for passing to <see cref="IReportItemProvider"/>.
     /// </summary>
