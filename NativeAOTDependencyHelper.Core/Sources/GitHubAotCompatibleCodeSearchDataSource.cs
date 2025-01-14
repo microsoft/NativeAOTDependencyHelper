@@ -60,7 +60,7 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
                 NuGetPackageRegistration? packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_nugetSource, package);
                 if (packageMetadata?.RepositoryUrl == null) return null;
                 var repoPath = packageMetadata?.RepositoryUrl.Replace("https://github.com/", "");
-                var request = new SearchCodeRequest("<IsAotCompatible>")
+                var request = new SearchCodeRequest("<IsAotCompatible")
                 {
                     In = new[] { CodeInQualifier.File, CodeInQualifier.Path },
                     Language = Language.Xml,
@@ -72,7 +72,7 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
 
             }
 
-            // Fetching source file from url parsed in GitHub code search response
+                // Fetching source file from url parsed in GitHub code search response
             var gitSource = result.Items[0].Url;
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "AOT Compatibility Tool");

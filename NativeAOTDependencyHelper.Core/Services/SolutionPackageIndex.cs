@@ -24,6 +24,7 @@ public class SolutionPackageIndex(DotnetToolingInterop _dotnetInterop, ILogger _
 
     public async Task<bool> InitializeAsync(string solutionFilePath)
     {
+        HasLoaded = false;
         // https://learn.microsoft.com/dotnet/core/tools/dotnet-list-package
         RawPackageList = await _dotnetInterop.GetTransitiveDependencyListAsync(solutionFilePath);
 
