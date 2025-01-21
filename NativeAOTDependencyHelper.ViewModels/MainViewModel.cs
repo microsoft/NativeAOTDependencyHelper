@@ -78,6 +78,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
             _taskOrchestrator.ReportPackageProgress -= _taskOrchestrator_ReportPackageProgress;
             _taskOrchestrator.FinishedProcessingPackage -= _taskOrchestrator_FinishedProcessingPackage;
         }
+        _cancellationToken?.Cancel();
         _cancellationToken?.Dispose();
         _cancellationToken = null;
     }
@@ -109,7 +110,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
 
             IsWorking = true;
 
-            var result = await _taskOrchestrator.ProcessSolutionAsync(filepath);
+            var result = await _taskOrchestrator.ProcessSolutionAsync(filepath, _cancellationToken.Token);
 
             if (!result)
             {
