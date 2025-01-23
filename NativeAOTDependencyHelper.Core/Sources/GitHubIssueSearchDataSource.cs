@@ -60,11 +60,11 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
                 State = ItemState.Open
             };
 
-            var result = await _gitHubClient?.Search.SearchIssues(request);
-            if (result == null || result.TotalCount == 0) return null;
             var queryUri = new Uri($"{repoUrl}/issues?q=type%3Aissue%20state%3Aopen%20aot");
             try
             {
+                var result = await _gitHubClient?.Search.SearchIssues(request);
+                if (result == null) return null;
                 return new GitHubIssueSearchResult(result.TotalCount, queryUri);
             }
             catch (Exception e)
