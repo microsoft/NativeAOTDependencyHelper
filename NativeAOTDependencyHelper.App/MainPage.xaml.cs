@@ -27,6 +27,8 @@ public sealed partial class MainPage : Page,
 
     public CredentialManager CredentialManager { get; } = ((App)App.Current).Services.GetService<CredentialManager>();
 
+    private string _currentLoadPath = null; 
+
     public MainPage()
     {
         InitializeComponent();
@@ -62,7 +64,10 @@ public sealed partial class MainPage : Page,
         var file = await openPicker.PickSingleFileAsync();
 
         // If no file was selected, cancel operation
-        if (file == null) return; 
+        if (file == null) return;
+
+        // Caching this to enable project reload
+        _currentLoadPath = file.Path;
 
         await ViewModel.ProcessSolutionFileCommand.ExecuteAsync(file.Path);
     }
@@ -71,5 +76,11 @@ public sealed partial class MainPage : Page,
     {
         CredentialManager.WriteCredential(CredentialInputBox.Password);
         ViewModel.UpdateIsOpenSolutionEnabledProperty();
+    }
+
+    private async void ReloadSolution_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.OnProcessFinished();
+        if (_currentLoadPath != null) await ViewModel.ProcessSolutionFileCommand.ExecuteAsync(_currentLoadPath);
     }
 }
