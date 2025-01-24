@@ -83,4 +83,10 @@ public sealed partial class MainPage : Page,
         ViewModel.OnProcessFinished();
         if (_currentLoadPath != null) await ViewModel.ProcessSolutionFileCommand.ExecuteAsync(_currentLoadPath);
     }
+
+    private void DependencyView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // When a package is selected, hide the log view.
+        LogToggleButton.IsChecked = false;
+    }
 }
