@@ -84,10 +84,12 @@
                     <Button Content="{ui:FontIcon Glyph=&#xE711;,
                                                   FontSize=16}"
                             Style="{StaticResource SubtleButtonStyle}"
-                            Visibility="{x:Bind ViewModel.IsWorking}" />
-                    <Button Content="{ui:FontIcon Glyph=&#xE72C;,
+                            Visibility="{x:Bind ViewModel.IsWorking}"
+                            Click="{x:Bind ViewModel.CancelProcess}"/>
+                        <Button Content="{ui:FontIcon Glyph=&#xE72C;,
                                                   FontSize=16}"
-                            Style="{StaticResource SubtleButtonStyle}" />
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Click="ReloadSolution_Click"/>
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Column="1"
@@ -221,10 +223,15 @@
                                                        FontSize="12"
                                                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
                                                        Text="Error" />
-                                        </StackPanel>
-                                    </toolkit:Case>
-                                    <!--  TO DO: Should this state show when not all tests pass?  -->
-                                    <!--<toolkit:Case Value="Warning">
+                                            </StackPanel>
+                                        </toolkit:Case>
+                                        <toolkit:Case Value="Cancelled">
+                                            <TextBlock>
+                                                Process cancelled.
+                                            </TextBlock>
+                                        </toolkit:Case>
+                                        <!--  TO DO: Should this state show when not all tests pass?  -->
+                                        <!--<toolkit:Case Value="Warning">
                                         <StackPanel Height="24"
                                                     Padding="6,0,8,0"
                                                     Background="{ThemeResource SystemFillColorCautionBackgroundBrush}"

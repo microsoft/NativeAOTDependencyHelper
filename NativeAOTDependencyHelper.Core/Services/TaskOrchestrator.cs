@@ -26,7 +26,7 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
 
     private ConcurrentDictionary<(Type, NuGetPackageInfo), object?> _resultCache = new();
 
-    public async Task<bool> ProcessSolutionAsync(string solutionFilePath)
+    public async Task<bool> ProcessSolutionAsync(string solutionFilePath, CancellationToken cancellationToken)
     {
         _logger.Information($"Initializing Solution: {solutionFilePath}");
 
@@ -44,7 +44,11 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
             {
                 _logger.Information($"Processing Package: {package.Name}");
                 StartedProcessingPackage?.Invoke(this, new(package));
-
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    _logger.Warning("Cancellation Requested");
+                    return false;
+                }
                 // https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/task-based-asynchronous-programming
                 // https://sergeyteplyakov.github.io/Blog/async/2019/05/21/The-Dangers-of-Task.Factory.StartNew.html
                 // https://learn.microsoft.com/archive/msdn-magazine/2011/february/msdn-magazine-parallel-computing-it-s-all-about-the-synchronizationcontext
@@ -61,7 +65,7 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
                     // TODO: If we do background the reporters, then we'll want to wait for them all to be done before reporting the package is finished...
                     FinishedProcessingPackage?.Invoke(this, new(package));
                     _logger.Information($"Finished Package: {package.Name}");
-                }));
+                }, cancellationToken));
             }
 
             Task.WaitAll(tasks.ToArray());
