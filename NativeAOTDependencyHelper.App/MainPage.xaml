@@ -119,8 +119,11 @@
                         HorizontalAlignment="Right"
                         Orientation="Horizontal">
                 <ToggleButton x:Name="LogToggleButton"
+                              Checked="LogToggleButton_Checked"
                               Content="{ui:FontIcon Glyph=&#xEA37;,
-                                                    FontSize=16}" />
+                                                    FontSize=16}"
+                              ToolTipService.ToolTip="Toggle Log View"
+                              Unchecked="LogToggleButton_Unchecked" />
                 <Button Content="{ui:FontIcon Glyph=&#xE897;,
                                               FontSize=16}"
                         Style="{StaticResource SubtleButtonStyle}">
