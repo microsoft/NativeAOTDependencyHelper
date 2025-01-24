@@ -39,8 +39,9 @@ public interface IReportItemProvider
     /// Processes data from the given data sources (will happen for each package) and returns a new instance of <see cref="IReportItemProvider"/> to add to that package's checklist.
     /// </summary>
     /// <param name="sources">Instances of the requested <see cref="IDataSource"/> in <see cref="IDependsOnDataSource.DependentDataSourceIds"/>, will be in the same order as requested or empty if none.</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the operation.</param>
     /// <returns>A new <see cref="ReportItem"/> (or <see cref="AOTCheckItem"/>) for the given <see cref="NuGetPackageInfo"/>.</returns>
-    public Task<ReportItem> ProcessPackage(NuGetPackageInfo package);
+    public Task<ReportItem?> ProcessPackage(NuGetPackageInfo package, CancellationToken cancellationToken);
 }
 
 public enum ReportCategory

@@ -27,9 +27,9 @@ public class NuGetLatestVersionCheck(TaskOrchestrator _orchestrator, IDataSource
 
     public ReportType Type => ReportType.Check;
 
-    public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
+    public async Task<ReportItem?> ProcessPackage(NuGetPackageInfo package, CancellationToken cancellationToken)
     {
-        var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);
+        var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package, cancellationToken);
 
         bool found = false;
         string? latest = null;
@@ -42,6 +42,7 @@ public class NuGetLatestVersionCheck(TaskOrchestrator _orchestrator, IDataSource
             latest = registrationList.Upper;
             foreach (var registration in registrationList.Items)
             {
+                if (cancellationToken.IsCancellationRequested) return null;
                 if (registration.CatalogEntry.Version == latest)
                 {
                     // Check each project's version                    

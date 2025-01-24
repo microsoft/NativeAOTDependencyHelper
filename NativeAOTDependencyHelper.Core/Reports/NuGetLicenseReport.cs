@@ -20,15 +20,16 @@ public class NuGetLicenseReport(TaskOrchestrator _orchestrator, IDataSource<NuGe
 
     public ReportType Type => ReportType.Report;
 
-    public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
+    public async Task<ReportItem?> ProcessPackage(NuGetPackageInfo package, CancellationToken cancellationToken)
     {
-        var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);
+        var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package, cancellationToken);
 
         if (packageMetadata?.Items.LastOrDefault() is RegistrationListings registrationList)
         {
             var latest = registrationList.Upper;
             foreach (var registration in registrationList.Items)
             {
+                if (cancellationToken.IsCancellationRequested) return null;
                 if (registration.CatalogEntry.Version == latest)
                 {
                     // TODO: Do we care if this fails?

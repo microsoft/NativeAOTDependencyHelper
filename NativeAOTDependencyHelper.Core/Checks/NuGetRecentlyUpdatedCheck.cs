@@ -25,9 +25,9 @@ public class NuGetRecentlyUpdatedCheck(TaskOrchestrator _orchestrator, IDataSour
 
     public ReportType Type => ReportType.Check;
 
-    public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
+    public async Task<ReportItem?> ProcessPackage(NuGetPackageInfo package, CancellationToken cancellationToken)
     {
-        var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package);
+        var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync<NuGetPackageRegistration>(_nugetSource, package, cancellationToken);
 
         bool found = false;
         bool isRecent = false;
@@ -38,6 +38,7 @@ public class NuGetRecentlyUpdatedCheck(TaskOrchestrator _orchestrator, IDataSour
             var latest = registrationList.Upper;
             foreach (var registration in registrationList.Items)
             {
+                if (cancellationToken.IsCancellationRequested) return null;
                 if (registration.CatalogEntry.Version == latest)
                 {
                     found = true;

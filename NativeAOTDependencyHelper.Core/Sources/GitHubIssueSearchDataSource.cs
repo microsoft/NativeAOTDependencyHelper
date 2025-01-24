@@ -39,14 +39,14 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
         return _gitHubClient != null;
     }
 
-    public async Task<GitHubIssueSearchResult?> GetInfoForPackageAsync(NuGetPackageInfo package)
+    public async Task<GitHubIssueSearchResult?> GetInfoForPackageAsync(NuGetPackageInfo package, CancellationToken cancellationToken)
     {
         using (await _mutex.LockAsync())
         {
             // We mutex the datasource and artificially delay here as GH API is rate limited 5000/hr - https://docs.github.com/rest/using-the-rest-api/rate-limits-for-the-rest-api
             await Task.Delay(1000); // We could probably lessen this, but for now leaving as 1000 (over 720) in case we add more checks elsewhere, we should probably manage this in the AuthService centrally or something?
 
-            NuGetPackageRegistration? packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_nugetSource, package);
+            NuGetPackageRegistration? packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_nugetSource, package, cancellationToken);
             if (packageMetadata?.RepositoryUrl == null || !packageMetadata.RepositoryUrl.Contains(gitHubUrl)) return null;
             // Parsing repo path. Remove .git url suffix since this doesn't work in search
 

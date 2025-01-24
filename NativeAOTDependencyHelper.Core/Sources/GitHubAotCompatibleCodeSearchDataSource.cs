@@ -45,7 +45,7 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
         return _githubClient != null;
     }
 
-    public async Task<GitHubCodeSearchResult?> GetInfoForPackageAsync(NuGetPackageInfo package)
+    public async Task<GitHubCodeSearchResult?> GetInfoForPackageAsync(NuGetPackageInfo package, CancellationToken cancellationToken)
     {
         SearchCodeResult result;
 
@@ -57,7 +57,8 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
                 await Task.Delay(6250); // Technically, 6000, but adding a bit of buffer.
 
                 // GitHub search code request to fetch source file url that contains <IsAotCompatible> tag
-                NuGetPackageRegistration? packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_nugetSource, package);
+                cancellationToken.ThrowIfCancellationRequested();
+                NuGetPackageRegistration? packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_nugetSource, package, cancellationToken);
                 if (packageMetadata?.RepositoryUrl == null) return null;
                 var repoPath = packageMetadata?.RepositoryUrl.Replace("https://github.com/", "");
                 var request = new SearchCodeRequest("<IsAotCompatible")
@@ -78,6 +79,7 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "AOT Compatibility Tool");
 
             // Parsing XML tags to find <IsAotCompatible> tag
+            cancellationToken.ThrowIfCancellationRequested();
             var repoInfo = await _httpClient.GetFromJsonAsync<GitHubCodeSearchResult>(gitSource); // TODO: Check if this will rate limit us too?
             var sourceFile = await _httpClient.GetAsync(repoInfo.DownloadUrl);
             var sourceXml = await sourceFile.Content.ReadAsStreamAsync();
