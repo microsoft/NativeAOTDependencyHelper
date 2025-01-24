@@ -31,6 +31,28 @@
             <Setter Value="8000" Property="MaxWidth" />
             <Setter Value="640" Property="Width" />
         </Style>
+
+        <!--  For the package check status  -->
+        <converters:SwitchConverter x:Key="SummaryToBackgroundColorSwitchConverter"
+                                    TargetType="viewModels:PackageCheckSummary">
+            <toolkit:Case Value="AllPassed" Content="{ThemeResource SystemFillColorSuccessBackgroundBrush}" />
+            <toolkit:Case Value="SomePassed" Content="{ThemeResource SystemFillColorCautionBackgroundBrush}" />
+            <toolkit:Case Value="NonePassed" Content="{ThemeResource SystemFillColorCriticalBackgroundBrush}" />
+        </converters:SwitchConverter>
+
+        <converters:SwitchConverter x:Key="SummaryToForegroundColorSwitchConverter"
+                                    TargetType="viewModels:PackageCheckSummary">
+            <toolkit:Case Value="AllPassed" Content="{ThemeResource SystemFillColorSuccessBrush}" />
+            <toolkit:Case Value="SomePassed" Content="{ThemeResource SystemFillColorCautionBrush}" />
+            <toolkit:Case Value="NonePassed" Content="{ThemeResource SystemFillColorCriticalBrush}" />
+        </converters:SwitchConverter>
+
+        <converters:SwitchConverter x:Key="SummaryToGlyphSwitchConverter"
+                                    TargetType="viewModels:PackageCheckSummary">
+            <toolkit:Case Value="AllPassed" Content="&#xEC61;" />
+            <toolkit:Case Value="SomePassed" Content="&#xE814;" />
+            <toolkit:Case Value="NonePassed" Content="&#xEA39;" />
+        </converters:SwitchConverter>
     </Page.Resources>
 
     <Grid Padding="16"
@@ -63,7 +85,7 @@
                         <Viewbox Width="16">
                             <PathIcon Data="M2048 335v1378q0 37-19 67t-52 47l-358 180q-26 13-58 13-25 0-48-9t-42-28l-726-726-461 353q-19 14-39 14-12 0-40-9t-59-22-61-24-43-17q-18-7-30-23t-12-37V556q0-20 12-36t30-24q14-5 43-17t60-24 60-21 40-10q20 0 39 14l461 353 726-726q18-18 41-27t49-10q32 0 58 13l358 180q33 17 52 47t19 67zM256 1280l256-256-256-256v512zm1280 119V649l-488 375 488 375z" />
                         </Viewbox>
-                        <TextBlock Text="Open solution" />
+                        <TextBlock Text="Open solution or project" />
                     </StackPanel>
                 </Button>
                 <ProgressBar Value="{x:Bind ViewModel.ChecksProcessed}"
@@ -159,6 +181,7 @@
                 </Grid.ColumnDefinitions>
                 <ListView x:Name="DependencyView"
                           ItemsSource="{x:Bind ViewModel.Packages}"
+                          SelectedIndex="0"
                           SelectionMode="Single">
                     <!--<ListView.Layout>
            <StackLayout Spacing="4" />
@@ -188,19 +211,19 @@
                                     <toolkit:Case Value="Success">
                                         <StackPanel Height="24"
                                                     Padding="4,0,8,0"
-                                                    Background="{ThemeResource SystemFillColorSuccessBackgroundBrush}"
+                                                    Background="{x:Bind CheckSummary, Converter={StaticResource SummaryToBackgroundColorSwitchConverter}}"
                                                     CornerRadius="12"
                                                     Orientation="Horizontal"
                                                     Spacing="4">
                                             <FontIcon Margin="0,1,0,0"
                                                       VerticalAlignment="Center"
                                                       FontSize="14"
-                                                      Foreground="{ThemeResource SystemFillColorSuccessBrush}"
-                                                      Glyph="&#xEC61;" />
+                                                      Foreground="{x:Bind CheckSummary, Converter={StaticResource SummaryToForegroundColorSwitchConverter}}"
+                                                      Glyph="{x:Bind CheckSummary, Converter={StaticResource SummaryToGlyphSwitchConverter}}" />
                                             <TextBlock Margin="0,-2,0,0"
                                                        VerticalAlignment="Center"
                                                        FontSize="12"
-                                                       Foreground="{ThemeResource SystemFillColorSuccessBrush}">
+                                                       Foreground="{x:Bind CheckSummary, Converter={StaticResource SummaryToForegroundColorSwitchConverter}}">
                                                 <Run Text="{x:Bind PassedChecks}" /><Run Text="/" /><Run Text="{x:Bind TotalChecks}" />
                                                 <Run Text="passed" />
                                             </TextBlock>
@@ -217,43 +240,31 @@
                                                       VerticalAlignment="Center"
                                                       FontSize="14"
                                                       Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                                                      Glyph="&#xEC61;" />
+                                                      Glyph="&#xE783;" />
                                             <TextBlock Margin="0,-2,0,0"
                                                        VerticalAlignment="Center"
                                                        FontSize="12"
-                                                       Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                                                       Text="Error" />
-                                            </StackPanel>
-                                        </toolkit:Case>
-                                        <toolkit:Case Value="Cancelled">
-                                            <TextBlock>
-                                                Process cancelled.
-                                            </TextBlock>
-                                        </toolkit:Case>
-                                        <!--  TO DO: Should this state show when not all tests pass?  -->
-                                        <!--<toolkit:Case Value="Warning">
-                                        <StackPanel Height="24"
-                                                    Padding="6,0,8,0"
-                                                    Background="{ThemeResource SystemFillColorCautionBackgroundBrush}"
-
-                                                    CornerRadius="12"
-                                                    Orientation="Horizontal"
-                                                    Spacing="4">
-                                            <FontIcon Margin="0,1,0,0"
-                                                      VerticalAlignment="Center"
-                                                      FontSize="12"
-                                                      Foreground="{ThemeResource SystemFillColorCautionBrush}"
-                                                      Glyph="&#xE814;" />
-                                            <TextBlock Margin="0,-1,0,0"
-                                                       VerticalAlignment="Center"
-                                                       FontSize="12"
-                                                       Foreground="{ThemeResource SystemFillColorCautionBrush}">
-
-                                                <Run Text="{x:Bind PassedChecks}" /><Run Text="/" /><Run Text="{x:Bind TotalChecks}" />
-                                                <Run Text="passed" />
+                                                       Foreground="{ThemeResource SystemFillColorCriticalBrush}">
+                                                <ToolTipService.ToolTip>
+                                                    <ItemsControl ItemsSource="{x:Bind ProcessingErrors}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate x:DataType="x:String">
+                                                                <TextBlock IsTextSelectionEnabled="True"
+                                                                           Text="{x:Bind}"
+                                                                           TextWrapping="Wrap" />
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </ToolTipService.ToolTip>
+                                                <Run Text="{x:Bind ErroredChecks}" /><Run Text=" Error(s)" />
                                             </TextBlock>
                                         </StackPanel>
-                                    </toolkit:Case>-->
+                                    </toolkit:Case>
+                                    <toolkit:Case Value="Cancelled">
+                                        <TextBlock>
+                                            Process cancelled.
+                                        </TextBlock>
+                                    </toolkit:Case>
                                     <toolkit:Case IsDefault="True">
                                         <StackPanel Height="24"
                                                     Padding="4,0,8,0"
@@ -300,18 +311,18 @@
             <toolkit:HeaderedContentControl>
                 <toolkit:HeaderedContentControl.Header>
                     <TextBlock Padding="8"
-                               Style="{StaticResource HeaderTextBlockStyle}"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
                                Text="Welcome to the Native AOT Dependency Helper Tool" />
                 </toolkit:HeaderedContentControl.Header>
                 <StackPanel Padding="8,0,0,0"
                             Orientation="Vertical"
-                            Spacing="12">
+                            Spacing="8">
                     <toolkit:HeaderedContentControl>
                         <toolkit:HeaderedContentControl.Header>
-                            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}"
+                            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}"
                                        Text="Steps to get started" />
                         </toolkit:HeaderedContentControl.Header>
-                        <StackPanel Margin="15,10,0,0"
+                        <StackPanel Margin="0,12,0,0"
                                     Orientation="Vertical">
                             <RichTextBlock>
                                 <Paragraph>
@@ -324,26 +335,28 @@
                             </RichTextBlock>
                             <PasswordBox Name="CredentialInputBox"
                                          Width="300"
-                                         Margin="12"
+                                         Margin="0,12,0,12"
                                          HorizontalAlignment="Left"
                                          PasswordChanged="PasswordBox_PasswordChanged"
                                          PlaceholderText="Add or update your GitHub PAT here" />
-                            <TextBlock Text="2. Click on the 'Open .sln..' button in the top left corner to select the solution file of your project. If the button is disabled, please enter a PAT and try again." />
-                            <TextBlock Margin="0,20,0,20"
-                                       Text="** Note: Due to API rate limits, the app will take some time generating the report. Loading errors can be analyzed in the logger and will be indicated with a '!' icon next to the package item."
+                            <TextBlock Text="2. Click on the 'Open solution or project' button in the top left corner to select your Visual Studio solution file of your project you'd like to check or the individual C# project file. If the button is disabled, please enter a PAT and try again."
+                                       TextWrapping="Wrap" />
+                            <TextBlock Margin="0,8,0,12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Text="Note: Due to API rate limits, the app will take some time generating the report. Loading errors can be analyzed in the logger and will be indicated with a '!' icon next to the package item."
                                        TextWrapping="WrapWholeWords" />
                         </StackPanel>
                     </toolkit:HeaderedContentControl>
 
-                    <TextBlock Style="{StaticResource SubheaderTextBlockStyle}"
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
                                Text="About this tool" />
 
                     <TextBlock TextWrapping="WrapWholeWords">
-                        The tool bubbles up the following data and performs a series of 'checks' to gauge how well a dependency may support AOT.<LineBreak /><LineBreak />
-                        This information is retrieved and bubbled up for each dependency in your project, as well as general information like the package ID, whether or not its directly referenced or a transitive dependency, as well as the requested and resolved versions from each referencing project.<LineBreak /><LineBreak />
-                        <Bold>'Reports'</Bold>
-                        just provide general information to bubble up for each package.<LineBreak /><LineBreak />
-                        <Bold>'Checks'</Bold>
+                        The tool bubbles up the following data and performs a series of 'checks' to gauge how well a dependency may support AOT. This information is retrieved and bubbled up for each dependency in your project, as well as general information like the package ID, whether or not its directly referenced or a transitive dependency, as well as the requested and resolved versions from each referencing project.<LineBreak /><LineBreak />
+                        <Bold>Reports</Bold>
+                        just provide general information to bubble up for each package.<LineBreak />
+                        <Bold>Checks</Bold>
                         look specifically for things that may indicate potential issues with AOT compatibility.<LineBreak /><LineBreak />
                         Passing a check does not guarantee AOT compatibility, conversely failing a check indicated something to investigate or be aware of vs. it being strictly not able to function when AOT is turned on. These are aids to discovery of potentially short comings, known issues, or gaps with your dependency chain to be aware of before attempting to add this functionality to your application.<LineBreak /><LineBreak />
                         Here are the following checks performed:</TextBlock>
@@ -351,34 +364,34 @@
                     <toolkit:HeaderedItemsControl ItemsSource="{x:Bind ViewModel.GetReportAndCheckTypes}">
                         <toolkit:HeaderedItemsControl.ItemContainerStyle>
                             <Style TargetType="ContentPresenter">
-                                <Setter Value="16,6,5,5" Property="Margin" />
+                                <Setter Value="4,8,4,0" Property="Margin" />
                                 <Setter Value="Stretch" Property="HorizontalContentAlignment" />
                             </Style>
                         </toolkit:HeaderedItemsControl.ItemContainerStyle>
                         <toolkit:HeaderedItemsControl.Header>
-                            <toolkit:DataTable Margin="12,12"
+                            <toolkit:DataTable Margin="0,12,0,0"
                                                ColumnSpacing="16">
                                 <toolkit:DataColumn DesiredWidth="100">
                                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                               Style="{StaticResource SubtitleTextBlockStyle}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}"
                                                Text="Type"
                                                TextWrapping="WrapWholeWords" />
                                 </toolkit:DataColumn>
                                 <toolkit:DataColumn DesiredWidth="200">
                                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                               Style="{StaticResource SubtitleTextBlockStyle}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}"
                                                Text="Category"
                                                TextWrapping="WrapWholeWords" />
                                 </toolkit:DataColumn>
-                                <toolkit:DataColumn DesiredWidth="300">
+                                <toolkit:DataColumn DesiredWidth="200">
                                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                               Style="{StaticResource SubtitleTextBlockStyle}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}"
                                                Text="Name"
                                                TextWrapping="WrapWholeWords" />
                                 </toolkit:DataColumn>
                                 <toolkit:DataColumn CanResize="True">
                                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                               Style="{StaticResource SubtitleTextBlockStyle}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}"
                                                Text="Description"
                                                TextWrapping="WrapWholeWords" />
                                 </toolkit:DataColumn>

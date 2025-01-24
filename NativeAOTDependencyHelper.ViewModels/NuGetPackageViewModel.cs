@@ -22,6 +22,22 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
 
     public bool HasAnyFailedChecks => CheckItems.Any(check => check.Status != CheckStatus.Passed);
 
+    public PackageCheckSummary CheckSummary { 
+        get
+        {
+            if (PassedChecks == TotalChecks)
+            {
+                return PackageCheckSummary.AllPassed;
+            }
+            else if (PassedChecks == 0)
+            {
+                return PackageCheckSummary.NonePassed;
+            }
+
+            return PackageCheckSummary.SomePassed;
+        } 
+    }
+
     /// <summary>
     /// Total reports + checks (as checks are reports)
     /// </summary>
@@ -33,9 +49,16 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasAnyFailedChecks))]
+    [NotifyPropertyChangedFor(nameof(ErroredChecks))]
     [NotifyPropertyChangedFor(nameof(PassedChecks))]
     [NotifyPropertyChangedFor(nameof(TotalChecks))]
+    [NotifyPropertyChangedFor(nameof(CheckSummary))]
     public partial int ReportsCompleted { get; set; }
+
+    /// <summary>
+    /// Number of checks with errors.
+    /// </summary>
+    public int ErroredChecks => CheckItems.Count(check => check.Status == CheckStatus.Error);
 
     /// <summary>
     /// Number of passed checks.
@@ -55,4 +78,11 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
     /// </summary>
     [ObservableProperty]
     public partial int? NumberOfAOTIssues { get; set; }
+}
+
+public enum PackageCheckSummary
+{
+    NonePassed,
+    SomePassed,
+    AllPassed,
 }

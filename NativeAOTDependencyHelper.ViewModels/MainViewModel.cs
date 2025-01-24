@@ -154,9 +154,10 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
                     package.ReportItems.Add(item);
                 }
 
-                if (e.ReportItem.ProcessingError != null)
+                if (e.ReportItem.ProcessingError != null
+                    || (e.ReportItem is AOTCheckItem check2 && check2.Status == CheckStatus.Error))
                 {
-                    package.ProcessingErrors.Add(e.ReportItem.ProcessingError);
+                    package.ProcessingErrors.Add(e.ReportItem.ProcessingError ?? e.ReportItem.ReportDetails);
                     package.LoadStatus = PackageLoadStatus.Error;
                 }
                 package.ReportsCompleted++;
