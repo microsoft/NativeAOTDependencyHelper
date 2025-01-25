@@ -42,13 +42,9 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
 
             foreach (var package in _servicePackageIndex.Packages)
             {
+                if (cancellationToken.IsCancellationRequested) return false;
                 _logger.Information($"Processing Package: {package.Name}");
                 StartedProcessingPackage?.Invoke(this, new(package));
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    return false;
-                }
                 // https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/task-based-asynchronous-programming
                 // https://sergeyteplyakov.github.io/Blog/async/2019/05/21/The-Dangers-of-Task.Factory.StartNew.html
                 // https://learn.microsoft.com/archive/msdn-magazine/2011/february/msdn-magazine-parallel-computing-it-s-all-about-the-synchronizationcontext

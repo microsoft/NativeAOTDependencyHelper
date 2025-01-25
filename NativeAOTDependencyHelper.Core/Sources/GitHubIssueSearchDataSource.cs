@@ -67,6 +67,10 @@ public class GitHubIssueSearchDataSource(TaskOrchestrator _orchestrator, IDataSo
                 if (result == null) return null;
                 return new GitHubIssueSearchResult(result.TotalCount, queryUri);
             }
+            catch (OperationCanceledException e)
+            {
+                return new GitHubIssueSearchResult(0, queryUri, e.Message);
+            }
             catch (Exception e)
             {
                 _logger.Error(e, $"Error searching GitHub Issues for {package.Name}");

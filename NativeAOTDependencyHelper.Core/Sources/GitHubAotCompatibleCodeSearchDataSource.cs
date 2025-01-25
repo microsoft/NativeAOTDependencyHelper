@@ -73,15 +73,15 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
 
             }
 
-                // Fetching source file from url parsed in GitHub code search response
+            // Fetching source file from url parsed in GitHub code search response
             var gitSource = result.Items[0].Url;
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "AOT Compatibility Tool");
 
             // Parsing XML tags to find <IsAotCompatible> tag
             cancellationToken.ThrowIfCancellationRequested();
-            var repoInfo = await _httpClient.GetFromJsonAsync<GitHubCodeSearchResult>(gitSource); // TODO: Check if this will rate limit us too?
-            var sourceFile = await _httpClient.GetAsync(repoInfo.DownloadUrl);
+            var repoInfo = await _httpClient.GetFromJsonAsync<GitHubCodeSearchResult>(gitSource, cancellationToken); // TODO: Check if this will rate limit us too?
+            var sourceFile = await _httpClient.GetAsync(repoInfo?.DownloadUrl, cancellationToken);
             var sourceXml = await sourceFile.Content.ReadAsStreamAsync();
             XDocument doc = XDocument.Load(sourceXml);
 
@@ -99,6 +99,14 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
                 repoInfo.CheckStatus = CheckStatus.Warning;
             }
             return repoInfo;
+        }
+        catch (OperationCanceledException e)
+        {
+            return new GitHubCodeSearchResult
+            {
+                CheckStatus = CheckStatus.Error,
+                Error = e.Message
+            };
         }
         catch (Exception e)
         {
