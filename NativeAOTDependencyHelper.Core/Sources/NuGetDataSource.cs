@@ -86,19 +86,19 @@ public class NuGetDataSource(ILogger _logger) : IDataSource<NuGetPackageRegistra
         if (registration == null || PackageBaseAddress == null || version == null) return null;
 
         // Type = PackageBaseAddress/3.0.0
-            var response = await _sharedHttpClient.GetAsync($"{PackageBaseAddress}{packageId.ToLower()}/{version}/{packageId.ToLower()}.nuspec");
-            response.EnsureSuccessStatusCode();
+        var response = await _sharedHttpClient.GetAsync($"{PackageBaseAddress}{packageId.ToLower()}/{version}/{packageId.ToLower()}.nuspec");
+        response.EnsureSuccessStatusCode();
 
-            using var nuspecStream = await response.Content.ReadAsStreamAsync();
-            registration.Metadata = XDocument.Load(nuspecStream);
-            var repository = from element in registration.Metadata.Descendants()
-                             where element.Name.LocalName == "repository"
-                             select element;
+        using var nuspecStream = await response.Content.ReadAsStreamAsync();
+        registration.Metadata = XDocument.Load(nuspecStream);
+        var repository = from element in registration.Metadata.Descendants()
+                         where element.Name.LocalName == "repository"
+                         select element;
 
-            if (repository != null)
-            {
-                registration.RepositoryUrl = repository?.FirstOrDefault()?.Attribute("url")?.Value;
-            }
+        if (repository != null)
+        {
+            registration.RepositoryUrl = repository?.FirstOrDefault()?.Attribute("url")?.Value;
+        }
 
         return registration;
     }

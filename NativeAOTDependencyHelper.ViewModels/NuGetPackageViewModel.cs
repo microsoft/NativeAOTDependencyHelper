@@ -58,7 +58,7 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
     /// <summary>
     /// Number of checks with errors.
     /// </summary>
-    public int ErroredChecks => CheckItems.Count(check => check.Status == CheckStatus.Error);
+    public int ErroredChecks => CheckItems.Count(check => check.Status == CheckStatus.Error) + ReportItems.Count(report => report.ProcessingError != null);
 
     /// <summary>
     /// Number of passed checks.
