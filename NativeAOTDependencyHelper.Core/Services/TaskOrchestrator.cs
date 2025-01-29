@@ -59,7 +59,6 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
                     }
 
                     // TODO: If we do background the reporters, then we'll want to wait for them all to be done before reporting the package is finished...
-                    if (cancellationToken.IsCancellationRequested) return;
                     FinishedProcessingPackage?.Invoke(this, new(package));
                     _logger.Information($"Finished Package: {package.Name}");
                 }, cancellationToken));
