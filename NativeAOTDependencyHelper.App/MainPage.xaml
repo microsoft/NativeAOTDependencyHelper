@@ -256,7 +256,7 @@
                                                         </ItemsControl.ItemTemplate>
                                                     </ItemsControl>
                                                 </ToolTipService.ToolTip>
-                                                <Run Text="{x:Bind ErroredChecks}" /><Run Text=" Error(s)" />
+                                                <Run Text="{x:Bind TotalErrorCount}" /><Run Text=" Error(s)" />
                                             </TextBlock>
                                         </StackPanel>
                                     </toolkit:Case>
