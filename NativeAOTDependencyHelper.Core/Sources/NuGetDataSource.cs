@@ -52,14 +52,23 @@ public class NuGetDataSource(ILogger _logger) : IDataSource<NuGetPackageRegistra
         return false;
     }
 
-    public async Task<NuGetPackageRegistration?> GetInfoForPackageAsync(NuGetPackageInfo package)
+    public async Task<NuGetPackageRegistration?> GetInfoForPackageAsync(NuGetPackageInfo package, CancellationToken cancellationToken)
     {
         try
         {
             // Type = RegistrationsBaseUrl
-            var registration = await _sharedHttpClient.GetFromJsonAsync<NuGetPackageRegistration>($"{RegistrationsBaseUrl}{package.Name.ToLower()}/index.json");
+            cancellationToken.ThrowIfCancellationRequested();
+            var registration = await _sharedHttpClient.GetFromJsonAsync<NuGetPackageRegistration>($"{RegistrationsBaseUrl}{package.Name.ToLower()}/index.json", cancellationToken);
             var version = registration?.Items?.FirstOrDefault()?.Upper;
             return await GetMetadataFromNuspec(registration, package.Name, version!);
+        }
+        catch (OperationCanceledException e)
+        {
+            return new NuGetPackageRegistration
+            {
+                Id = package.Name,
+                Error = e.Message
+            };
         }
         catch (Exception e)
         {

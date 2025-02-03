@@ -42,13 +42,9 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
 
             foreach (var package in _servicePackageIndex.Packages)
             {
+                if (cancellationToken.IsCancellationRequested) return false;
                 _logger.Information($"Processing Package: {package.Name}");
                 StartedProcessingPackage?.Invoke(this, new(package));
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    _logger.Warning("Cancellation Requested");
-                    return false;
-                }
                 // https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/task-based-asynchronous-programming
                 // https://sergeyteplyakov.github.io/Blog/async/2019/05/21/The-Dangers-of-Task.Factory.StartNew.html
                 // https://learn.microsoft.com/archive/msdn-magazine/2011/february/msdn-magazine-parallel-computing-it-s-all-about-the-synchronizationcontext
@@ -57,9 +53,9 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
                     foreach (var reporter in providers)
                     {
                         // TODO: Do we want a background task per reporter to be tracking (and do this in parallel)?
-                        var report = await reporter.ProcessPackage(package);
-
-                        ReportPackageProgress?.Invoke(this, new(package, report));
+                        if (cancellationToken.IsCancellationRequested) break;
+                        var report = await reporter.ProcessPackage(package, cancellationToken);
+                        if (report != null) ReportPackageProgress?.Invoke(this, new(package, report));
                     }
 
                     // TODO: If we do background the reporters, then we'll want to wait for them all to be done before reporting the package is finished...
@@ -80,9 +76,10 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
         return false;
     }
 
-    public async Task<T?> GetDataFromSourceForPackageAsync<T>(IDataSource<T> dataSource, NuGetPackageInfo package)
+    public async Task<T?> GetDataFromSourceForPackageAsync<T>(IDataSource<T> dataSource, NuGetPackageInfo package, CancellationToken cancellationToken)
     {
         // TODO: We may want to investigate if we can grab all the generic reporter interfaces from the services collection and initialize them before we start processing instead...
+        if (cancellationToken.IsCancellationRequested) return default;
         using (await _dataSourceInitializeLocks.GetOrAdd(typeof(T), new AsyncLock()).LockAsync())
         {
             if (!dataSource.IsInitialized)
@@ -93,6 +90,10 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
 
             // TODO: We don't need to lock the whole datasource for this... but then it seems excessive to lock on every pairing here... (even though that's what we need). Think about the approach here more.
             // Note: We CANNOT use GetOrAdd on our ConcurrentDictionary here as that doesn't guarantee that the factory method will only be called once.
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return default;
+            }
             if (_resultCache.TryGetValue((dataSource.GetType(), package), out var result))
             {
                 _logger.Information($"Returning Cache: {dataSource.Name} - {package.Name}");
@@ -101,7 +102,7 @@ public class TaskOrchestrator(SolutionPackageIndex _servicePackageIndex, IServic
             else
             {
                 _logger.Information($"Fetching Data: {dataSource.Name} - {package.Name}");
-                var resultNew = await dataSource.GetInfoForPackageAsync(package);
+                var resultNew = await dataSource.GetInfoForPackageAsync(package, cancellationToken);
                 _resultCache[(dataSource.GetType(), package)] = resultNew;
                 return resultNew;
             }

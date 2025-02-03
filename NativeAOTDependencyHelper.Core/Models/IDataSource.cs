@@ -31,6 +31,7 @@ public interface IDataSource<T> // TODO: Needed to make this generic for how we 
     /// </summary>
     /// <typeparam name="T">The metadata type this datasource returns.</typeparam>
     /// <param name="package">The <see cref="NuGetPackageInfo"/> for the package that data is being requested.</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the operation.</param>
     /// <returns>The requested information of the requested type parameter from the data source or null.</returns>
-    public Task<T?> GetInfoForPackageAsync(NuGetPackageInfo package);
+    public Task<T?> GetInfoForPackageAsync(NuGetPackageInfo package, CancellationToken cancellationToken);
 }

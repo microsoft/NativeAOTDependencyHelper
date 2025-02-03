@@ -45,7 +45,7 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
         return _githubClient != null;
     }
 
-    public async Task<GitHubCodeSearchResult?> GetInfoForPackageAsync(NuGetPackageInfo package)
+    public async Task<GitHubCodeSearchResult?> GetInfoForPackageAsync(NuGetPackageInfo package, CancellationToken cancellationToken)
     {
         SearchCodeResult result;
 
@@ -57,7 +57,8 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
                 await Task.Delay(6250); // Technically, 6000, but adding a bit of buffer.
 
                 // GitHub search code request to fetch source file url that contains <IsAotCompatible> tag
-                NuGetPackageRegistration? packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_nugetSource, package);
+                cancellationToken.ThrowIfCancellationRequested();
+                NuGetPackageRegistration? packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_nugetSource, package, cancellationToken);
                 if (packageMetadata?.RepositoryUrl == null) return null;
                 var repoPath = packageMetadata?.RepositoryUrl.Replace("https://github.com/", "");
                 var request = new SearchCodeRequest("<IsAotCompatible")
@@ -72,14 +73,15 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
 
             }
 
-                // Fetching source file from url parsed in GitHub code search response
+            // Fetching source file from url parsed in GitHub code search response
             var gitSource = result.Items[0].Url;
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "AOT Compatibility Tool");
 
             // Parsing XML tags to find <IsAotCompatible> tag
-            var repoInfo = await _httpClient.GetFromJsonAsync<GitHubCodeSearchResult>(gitSource); // TODO: Check if this will rate limit us too?
-            var sourceFile = await _httpClient.GetAsync(repoInfo.DownloadUrl);
+            cancellationToken.ThrowIfCancellationRequested();
+            var repoInfo = await _httpClient.GetFromJsonAsync<GitHubCodeSearchResult>(gitSource, cancellationToken); // TODO: Check if this will rate limit us too?
+            var sourceFile = await _httpClient.GetAsync(repoInfo?.DownloadUrl, cancellationToken);
             var sourceXml = await sourceFile.Content.ReadAsStreamAsync();
             XDocument doc = XDocument.Load(sourceXml);
 
@@ -97,6 +99,14 @@ public class GitHubAotCompatibleCodeSearchDataSource(TaskOrchestrator _orchestra
                 repoInfo.CheckStatus = CheckStatus.Warning;
             }
             return repoInfo;
+        }
+        catch (OperationCanceledException e)
+        {
+            return new GitHubCodeSearchResult
+            {
+                CheckStatus = CheckStatus.Error,
+                Error = e.Message
+            };
         }
         catch (Exception e)
         {

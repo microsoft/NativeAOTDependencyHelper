@@ -20,9 +20,10 @@ public class GitHubAotIssuesReport(TaskOrchestrator _orchestrator, IDataSource<G
 
     public string Description => "Searches GitHub (if available) for open issues containing 'AOT'";
 
-    public async Task<ReportItem> ProcessPackage(NuGetPackageInfo package)
+    public async Task<ReportItem?> ProcessPackage(NuGetPackageInfo package, CancellationToken cancellationToken)
     {
-        var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_gitHubSource, package);
+        if (cancellationToken.IsCancellationRequested) return null;
+        var packageMetadata = await _orchestrator.GetDataFromSourceForPackageAsync(_gitHubSource, package, cancellationToken);
         if (packageMetadata == null) return new ReportItem(this, "No repository data given to search for AOT-related issues", null);
         if (packageMetadata.Error != null) return new ReportItem(this, "Error performing GitHub issues search for query " + packageMetadata.IssuesQuery, null, "Error performing GitHub issues search request: " + packageMetadata.Error);
         if (packageMetadata.TotalItems == 0) return new ReportItem(this, "No open issues found. View search query.", packageMetadata.IssuesQuery);

@@ -56,6 +56,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
     {
         if (_cancellationToken != null)
         {
+            _logger.Warning("Cancellation requested. Cancelling all running processes.");
             foreach (NuGetPackageViewModel package in Packages)
             {
                 if (package.LoadStatus == PackageLoadStatus.Loading)
@@ -83,7 +84,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
         _cancellationToken = null;
     }
 
- 
+
     // TODO: Have error string to report back issues initializing?
 
     public void UpdateIsOpenSolutionEnabledProperty() => OnPropertyChanged(nameof(IsOpenSolutionEnabled));
@@ -165,8 +166,7 @@ public partial class MainViewModel(IServiceProvider _serviceProvider, TaskSchedu
 
             ChecksProcessed++;
         }, _cancellationToken == null ? CancellationToken.None : _cancellationToken.Token, TaskCreationOptions.None, _uiScheduler);
-
-        reportProgressTask.Wait();
+        if (!reportProgressTask.IsCanceled) reportProgressTask.Wait();
     }
 
     private void _taskOrchestrator_FinishedProcessingPackage(object? sender, ProcessingPackageEventArgs e)
