@@ -39,6 +39,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="9.0.1" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 

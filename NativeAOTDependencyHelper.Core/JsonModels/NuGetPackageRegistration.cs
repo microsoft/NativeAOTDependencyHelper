@@ -25,6 +25,8 @@ public class NuGetPackageRegistration
     public string? Error { get; set; }
 
     public XDocument? Metadata { get; set; }
+
+    public bool IsTrimmable { get; set; } = false;
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Skip)]

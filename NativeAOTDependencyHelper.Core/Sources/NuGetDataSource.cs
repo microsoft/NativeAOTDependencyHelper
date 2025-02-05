@@ -5,7 +5,10 @@
 using NativeAOTDependencyHelper.Core.JsonModels;
 using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
+using NuGet.Configuration;
 using System.Net.Http.Json;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
 namespace NativeAOTDependencyHelper.Core.Sources;
@@ -60,6 +63,8 @@ public class NuGetDataSource(ILogger _logger) : IDataSource<NuGetPackageRegistra
             cancellationToken.ThrowIfCancellationRequested();
             var registration = await _sharedHttpClient.GetFromJsonAsync<NuGetPackageRegistration>($"{RegistrationsBaseUrl}{package.Name.ToLower()}/index.json", cancellationToken);
             var version = registration?.Items?.FirstOrDefault()?.Upper;
+            if (registration != null) registration.IsTrimmable = GetAssemblyMetadata(package.Name, version!);
+
             return await GetMetadataFromNuspec(registration, package.Name, version!);
         }
         catch (OperationCanceledException e)
@@ -79,6 +84,48 @@ public class NuGetDataSource(ILogger _logger) : IDataSource<NuGetPackageRegistra
                 Error = e.Message
             };
         }
+    }
+
+    public bool GetAssemblyMetadata(string packageName, string version)
+    {
+        var globalPackagePath = SettingsUtility.GetGlobalPackagesFolder(Settings.LoadDefaultSettings(root: null));
+        var packagePath = Path.Combine(globalPackagePath, packageName.ToLower(), version);
+        
+
+        if (Directory.Exists(packagePath))
+        {
+            string[] runtimeAssemblies = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll");
+            string[] paths = Directory.GetFiles(packagePath, "*.dll", SearchOption.AllDirectories);
+            var resolver = new PathAssemblyResolver(runtimeAssemblies.Concat(paths));
+            using var context = new MetadataLoadContext(resolver);
+
+            foreach (var path in paths)
+            {
+                try
+                {
+                    Assembly assembly = context.LoadFromAssemblyPath(path);
+                    var attributes = assembly.GetCustomAttributesData();
+
+                    foreach (var attribute in attributes)
+                    {
+                        if (attribute.AttributeType.Name == typeof(AssemblyMetadataAttribute).Name &&
+                            attribute.ConstructorArguments.Count == 2 &&
+                            attribute.ConstructorArguments[0].Value?.ToString()?.ToLower() == "istrimmable")
+                        {
+                            return attribute.ConstructorArguments[1].Value?.ToString()?.ToLower() == "true";
+                        }
+                    }
+                } catch (Exception e)
+                {
+                    _logger.Error(e, $"Error loading assembly {path}");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine($"Package {packageName} {version} not found in the global packages folder.");
+        }
+        return false;
     }
 
     private async Task<NuGetPackageRegistration?> GetMetadataFromNuspec(NuGetPackageRegistration? registration, string packageId, string version)

@@ -81,6 +81,7 @@ public partial class App : Application
         services.AddSingleton<IReportItemProvider, NuGetRecentlyUpdatedCheck>();
         services.AddSingleton<IReportItemProvider, GitHubAotFlagCheck>();
         services.AddSingleton<IReportItemProvider, GitHubAotIssuesReport>();
+        services.AddSingleton<IReportItemProvider, IsTrimmableMetadataCheck>();
 
         // Reports
         services.AddSingleton<IReportItemProvider, NuGetLicenseReport>();
