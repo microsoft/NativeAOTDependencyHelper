@@ -103,42 +103,27 @@
                     </TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="{ui:FontIcon Glyph=&#xE711;,
+                    <Button Click="{x:Bind ViewModel.CancelProcess}"
+                            Content="{ui:FontIcon Glyph=&#xE711;,
                                                   FontSize=16}"
                             Style="{StaticResource SubtleButtonStyle}"
-                            Visibility="{x:Bind ViewModel.IsWorking}"
-                            Click="{x:Bind ViewModel.CancelProcess}"/>
-                        <Button Content="{ui:FontIcon Glyph=&#xE72C;,
+                            Visibility="{x:Bind ViewModel.IsWorking}" />
+                    <Button Click="ReloadSolution_Click"
+                            Content="{ui:FontIcon Glyph=&#xE72C;,
                                                   FontSize=16}"
-                            Style="{StaticResource SubtleButtonStyle}"
-                            Click="ReloadSolution_Click"/>
+                            Style="{StaticResource SubtleButtonStyle}" />
                 </StackPanel>
             </StackPanel>
+            <!--  Right side of top bar  -->
             <StackPanel Grid.Column="1"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal">
-                <Button Content="{ui:FontIcon Glyph=&#xEBE8;,
-                                              FontSize=16}"
-                        Style="{StaticResource SubtleButtonStyle}">
-                    <Button.Flyout>
-                        <Flyout FlyoutPresenterStyle="{StaticResource CustomFlyoutPresenterStyle}"
-                                ShouldConstrainToRootBounds="False">
-                            <!--  Use VerticalAnchorRatio 1.0 to prefer to be on the bottom of the incoming items  -->
-                            <ScrollView VerticalAnchorRatio="1.0">
-                                <ItemsControl ItemsSource="{x:Bind Logger.LogItems}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="services:LogItemData">
-                                            <TextBlock Foreground="{x:Bind Level, Converter={StaticResource LevelToColorSwitchConverter}}"
-                                                       IsTextSelectionEnabled="True"
-                                                       Text="{x:Bind Message}"
-                                                       TextWrapping="Wrap" />
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollView>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
+                <ToggleButton x:Name="LogToggleButton"
+                              Checked="LogToggleButton_Checked"
+                              Content="{ui:FontIcon Glyph=&#xEA37;,
+                                                    FontSize=16}"
+                              ToolTipService.ToolTip="Toggle Log View"
+                              Unchecked="LogToggleButton_Unchecked" />
                 <Button Content="{ui:FontIcon Glyph=&#xE897;,
                                               FontSize=16}"
                         Style="{StaticResource SubtleButtonStyle}">
@@ -182,6 +167,7 @@
                 <ListView x:Name="DependencyView"
                           ItemsSource="{x:Bind ViewModel.Packages}"
                           SelectedIndex="0"
+                          SelectionChanged="DependencyView_SelectionChanged"
                           SelectionMode="Single">
                     <!--<ListView.Layout>
            <StackLayout Spacing="4" />
@@ -297,15 +283,38 @@
                       Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                       BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
                       BorderThickness="1,0,0,0">
-                    <ScrollViewer>
-                        <controls:DetailsControl x:Name="DetailsController"
-                                                 Margin="24,12,24,16"
-                                                 ViewModel="{x:Bind (viewModels:NuGetPackageViewModel)DependencyView.SelectedItem}" />
-                    </ScrollViewer>
+                    <!--  Use Details area for either the log or the package details  -->
+                    <toolkit:SwitchPresenter Value="{x:Bind LogToggleButton.IsChecked}"
+                                             TargetType="x:Boolean">
+                        <toolkit:Case Value="False" IsDefault="True">
+                            <ScrollViewer>
+                                <controls:DetailsControl x:Name="DetailsController"
+                                                         Margin="24,12,24,16"
+                                                         ViewModel="{x:Bind (viewModels:NuGetPackageViewModel)DependencyView.SelectedItem}" />
+                            </ScrollViewer>
+                        </toolkit:Case>
+                        <toolkit:Case Value="True">
+                            <!--  Use VerticalAnchorRatio 1.0 to prefer to be on the bottom of the incoming items  -->
+                            <ScrollView VerticalAnchorRatio="1.0">
+                                <ItemsControl Margin="8"
+                                              ItemsSource="{x:Bind Logger.LogItems}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="services:LogItemData">
+                                            <TextBlock Foreground="{x:Bind Level, Converter={StaticResource LevelToColorSwitchConverter}}"
+                                                       IsTextSelectionEnabled="True"
+                                                       Text="{x:Bind Message}"
+                                                       TextWrapping="Wrap" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollView>
+                        </toolkit:Case>
+                    </toolkit:SwitchPresenter>
                 </Grid>
             </Grid>
         </Grid>
 
+        <!--  Welcome Page - TODO: Move to its own Page to encapsulate?  -->
         <ScrollView Grid.Row="1"
                     Visibility="{x:Bind ViewModel.IsViewEmpty}">
             <toolkit:HeaderedContentControl>
@@ -417,6 +426,4 @@
             </toolkit:HeaderedContentControl>
         </ScrollView>
     </Grid>
-    <!--  TODO: We should have a status with a progress bar and the count of reports done vs. total, etc...  -->
-    <!--  TODO: Can we cancel all this? (i.e. add cancel button?)  -->
 </Page>

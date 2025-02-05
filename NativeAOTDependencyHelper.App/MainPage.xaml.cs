@@ -27,7 +27,9 @@ public sealed partial class MainPage : Page,
 
     public CredentialManager CredentialManager { get; } = ((App)App.Current).Services.GetService<CredentialManager>();
 
-    private string _currentLoadPath = null; 
+    private string _currentLoadPath = null;
+
+    private object _lastSelectedItem = null;
 
     public MainPage()
     {
@@ -82,5 +84,35 @@ public sealed partial class MainPage : Page,
     {
         ViewModel.OnProcessFinished();
         if (_currentLoadPath != null) await ViewModel.ProcessSolutionFileCommand.ExecuteAsync(_currentLoadPath);
+    }
+
+    private void DependencyView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // When a package is selected, hide the log view.
+        if (e.AddedItems.Count != 0)
+        {
+            // We're explicitly selecting a package, so we don't care about what we last had selected anymore.
+            _lastSelectedItem = null;
+            LogToggleButton.IsChecked = false;
+        }
+    }
+
+    private void LogToggleButton_Checked(object sender, RoutedEventArgs e)
+    {
+        _lastSelectedItem = DependencyView.SelectedItem;
+
+        // Deselect any package when the log view is open.
+        DependencyView.SelectedItem = null;
+    }
+
+    private void LogToggleButton_Unchecked(object sender, RoutedEventArgs e)
+    {
+        if (_lastSelectedItem != null)
+        {
+            // Select last selected package when we're just hiding it, but not selecting a different package.
+            DependencyView.SelectedItem = _lastSelectedItem;
+        }
+
+        _lastSelectedItem = null;
     }
 }
