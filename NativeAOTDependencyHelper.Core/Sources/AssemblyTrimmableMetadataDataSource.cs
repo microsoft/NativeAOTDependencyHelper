@@ -1,5 +1,6 @@
 ﻿using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
+using Nito.Disposables.Internals;
 using NuGet.Configuration;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -21,7 +22,7 @@ namespace NativeAOTDependencyHelper.Core.Sources
         {
             var globalPackagePath = SettingsUtility.GetGlobalPackagesFolder(Settings.LoadDefaultSettings(root: null));
             var packagePath = Path.Combine(globalPackagePath, package.Name.ToLower(), package.ResolvedVersion);
-
+            AppDomain currentDomain = AppDomain.CurrentDomain;
 
             if (Directory.Exists(packagePath))
             {
@@ -34,7 +35,8 @@ namespace NativeAOTDependencyHelper.Core.Sources
                 {
                     try
                     {
-                        Assembly assembly = context.LoadFromAssemblyPath(path);
+                        Assembly[]? assemblies = currentDomain.GetAssemblies().Where(a => a.GetName().Name == package.Name).ToArray();
+                        var assembly = (assemblies == null || assemblies.Length == 0) ? context.LoadFromAssemblyPath(path) : assemblies.First();
                         var attributes = assembly.GetCustomAttributesData().Where(a => a.AttributeType.Name == typeof(AssemblyMetadataAttribute).Name);
 
                         foreach (var attribute in attributes)

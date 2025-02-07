@@ -1,5 +1,4 @@
-﻿using NativeAOTDependencyHelper.Core.JsonModels;
-using NativeAOTDependencyHelper.Core.Models;
+﻿using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
 
 
@@ -18,5 +17,4 @@ public class IsTrimmableMetadataCheck(TaskOrchestrator _orchestrator, IDataSourc
             ? new AOTCheckItem(this, CheckStatus.Passed, "Assembly is marked as trimmable") 
             : new AOTCheckItem(this, CheckStatus.Warning, "Assembly is not marked as trimmable. However, if IsAotCompatible flag is true, then the package is also trimmable.");
     }
-
 }
