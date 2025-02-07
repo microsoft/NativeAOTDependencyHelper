@@ -70,6 +70,7 @@ public partial class App : Application
         services.AddSingleton<IDataSource<NuGetPackageRegistration>, NuGetDataSource>();
         services.AddSingleton<IDataSource<GitHubIssueSearchResult>, GitHubIssueSearchDataSource>();
         services.AddSingleton<IDataSource<GitHubCodeSearchResult>, GitHubAotCompatibleCodeSearchDataSource>();
+        services.AddSingleton<IDataSource<bool>, AssemblyTrimmableMetadataDataSource>();
 
         // Other services
         services.AddSingleton<ILogger, BasicLogger>();

@@ -1,29 +1,26 @@
 ﻿using NativeAOTDependencyHelper.Core.Models;
 using NativeAOTDependencyHelper.Core.Services;
 using NuGet.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NativeAOTDependencyHelper.Core.Sources
 {
-    public class AssemblyMetadataDatasource(TaskOrchestrator _taskOrchestrator, ILogger _logger) : IDataSource<List<AssemblyMetadataAttribute>>
+    public class AssemblyTrimmableMetadataDataSource(TaskOrchestrator _taskOrchestrator, ILogger _logger) : IDataSource<bool>
     {
-        public string Name => "Package Assembly Metadata";
+        public string Name => "If package assembly metadata is marked as trimmable";
 
         public string Description => "Returns the custom metadata attributes indicated on the NuGet package's assembly";
 
         // No need to setup for network call-- returns true by default
         public bool IsInitialized => true;
 
-        public bool GetAssemblyMetadata(string packageName, string version)
+        public async Task<bool> InitializeAsync() => true;
+
+        public async Task<bool> GetInfoForPackageAsync(NuGetPackageInfo package, CancellationToken cancellationToken)
         {
             var globalPackagePath = SettingsUtility.GetGlobalPackagesFolder(Settings.LoadDefaultSettings(root: null));
-            var packagePath = Path.Combine(globalPackagePath, packageName.ToLower(), version);
+            var packagePath = Path.Combine(globalPackagePath, package.Name.ToLower(), package.ResolvedVersion);
 
 
             if (Directory.Exists(packagePath))
@@ -38,12 +35,11 @@ namespace NativeAOTDependencyHelper.Core.Sources
                     try
                     {
                         Assembly assembly = context.LoadFromAssemblyPath(path);
-                        var attributes = assembly.GetCustomAttributesData();
+                        var attributes = assembly.GetCustomAttributesData().Where(a => a.AttributeType.Name == typeof(AssemblyMetadataAttribute).Name);
 
                         foreach (var attribute in attributes)
                         {
-                            if (attribute.AttributeType.Name == typeof(AssemblyMetadataAttribute).Name &&
-                                attribute.ConstructorArguments.Count == 2 &&
+                            if (attribute.ConstructorArguments.Count == 2 &&
                                 attribute.ConstructorArguments[0].Value?.ToString()?.ToLower() == "istrimmable")
                             {
                                 return attribute.ConstructorArguments[1].Value?.ToString()?.ToLower() == "true";
@@ -58,16 +54,9 @@ namespace NativeAOTDependencyHelper.Core.Sources
             }
             else
             {
-                Console.WriteLine($"Package {packageName} {version} not found in the global packages folder.");
+                Console.WriteLine($"Package {package.Name} {package.ResolvedVersion} not found in the global packages folder.");
             }
             return false;
         }
-
-        public async Task<List<AssemblyMetadataAttribute>?> GetInfoForPackageAsync(NuGetPackageInfo package, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> InitializeAsync() => true;
     }
 }

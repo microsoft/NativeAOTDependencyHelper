@@ -12,7 +12,8 @@ namespace NativeAOTDependencyHelper.Core.Models;
 /// </summary>
 /// <param name="Name">The <see cref="NuGetPackage.Id"/> of this package.</param>
 /// <param name="ProjectReferences">List of projects which reference this package.</param> // TODO: This could be a problem being a record-type if we add additional references here by transitive dependencies...
-public record NuGetPackageInfo(string Name, NuGetPackageProjectReference[] ProjectReferences)
+/// <param name="ResolvedVersion" >The resolved version of this package. </param>
+public record NuGetPackageInfo(string Name, NuGetPackageProjectReference[] ProjectReferences, string ResolvedVersion)
 {
     /// <summary>
     /// Gets whether this NuGetPackage is ONLY included due to transitive references and has no direct references by projects.
@@ -72,7 +73,8 @@ public record NuGetPackageInfo(string Name, NuGetPackageProjectReference[] Proje
         // Construct final package info with references to all projects used
         foreach ((var packageId, var projects) in _uniquePackageIndex)
         {
-            yield return new NuGetPackageInfo(packageId, projects.ToArray());
+            var resolvedVersion = projects.Where(p => p.ResolvedVersion != null).First().ResolvedVersion;
+            yield return new NuGetPackageInfo(packageId, projects.ToArray(), resolvedVersion);
         }
     }
 
