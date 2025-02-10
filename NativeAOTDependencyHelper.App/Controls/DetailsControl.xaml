@@ -122,7 +122,9 @@
                                 <toolkit:Case Value="{x:Null}">
                                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                               Text="{x:Bind ReportDetails}" />
+                                               Text="{x:Bind ReportDetails}"
+                                               MaxWidth="500"
+                                               TextWrapping="WrapWholeWords"/>
                                 </toolkit:Case>
                                 <toolkit:Case IsDefault="true">
                                     <HyperlinkButton Padding="0"

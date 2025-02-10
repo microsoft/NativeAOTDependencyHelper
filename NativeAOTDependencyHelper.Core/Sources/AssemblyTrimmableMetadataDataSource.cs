@@ -35,7 +35,10 @@ namespace NativeAOTDependencyHelper.Core.Sources
                 {
                     try
                     {
-                        Assembly[]? assemblies = currentDomain.GetAssemblies().Where(a => a.GetName().Name == package.Name).ToArray();
+                        Assembly[]? assemblies = currentDomain.GetAssemblies()
+                            .Concat(context.GetAssemblies())
+                            .Where(a => a.GetName().Name == package.Name)
+                            .ToArray();
                         var assembly = (assemblies == null || assemblies.Length == 0) ? context.LoadFromAssemblyPath(path) : assemblies.First();
                         var attributes = assembly.GetCustomAttributesData().Where(a => a.AttributeType.Name == typeof(AssemblyMetadataAttribute).Name);
 
