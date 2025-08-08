@@ -1,4 +1,7 @@
-﻿using System.Linq;
+// Copyright (c) Microsoft Corporation
+// The Microsoft Corporation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using Meziantou.Framework.Win32;
 
 namespace NativeAOTDependencyHelper.Core;
@@ -6,12 +9,13 @@ namespace NativeAOTDependencyHelper.Core;
 /// <summary>
 /// CredentialManager helper class copied from the Microsoft Store CLI project.
 /// </summary>
-public class CredentialManager {
+public class CredentialManager
+{
     internal string ApplicationName { get; set; } = "NativeAOTDependencyHelper";
 
     private string defaultUserName = "default";
 
-    public bool HasCredential { get; private set; } = false; 
+    public bool HasCredential { get; private set; } = false;
 
     private string GetCredentialName() => $"{ApplicationName}:user={defaultUserName}";
 
