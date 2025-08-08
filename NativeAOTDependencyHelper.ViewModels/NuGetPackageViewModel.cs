@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation
+// Copyright (c) Microsoft Corporation
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -22,7 +22,8 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
 
     public bool HasAnyFailedChecks => CheckItems.Any(check => check.Status != CheckStatus.Passed);
 
-    public PackageCheckSummary CheckSummary { 
+    public PackageCheckSummary CheckSummary
+    {
         get
         {
             if (PassedChecks == TotalChecks)
@@ -35,7 +36,7 @@ public partial class NuGetPackageViewModel(NuGetPackageInfo _packageInfo, int _t
             }
 
             return PackageCheckSummary.SomePassed;
-        } 
+        }
     }
 
     /// <summary>

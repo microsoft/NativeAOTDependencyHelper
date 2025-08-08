@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation
+// Copyright (c) Microsoft Corporation
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -90,7 +90,7 @@ public class NuGetDataSource(ILogger _logger) : IDataSource<NuGetPackageRegistra
     {
         var globalPackagePath = SettingsUtility.GetGlobalPackagesFolder(Settings.LoadDefaultSettings(root: null));
         var packagePath = Path.Combine(globalPackagePath, packageName.ToLower(), version);
-        
+
 
         if (Directory.Exists(packagePath))
         {
@@ -115,7 +115,8 @@ public class NuGetDataSource(ILogger _logger) : IDataSource<NuGetPackageRegistra
                             return attribute.ConstructorArguments[1].Value?.ToString()?.ToLower() == "true";
                         }
                     }
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     _logger.Error(e, $"Error loading assembly {path}");
                 }
