@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <UserControl x:Class="NativeAOTDependencyHelper.App.Controls.DetailsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -33,7 +33,8 @@
                    Style="{StaticResource SubtitleTextBlockStyle}"
                    Text="{x:Bind ViewModel.Info.Name}" />
 
-        <toolkit:HeaderedContentControl Margin="0,16,0,0">
+        <toolkit:HeaderedContentControl Margin="0,16,0,0"
+                                        HorizontalContentAlignment="Stretch">
             <toolkit:HeaderedContentControl.Header>
                 <StackPanel Margin="0,0,0,8"
                             Orientation="Horizontal"
@@ -93,7 +94,8 @@
 
 
 
-        <toolkit:HeaderedContentControl Margin="0,32,0,0">
+        <toolkit:HeaderedContentControl Margin="0,32,0,0"
+                                        HorizontalContentAlignment="Stretch">
             <toolkit:HeaderedContentControl.Header>
                 <StackPanel Margin="0,0,0,8"
                             Orientation="Horizontal"
@@ -136,7 +138,8 @@
             </ItemsRepeater>
         </toolkit:HeaderedContentControl>
 
-        <toolkit:HeaderedContentControl Margin="0,32,0,0">
+        <toolkit:HeaderedContentControl Margin="0,32,0,0"
+                                        HorizontalContentAlignment="Stretch">
             <toolkit:HeaderedContentControl.Header>
                 <StackPanel Margin="0,0,0,8"
                             Orientation="Horizontal"
