@@ -8,13 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.7.1" />
-	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+	<PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.7.4" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
 	<PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.2" />
-	<PackageReference Include="NuGet.Configuration" Version="6.12.1" />
-	<PackageReference Include="Octokit" Version="13.0.1" />
-    <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
-    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="9.0.1" />
+	<PackageReference Include="NuGet.Configuration" Version="6.14.0" />
+	<PackageReference Include="Octokit" Version="14.0.0" />
+    <PackageReference Include="System.Net.Http.Json" Version="9.0.8" />
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="9.0.8" />
   </ItemGroup>
 
 </Project>
