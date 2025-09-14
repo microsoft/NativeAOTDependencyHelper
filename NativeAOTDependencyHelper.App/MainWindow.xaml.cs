@@ -20,6 +20,7 @@ public sealed partial class MainWindow : Window
         this.InitializeComponent();
         this.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
         this.AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+        this.AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         this.AppWindow.TitleBar.PreferredHeightOption = Microsoft.UI.Windowing.TitleBarHeightOption.Tall;
     }
 }
