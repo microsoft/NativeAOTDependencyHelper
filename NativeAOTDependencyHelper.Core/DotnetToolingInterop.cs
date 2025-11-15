@@ -40,7 +40,7 @@ public class DotnetToolingInterop(ILogger _logger)
         {
             Process process = new();
             process.StartInfo.FileName = "dotnet.exe";
-            process.StartInfo.Arguments = $"list {solutionpath} package --include-transitive --format json";
+            process.StartInfo.Arguments = $"list \"{solutionpath}\" package --include-transitive --format json";
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
