@@ -1,3 +1,6 @@
+> [!IMPORTANT]  
+> This repo is set to retire on 9/30/2026. Please refer to .NET docs for [Native AOT deployment](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/?tabs=windows%2Cnet8) related topics.
+
 
 # Native AOT Dependency Helper Sample
 
